@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="_pics\**" />
+    <EmbeddedResource Remove="_pics\**" />
+    <None Remove="_pics\**" />
+    <Page Remove="_pics\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="graphics\home.jpg" />
+    <None Remove="graphics\home_logo.jpg" />
+    <None Remove="graphics\logo.png" />
+    <None Remove="graphics\tools_logo.png" />
+    <None Remove="graphics\underline.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="graphics\home.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="graphics\logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="graphics\tools_logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="graphics\underline.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Esri.ArcGISRuntime" Version="200.7.0" />
+    <PackageReference Include="Esri.ArcGISRuntime.WPF" Version="200.7.0" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,54 @@
+﻿<Window x:Class="SurfScout.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:esri="http://schemas.esri.com/arcgis/runtime/2013"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SurfScout"
+        mc:Ignorable="d"
+        Title="SurfScout" Height="450" Width="800">
+    <Grid Name ="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="107*"/>
+            <RowDefinition Height="618*"/>
+        </Grid.RowDefinitions>
+        <Image Source="pack://application:,,,/SurfScout;component/graphics/underline.png" Margin="0,602.2,0.6,-0.2" Stretch="UniformToFill" Grid.Row="1"/>
+        <Grid Width="{Binding ElementName=MainWindow, Path=ActualWidth}" Height="{Binding ElementName=MainWindow, Path=ActualHeight}" Margin="0,0,1073.6,15.8" Name="SelectProgram"  Background="WhiteSmoke" Grid.RowSpan="2">
+            <StackPanel Background="WhiteSmoke">
+                <Image Source="pack://application:,,,/SurfScout;component/graphics/logo.png" Margin="0,0,-0.4,0"/>
+                <Button x:Name="buttonMapViewer" Height="55" Background="WhiteSmoke" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0">
+                    <DockPanel LastChildFill="False">
+                        <Image Source="pack://application:,,,/SurfScout;component/graphics/tools_logo.png" DockPanel.Dock="Left" Margin="0,0,0,-0.4"/>
+                        <TextBlock Text="Map Viewer" FontSize="16" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                    </DockPanel>
+                </Button>
+                <Button x:Name="buttonWindModel" Height="55" Background="WhiteSmoke" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0">
+                    <DockPanel LastChildFill="False">
+                        <Image Source="pack://application:,,,/SurfScout;component/graphics/tools_logo.png" DockPanel.Dock="Left" Margin="0,0,0,-0.4"/>
+                        <TextBlock Text="Wind Model" FontSize="16" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                    </DockPanel>
+                </Button>
+                <TextBlock Height="440"></TextBlock>
+                <Button x:Name="buttonTasks" Content="Tasks" Height="45.0" FontSize="16" Background="WhiteSmoke"/>
+                <Button x:Name="buttonInfo" Content="Info" Height="40.0" FontSize="16" Background="WhiteSmoke"/>
+                <Button x:Name="buttonQuit" Content="Quit" FontWeight="Bold" Height="42" FontSize="18" Background="LightGray"/>
+            </StackPanel>
+        </Grid>
+        <!-- Home Grid !-->
+        <Grid Name="HomeScreen" Margin="264,0,-0.4,15.8" Visibility="Visible" Grid.RowSpan="2">
+            <Label HorizontalAlignment="Center" FontSize="18" Margin="0,29,876,629" Width="198">Surf Scout</Label>
+            <Image Source= "pack://application:,,,/SurfScout;component/graphics/home.jpg" DockPanel.Dock="Left" Margin="0,80,0,0" Stretch="Fill"/>
+        </Grid>
+        <!-- Map Viewer Grid !-->
+        <Grid Name="MapViewer" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
+            <Grid>
+                <esri:MapView x:Name="MyMapView" />
+            </Grid>
+        </Grid>
+        <!-- Wind Model Grid !-->
+        <Grid Name="WindModel" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
+            
+        </Grid>
+    </Grid>
+
+</Window>
