@@ -41,6 +41,7 @@
   <ItemGroup>
     <PackageReference Include="Esri.ArcGISRuntime" Version="200.7.0" />
     <PackageReference Include="Esri.ArcGISRuntime.WPF" Version="200.7.0" />
+    <PackageReference Include="Npgsql" Version="9.0.3" />
   </ItemGroup>
 
 </Project>

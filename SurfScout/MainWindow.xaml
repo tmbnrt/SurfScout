@@ -16,6 +16,12 @@
         <Grid Width="{Binding ElementName=MainWindow, Path=ActualWidth}" Height="{Binding ElementName=MainWindow, Path=ActualHeight}" Margin="0,0,1073.6,15.8" Name="SelectProgram"  Background="WhiteSmoke" Grid.RowSpan="2">
             <StackPanel Background="WhiteSmoke">
                 <Image Source="pack://application:,,,/SurfScout;component/graphics/logo.png" Margin="0,0,-0.4,0"/>
+                <Button x:Name="buttonUser" Height="55" Background="WhiteSmoke" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0">
+                    <DockPanel LastChildFill="False">
+                        <Image Source="pack://application:,,,/SurfScout;component/graphics/tools_logo.png" DockPanel.Dock="Left" Margin="0,0,0,-0.4"/>
+                        <TextBlock x:Name="buttonUserName" Text="User Login" FontSize="16" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                    </DockPanel>
+                </Button>
                 <Button x:Name="buttonMapViewer" Height="55" Background="WhiteSmoke" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0">
                     <DockPanel LastChildFill="False">
                         <Image Source="pack://application:,,,/SurfScout;component/graphics/tools_logo.png" DockPanel.Dock="Left" Margin="0,0,0,-0.4"/>
@@ -28,8 +34,7 @@
                         <TextBlock Text="Wind Model" FontSize="16" Margin="10,0,0,0" VerticalAlignment="Center"/>
                     </DockPanel>
                 </Button>
-                <TextBlock Height="440"></TextBlock>
-                <Button x:Name="buttonTasks" Content="Tasks" Height="45.0" FontSize="16" Background="WhiteSmoke"/>
+                <TextBlock Height="200"></TextBlock>
                 <Button x:Name="buttonInfo" Content="Info" Height="40.0" FontSize="16" Background="WhiteSmoke"/>
                 <Button x:Name="buttonQuit" Content="Quit" FontWeight="Bold" Height="42" FontSize="18" Background="LightGray"/>
             </StackPanel>
@@ -39,9 +44,42 @@
             <Label HorizontalAlignment="Center" FontSize="18" Margin="0,29,876,629" Width="198">Surf Scout</Label>
             <Image Source= "pack://application:,,,/SurfScout;component/graphics/home.jpg" DockPanel.Dock="Left" Margin="0,80,0,0" Stretch="Fill"/>
         </Grid>
+        <!-- User Login Grid !-->
+        <Grid Name="UserLogin" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
+            <Grid>
+                <!-- Outer grid for vertical offset -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="200"/>
+                    <!-- Vertical offset -->
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="1" HorizontalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="200"/>
+                        <!-- Tight width -->
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="User name:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10"/>
+                    <TextBox x:Name="UsernameBox" Grid.Row="0" Grid.Column="1" Margin="0,0,0,10" Width="180"/>
+                    <TextBlock Text="Password:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10"/>
+                    <PasswordBox x:Name="PasswordBox" Grid.Row="1" Grid.Column="1" Margin="0,0,0,10" Width="180"/>
+                    <Button x:Name="buttonLogin" Content="Login" Grid.Row="2" Grid.ColumnSpan="2" 
+                Margin="0,5,0,5" Width="120" HorizontalAlignment="Center"/>
+                    <Button x:Name="buttonRegister" Content="Register" Grid.Row="3" Grid.ColumnSpan="2" 
+                Width="120" HorizontalAlignment="Center"/>
+                </Grid>
+            </Grid>
+        </Grid>
         <!-- Map Viewer Grid !-->
         <Grid Name="MapViewer" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
             <Grid>
+                <!--esri:MapView x:Name="MyMapView" /!-->
                 <esri:MapView x:Name="MyMapView" />
             </Grid>
         </Grid>

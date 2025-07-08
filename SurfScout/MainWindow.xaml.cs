@@ -30,6 +30,7 @@ public partial class MainWindow : Window
 {
     private List<Button> buttons;
     private List<Grid> grids;
+    public bool eventHandlerIsAttached_Grid_UserLogin = false;
     public bool eventHandlerIsAttached_Grid_MapViewer = false;
     public bool eventHandlerIsAttached_Grid_WindModel = false;
 
@@ -41,11 +42,24 @@ public partial class MainWindow : Window
         AddGrids();
 
         // Button interaction
-        buttonMapViewer.Click += buttonMapViewer_Click;
-        buttonWindModel.Click += buttonWindModel_Click;
+        buttonUser.Click += ButtonUser_Click;
+        buttonMapViewer.Click += ButtonMapViewer_Click;
+        buttonWindModel.Click += ButtonWindModel_Click;
     }
 
-    private void buttonMapViewer_Click(object sender, RoutedEventArgs e)
+    private void ButtonUser_Click(object sender, RoutedEventArgs e)
+    {
+        ChangeColor(buttonUser);
+        ChangeGrid(UserLogin);
+
+        if (!eventHandlerIsAttached_Grid_UserLogin)
+        {
+            Grid_UserLogin grid_userlogin = new Grid_UserLogin(sender, e, this);
+            eventHandlerIsAttached_Grid_UserLogin = true;
+        }
+    }
+
+    private void ButtonMapViewer_Click(object sender, RoutedEventArgs e)
     {
         ChangeColor(buttonMapViewer);
         ChangeGrid(MapViewer);
@@ -57,7 +71,7 @@ public partial class MainWindow : Window
         }
     }
 
-    private void buttonWindModel_Click(object sender, RoutedEventArgs e)
+    private void ButtonWindModel_Click(object sender, RoutedEventArgs e)
     {
         ChangeColor(buttonWindModel);
         ChangeGrid(WindModel);
@@ -72,6 +86,8 @@ public partial class MainWindow : Window
     private void AddGrids()
     {
         this.grids = new List<Grid>();
+        this.grids.Add(HomeScreen);
+        this.grids.Add(UserLogin);
         this.grids.Add(MapViewer);
         this.grids.Add(WindModel);
     }
@@ -79,6 +95,7 @@ public partial class MainWindow : Window
     private void AddButtons()
     {
         this.buttons = new List<Button>();
+        this.buttons.Add(buttonUser);
         this.buttons.Add(buttonMapViewer);
         this.buttons.Add(buttonWindModel);
     }

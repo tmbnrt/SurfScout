@@ -40,7 +40,10 @@ namespace SurfScout.WindowLogic
             LoadMap();
 
             // Click interaction
-            win.MyMapView.GeoViewTapped += MyMapView_GeoView_Click;            
+            win.MyMapView.GeoViewTapped += MyMapView_GeoView_Click;    
+            
+            // By click Event on card --> show related spots in the area (1 km?) -- Get spot list from backend
+            // ...
         }
 
         private async void LoadMap()
