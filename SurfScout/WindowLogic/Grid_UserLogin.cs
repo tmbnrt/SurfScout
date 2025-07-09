@@ -1,4 +1,5 @@
-﻿using SurfScout.Services;
+﻿using SurfScout.DataStores;
+using SurfScout.Services;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -20,6 +21,19 @@ namespace SurfScout.WindowLogic
 
             win.buttonLogin.Click += ButtonLogin_Click;
             win.buttonRegister.Click += ButtonRegister_Click;
+            win.buttonLogout.Click += ButtonLogout_Click;
+        }
+
+        private async void ButtonLogout_Click(object sender, RoutedEventArgs e)
+        {
+            // Reset all user data and clear session and spot logs
+            UserSession.Reset();
+            SpotStore.ClearSpots();
+            SessionStore.ClearSessions();
+
+            // If succeeded -> swap grid to *login
+            win.buttonUserName.Text = "User Login";
+            win.ChangeGrid(win.UserLogin);
         }
 
         private async void ButtonLogin_Click(object sender, RoutedEventArgs e)
@@ -29,29 +43,39 @@ namespace SurfScout.WindowLogic
 
             // API login
             var service = new UserService();
-            var (success, token, user) = await service.LoginAsync(username, password);
+            var response = await service.LoginAsync(username, password);
 
-            if (success)
+            try
             {
-                UserSession.jwtToken = token;
-                UserSession.username = username;
+                if (response.Success)
+                {
+                    UserSession.JwtToken = response.Token;
+                    UserSession.Username = response.User.Username;
+                    UserSession.UserId = response.User.Id;
 
-                MessageBox.Show($"Login successful. Welcome back, {user}!");
-                win.UsernameBox.Text = string.Empty;
-                win.PasswordBox.Password = string.Empty;
+                    MessageBox.Show($"Login successful. Welcome back, {username}!");
+                    win.UsernameBox.Text = string.Empty;
+                    win.PasswordBox.Password = string.Empty;
 
-                // Change button name to user name
-                win.buttonUserName.Text = username;
+                    // Store user info
+                    //UserStore.Role
+
+                    // Change button name to user name and swap grid from *login to *userinfo
+                    win.buttonUserName.Text = response.User.Username;
+                    win.LoggedUser.Text = response.User.Username;
+                    win.ChangeGrid(win.UserInfo);
+
+                    // Add data i.e. login time to UI
+                    // ...
+
+                    // Get spots
+                    // ... [HttpGet"spots"]
+                }
             }
-
-            // if login successfull, change content of "UserLogin botton" to the name of the user
-            // ...
-
-            // swap content of the "userLogin"-grid to "userInfo"-grid
-            // ...
-
-            // if logout swap back to "userLogin"-grid
-            // ...
+            catch
+            {
+                return;
+            }            
         }
 
         private async void ButtonRegister_Click(object sender, RoutedEventArgs e)

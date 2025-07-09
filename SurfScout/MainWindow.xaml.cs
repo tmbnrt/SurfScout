@@ -88,6 +88,7 @@ public partial class MainWindow : Window
         this.grids = new List<Grid>();
         this.grids.Add(HomeScreen);
         this.grids.Add(UserLogin);
+        this.grids.Add(UserInfo);
         this.grids.Add(MapViewer);
         this.grids.Add(WindModel);
     }
@@ -100,7 +101,7 @@ public partial class MainWindow : Window
         this.buttons.Add(buttonWindModel);
     }
 
-    private void ChangeGrid(Grid act)
+    public void ChangeGrid(Grid act)
     {
         foreach (Grid b in this.grids)
         {

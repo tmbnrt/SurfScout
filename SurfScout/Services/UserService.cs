@@ -1,8 +1,10 @@
-﻿using SurfScout.Services;
+﻿using SurfScout.Models;
+using SurfScout.Services;
 using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -14,38 +16,35 @@ namespace SurfScout.Services
     {
         public UserService() {}
 
-        public async Task<(bool success, string token, string username)> LoginAsync(string username, string password)
+        public async Task<LoginResponse?> LoginAsync(string username, string password)
         {
             var loginRequest = new
             {
                 username = username.Trim(),
-                passwordHash = password.Trim()
+                password_hash = password.Trim()
             };
 
             var json = JsonSerializer.Serialize(loginRequest);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            using var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:7190/");
+            using var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7190/api/Users/login")
+            };
 
             try
             {
                 var response = await client.PostAsync("login", content);
-                var responseBody = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
                 {
-                    using var doc = JsonDocument.Parse(responseBody);
-                    var token = doc.RootElement.GetProperty("token").GetString();
-                    var name = doc.RootElement.GetProperty("username").GetString();
-                    return (true, token, name);
-
-                    // Get Spot data from API to show on the map
-                    // ...
+                    var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
+                    return result;
                 }
                 else
                 {
-                    MessageBox.Show(responseBody, "Login failed.", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    var errorText = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show(errorText, "Login failed.", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
             catch (Exception ex)
@@ -53,7 +52,7 @@ namespace SurfScout.Services
                 MessageBox.Show($"Connection error: {ex.Message}", "Network problem", MessageBoxButton.OK);
             }
 
-            return (false, null, null);
+            return null;
         }
 
         public async Task<bool> RegisterUserAsync(string username, string password)
@@ -61,14 +60,14 @@ namespace SurfScout.Services
             var user = new
             {
                 username = username.Trim(),
-                passwordHash = password.Trim()
+                password_hash = password.Trim()
             };
 
             var json = JsonSerializer.Serialize(user);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             using var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:7190/");
+            client.BaseAddress = new Uri("https://localhost:7190/api/Users/register");
 
             try
             {

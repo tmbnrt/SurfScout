@@ -21,5 +21,10 @@ namespace SurfScout.DataStores
         {
             _spots.Add(spot);
         }
+
+        public static void ClearSpots()
+        {
+            _spots.Clear();
+        }
     }
 }

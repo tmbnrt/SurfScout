@@ -70,9 +70,37 @@
                     <TextBlock Text="Password:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10"/>
                     <PasswordBox x:Name="PasswordBox" Grid.Row="1" Grid.Column="1" Margin="0,0,0,10" Width="180"/>
                     <Button x:Name="buttonLogin" Content="Login" Grid.Row="2" Grid.ColumnSpan="2" 
-                Margin="0,5,0,5" Width="120" HorizontalAlignment="Center"/>
+                            Margin="0,5,0,5" Width="120" HorizontalAlignment="Center"/>
                     <Button x:Name="buttonRegister" Content="Register" Grid.Row="3" Grid.ColumnSpan="2" 
-                Width="120" HorizontalAlignment="Center"/>
+                            Width="120" HorizontalAlignment="Center"/>
+                </Grid>
+            </Grid>
+        </Grid>
+        <!-- User info Grid !-->
+        <Grid Name="UserInfo" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
+            <Grid>
+                <!-- Outer grid for vertical offset -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="200"/>
+                    <!-- Vertical offset -->
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="1" HorizontalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="200"/>
+                        <!-- Tight width -->
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Logged in as:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10"/>
+                    <TextBlock x:Name="LoggedUser" Grid.Row="0" Grid.Column="1" Margin="0,0,0,10" Width="180"/>
+                    <Button x:Name="buttonLogout" Content="Logout" Grid.Row="2" Grid.ColumnSpan="2" 
+                            Margin="0,5,0,5" Width="120" HorizontalAlignment="Center"/>
                 </Grid>
             </Grid>
         </Grid>
