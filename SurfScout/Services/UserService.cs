@@ -39,6 +39,9 @@ namespace SurfScout.Services
                     var token = doc.RootElement.GetProperty("token").GetString();
                     var name = doc.RootElement.GetProperty("username").GetString();
                     return (true, token, name);
+
+                    // Get Spot data from API to show on the map
+                    // ...
                 }
                 else
                 {
