@@ -107,13 +107,25 @@
         <!-- Map Viewer Grid !-->
         <Grid Name="MapViewer" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
             <Grid>
-                <!--esri:MapView x:Name="MyMapView" /!-->
-                <esri:MapView x:Name="MyMapView" />
+                <!-- Map ganzflächig -->
+                <esri:MapView x:Name="SpotView" />
+
+                <!-- Überlagerte Buttons oben -->
+                <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Margin="20,20,20,0"
+                    Panel.ZIndex="1"
+                    Background="#AAFFFFFF">
+                    <Button x:Name="buttonMapAddSpot" Content="Add new spot" Width="150" Height="30" Margin="0,0,10,0"/>
+                    <Button x:Name="buttonMapAddSession" Content="Add session to existing spot" Width="300" Height="30"/>
+                </StackPanel>
             </Grid>
         </Grid>
+
         <!-- Wind Model Grid !-->
         <Grid Name="WindModel" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
-            
+
         </Grid>
     </Grid>
 

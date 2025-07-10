@@ -19,6 +19,7 @@ using System.IO;
 using System.ComponentModel;
 using System.Security.Cryptography.X509Certificates;
 using SurfScout.WindowLogic;
+using Esri.ArcGISRuntime.UI.Controls;
 
 
 namespace SurfScout;

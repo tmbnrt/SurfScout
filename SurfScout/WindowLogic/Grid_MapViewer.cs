@@ -24,26 +24,34 @@ using Esri.ArcGISRuntime.Data;
 using Esri.ArcGISRuntime.UI;
 using Esri.ArcGISRuntime.UI.Controls;
 using Esri.ArcGISRuntime.Symbology;
+using SurfScout.SubWindows;
 
 namespace SurfScout.WindowLogic
 {
     class Grid_MapViewer
     {
         MainWindow win;
+        private static bool addSpotIsActive;
+        private static bool addSessionIsActive;
         private List<MapPoint> savedCoordinates;
 
         public Grid_MapViewer(object sender, RoutedEventArgs e, MainWindow window)
         {
             this.win = window;
+            addSpotIsActive = false;
+            addSessionIsActive = false;
             this.savedCoordinates = new List<MapPoint>();
 
             LoadMap();
 
-            // Click interaction
-            win.MyMapView.GeoViewTapped += MyMapView_GeoView_Click;    
-            
-            // By click Event on card --> show related spots in the area (1 km?) -- Get spot list from backend
+            // Get spot wih location from server and place on the map
             // ...
+
+            win.buttonMapAddSpot.Click += buttonMapAddSpot_Click;
+            win.buttonMapAddSession.Click += buttonMapAddSession_Click;
+
+            // Click interaction
+            win.SpotView.GeoViewTapped += SpotView_GeoView_Tapped;
         }
 
         private async void LoadMap()
@@ -62,7 +70,7 @@ namespace SurfScout.WindowLogic
 
             // Add layer to map
             myMap.OperationalLayers.Add(shapeLayer);
-            win.MyMapView.Map = myMap;
+            win.SpotView.Map = myMap;
 
             // Wait until layer has been loaded
             await shapeLayer.LoadAsync();
@@ -75,6 +83,114 @@ namespace SurfScout.WindowLogic
             Console.WriteLine($"Clicked coordinates: {clickedPoint.X}, {clickedPoint.Y}");
         }
 
-        // ...
+        private void buttonMapAddSpot_Click(object sender, RoutedEventArgs e)
+        {
+            addSessionIsActive = false;
+            this.win.buttonMapAddSession.Foreground = SystemColors.ControlTextBrush;
+
+            // Toggle new-spot-mode: on / off
+            if (!addSpotIsActive)
+            {
+                this.win.buttonMapAddSpot.Foreground = Brushes.Goldenrod;
+                addSpotIsActive = true;
+            }
+            else
+            {
+                this.win.buttonMapAddSpot.Foreground = SystemColors.ControlTextBrush;
+                addSpotIsActive = false;
+            }
+        }
+
+        private void buttonMapAddSession_Click(object sender, RoutedEventArgs e)
+        {
+            addSpotIsActive = false;
+            this.win.buttonMapAddSpot.Foreground = SystemColors.ControlTextBrush;
+
+            // Toggle new-spot-mode: on / off
+            if (!addSessionIsActive)
+            {
+                this.win.buttonMapAddSession.Foreground = Brushes.Goldenrod;
+                addSessionIsActive = true;
+            }
+            else
+            {
+                this.win.buttonMapAddSession.Foreground = SystemColors.ControlTextBrush;
+                addSessionIsActive = false;
+            }
+        }
+
+        private void SpotView_GeoView_Tapped(object sender, GeoViewInputEventArgs e)
+        {
+            if (!addSpotIsActive && !addSessionIsActive)
+                return;
+
+            // Get tapped location
+            MapPoint location = e.Location;
+
+            // Convert to WGS84 (Longitude/Latitude)
+            var wgsPoint = (MapPoint)GeometryEngine.Project(location, SpatialReferences.Wgs84);
+
+            if (addSpotIsActive)
+                CreateSpot(wgsPoint.Y, wgsPoint.X);
+
+            //if (addSessionIsActive)
+            // ...
+        }
+
+        private void CreateSpot(double latitude, double longitude)
+        {
+            // Put pin on the map
+            SetPin(latitude, longitude);
+
+            // Open new window
+            AddSpotWindow newSpot = new AddSpotWindow();
+            bool? result = newSpot.ShowDialog(); // blockiert, bis User schließt
+
+            if (result == true && !string.IsNullOrWhiteSpace(newSpot.SpotName))
+            {
+                string spotName = newSpot.SpotName;
+
+                // Check spot names in database for fit // if fit --> info message
+            }
+            else
+            {
+                RemoveLastPin();
+                return;
+            }
+
+            // Check for existing spots nearby
+            // ...
+            // If spot nearby found --> info message window --> return
+
+            // Add new spot to server
+        }
+
+        private void SetPin(double latitude, double longitude)
+        {
+            var symbol = new SimpleMarkerSymbol(SimpleMarkerSymbolStyle.Circle,
+                                                 System.Drawing.Color.Red,
+                                                 12); // Size of the pin
+
+            var point = new MapPoint(longitude, latitude, SpatialReferences.Wgs84);
+
+            var graphic = new Graphic(point, symbol);
+
+            if (win.SpotView.GraphicsOverlays.Count == 0)
+                win.SpotView.GraphicsOverlays.Add(new GraphicsOverlay());
+
+            var overlay = win.SpotView.GraphicsOverlays[0];
+
+            overlay.Graphics.Add(graphic);
+        }
+
+        private void RemoveLastPin()
+        {
+            if (win.SpotView.GraphicsOverlays.Count > 0)
+            {
+                var graphics = win.SpotView.GraphicsOverlays[0].Graphics;
+                if (graphics.Count > 0)
+                    graphics.RemoveAt(graphics.Count - 1);
+            }
+        }
     }
 }
