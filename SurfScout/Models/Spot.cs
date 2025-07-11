@@ -15,5 +15,14 @@ namespace SurfScout.Models
 
         // Navigation property
         public List<Session> sessions { get; set; }
+
+        public bool CheckWithinDistance(double latitude, double longitude, double maxDistance)
+        {
+            double dx = location.X - latitude;
+            double dy = location.Y - longitude;
+
+            double distance = Math.Sqrt(dx * dx + dy * dy);
+            return distance > maxDistance;
+        }
     }
 }

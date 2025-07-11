@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using System.Data;
 using System.IO;
 using System.ComponentModel;
+using NetTopologySuite.Geometries;
 using Esri.ArcGISRuntime;
 using Esri.ArcGISRuntime.Geometry;
 using Esri.ArcGISRuntime.Mapping;
@@ -25,6 +26,9 @@ using Esri.ArcGISRuntime.UI;
 using Esri.ArcGISRuntime.UI.Controls;
 using Esri.ArcGISRuntime.Symbology;
 using SurfScout.SubWindows;
+using SurfScout.Services;
+using SurfScout.DataStores;
+using SurfScout.Models;
 
 namespace SurfScout.WindowLogic
 {
@@ -44,8 +48,8 @@ namespace SurfScout.WindowLogic
 
             LoadMap();
 
-            // Get spot wih location from server and place on the map
-            // ...
+            // Pull spots with location from server (stroe in SpotStore) and place on the map
+            Pull_SpotsFromServer();
 
             win.buttonMapAddSpot.Click += buttonMapAddSpot_Click;
             win.buttonMapAddSession.Click += buttonMapAddSession_Click;
@@ -74,6 +78,19 @@ namespace SurfScout.WindowLogic
 
             // Wait until layer has been loaded
             await shapeLayer.LoadAsync();
+        }
+
+        private async Task Pull_SpotsFromServer()
+        {
+            var spots = await SpotService.GetSpotsAsync();
+            SpotStore.SetSpots(spots);
+
+            // Show spots on map
+            foreach (var spot in SpotStore.Spots)
+            {
+                if (spot.location != null)
+                    SetPin(spot.location.Y, spot.location.X, spot.name, spot.id);
+            }
         }
 
         private void MyMapView_GeoView_Click(object sender, GeoViewInputEventArgs e)
@@ -140,40 +157,67 @@ namespace SurfScout.WindowLogic
         private void CreateSpot(double latitude, double longitude)
         {
             // Put pin on the map
-            SetPin(latitude, longitude);
+            SetPin(latitude, longitude, "", 0);
 
             // Open new window
-            AddSpotWindow newSpot = new AddSpotWindow();
-            bool? result = newSpot.ShowDialog(); // blockiert, bis User schließt
+            AddSpotWindow newSpotWin = new AddSpotWindow();
+            bool? result = newSpotWin.ShowDialog();
 
-            if (result == true && !string.IsNullOrWhiteSpace(newSpot.SpotName))
+            if (result == true && !string.IsNullOrWhiteSpace(newSpotWin.SpotName))
             {
-                string spotName = newSpot.SpotName;
+                string spotName = newSpotWin.SpotName;
 
-                // Check spot names in database for fit // if fit --> info message
+                // Check for existing spots nearby
+                foreach (var spot in SpotStore.Spots)
+                {
+                    if (spot.CheckWithinDistance(latitude, longitude, 500) || spotName == spot.name)
+                    {
+                        MessageBox.Show($"Spot {spot.name} already available!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                        RemoveLastPin();
+                        return;
+                    }
+                }
+
+                RemoveLastPin();    // dummy pin to create new location
+
+                // Create new spot
+                var newSpotObj = new Spot
+                {
+                    name = spotName,
+                    location = new NetTopologySuite.Geometries.Point(longitude, latitude),
+                    sessions = new List<Session>()
+                };
+                SpotStore.AddSpot(newSpotObj);
+
+                // Pin new spot on map
+                SetPin(latitude, longitude, spotName);
+
+                // Push to server
+                SpotService.SendSpotsForSyncAsync();                
             }
             else
             {
                 RemoveLastPin();
                 return;
             }
-
-            // Check for existing spots nearby
-            // ...
-            // If spot nearby found --> info message window --> return
-
-            // Add new spot to server
         }
 
-        private void SetPin(double latitude, double longitude)
+        private void SetPin(double latitude, double longitude, string spotName, int spotId = 0)
         {
             var symbol = new SimpleMarkerSymbol(SimpleMarkerSymbolStyle.Circle,
                                                  System.Drawing.Color.Red,
                                                  12); // Size of the pin
+            if (spotName == "")
+                symbol = new SimpleMarkerSymbol(SimpleMarkerSymbolStyle.Circle,
+                                                 System.Drawing.Color.Black, 8);
 
             var point = new MapPoint(longitude, latitude, SpatialReferences.Wgs84);
 
             var graphic = new Graphic(point, symbol);
+
+            // Connect spot data
+            graphic.Attributes.Add("Name", spotName);
+            graphic.Attributes.Add("Id", spotId);
 
             if (win.SpotView.GraphicsOverlays.Count == 0)
                 win.SpotView.GraphicsOverlays.Add(new GraphicsOverlay());
