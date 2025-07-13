@@ -32,11 +32,16 @@ namespace SurfScout.Services
 
             if (!response.IsSuccessStatusCode)
             {
-                // show error message
+                MessageBox.Show("Error while getting spot locations from server!", "Error");
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            var spots = JsonSerializer.Deserialize<List<Spot>>(json);
+            //var spots = JsonSerializer.Deserialize<List<Spot>>(json);
+
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new NetTopologySuite.IO.Converters.GeoJsonConverterFactory());
+
+            var spots = JsonSerializer.Deserialize<List<Spot>>(json, options);
 
             if (spots != null)
                 SpotStore.SetSpots(spots);
