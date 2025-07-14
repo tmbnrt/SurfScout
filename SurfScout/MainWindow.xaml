@@ -152,12 +152,49 @@
                         <TextBlock Text="Lorem ipsum ..." Margin="5" Grid.Row="1" />
 
                         <!-- Action buttons -->
-                        <Button x:Name="buttonSpotSessions"
-                            Content="SpotDetails"
-                            Width="80"
-                            HorizontalAlignment="Center"
-                            Margin="5"
-                            Grid.Row="2"/>
+                        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+                            <Button x:Name="buttonSpotShowSessions"
+                                Content="List sessions"
+                                Width="80"
+                                Margin="5"/>
+                        <Button x:Name="buttonSpotAddSession"
+                                Content="Add Session"
+                                Width="80"
+                                Margin="5"/>
+                        </StackPanel>
+
+                    </Grid>
+                </Border>
+            </Popup>
+
+            <!-- Sessions list popup !-->
+            <Popup x:Name="SessionsPopup"
+                Placement="RelativePoint"
+                StaysOpen="False"
+                AllowsTransparency="True"
+                IsOpen="False">
+                <Border Background="White" CornerRadius="5" BorderBrush="Gray" BorderThickness="1">
+                    <Grid Width="300" Height="200" Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="Surf Sessions" FontWeight="Bold" Margin="10"/>
+
+                        <ScrollViewer Grid.Row="1">
+                            <ListView x:Name="SessionListView" Margin="10">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Date}" Width="80"/>
+                                            <TextBlock Text="{Binding Rating}" Width="60" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Username}" Width="100"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </ScrollViewer>
                     </Grid>
                 </Border>
             </Popup>

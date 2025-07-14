@@ -52,25 +52,39 @@ namespace SurfScout.WindowLogic
             // Pull spots with location from server (stroe in SpotStore) and place on the map
             Pull_SpotsFromServer();
 
-            win.buttonMapAddSpot.Click += buttonMapAddSpot_Click;
-            win.buttonMapAddSession.Click += buttonMapAddSession_Click;
+            win.buttonMapAddSpot.Click += ButtonMapAddSpot_Click;
+            win.buttonMapAddSession.Click += ButtonMapAddSession_Click;
 
             // Click interaction with map
             win.SpotView.GeoViewTapped += SpotView_GeoView_Tapped;
-            win.buttonSpotSessions.Click += SpotSessionsInfo;
 
             // Click interaction with spot popup
+            win.buttonSpotAddSession.Click += ButtonSpotAddSession_Click;
+            win.buttonSpotShowSessions.Click += ButtonSpotShowSessions_Click;
             win.buttonCloseSpotPopup.Click += ButtonCloseSpotPopup_Click;
         }
 
         private void ButtonCloseSpotPopup_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            win.SpotPopup.IsOpen = false;
         }
 
-        private static void SpotSessionsInfo(object sender, RoutedEventArgs e)
+        private static void ButtonSpotAddSession_Click(object sender, RoutedEventArgs e)
         {
             // ...
+        }
+
+        private void ButtonSpotShowSessions_Click(object sender, RoutedEventArgs e)
+        {
+            var sessions = new List<Session>
+            {
+                new Session { Date = DateOnly.ParseExact("14.02.2025", "dd.MM.yyyy"), Rating = 5, UserId = 1 },
+                new Session { Date = DateOnly.ParseExact("19.04.2025", "dd.MM.yyyy"), Rating = 2, UserId = 3 },
+                new Session { Date = DateOnly.ParseExact("14.07.2024", "dd.MM.yyyy"), Rating = 1, UserId = 2 }
+            };
+
+            win.SessionListView.ItemsSource = sessions;
+            win.SessionsPopup.IsOpen = true;
         }
 
         private async void LoadMap()
@@ -140,7 +154,7 @@ namespace SurfScout.WindowLogic
             win.SpotPopup.IsOpen = false;
         }
 
-        private void buttonMapAddSpot_Click(object sender, RoutedEventArgs e)
+        private void ButtonMapAddSpot_Click(object sender, RoutedEventArgs e)
         {
             addSessionIsActive = false;
             this.win.buttonMapAddSession.Foreground = SystemColors.ControlTextBrush;
@@ -158,7 +172,7 @@ namespace SurfScout.WindowLogic
             }
         }
 
-        private void buttonMapAddSession_Click(object sender, RoutedEventArgs e)
+        private void ButtonMapAddSession_Click(object sender, RoutedEventArgs e)
         {
             addSpotIsActive = false;
             this.win.buttonMapAddSpot.Foreground = SystemColors.ControlTextBrush;
