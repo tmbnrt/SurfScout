@@ -34,13 +34,6 @@ namespace SurfScout.Models
 
             double distanceInMeters = result.Distance;
 
-            // DEBUG
-            var sb = new StringBuilder();
-            sb.AppendLine($"Spot: Lon={location.X}, Lat={location.Y}");
-            sb.AppendLine($"Input: Lon={longitude}, Lat={latitude}");
-            sb.AppendLine($"Distanz: {distanceInMeters} m");
-            string debugInfo = sb.ToString();
-
             return distanceInMeters <= maxDistance;
         }
     }
