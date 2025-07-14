@@ -29,6 +29,7 @@ using SurfScout.SubWindows;
 using SurfScout.Services;
 using SurfScout.DataStores;
 using SurfScout.Models;
+using System.Windows.Controls.Primitives;
 
 namespace SurfScout.WindowLogic
 {
@@ -54,8 +55,22 @@ namespace SurfScout.WindowLogic
             win.buttonMapAddSpot.Click += buttonMapAddSpot_Click;
             win.buttonMapAddSession.Click += buttonMapAddSession_Click;
 
-            // Click interaction
+            // Click interaction with map
             win.SpotView.GeoViewTapped += SpotView_GeoView_Tapped;
+            win.buttonSpotSessions.Click += SpotSessionsInfo;
+
+            // Click interaction with spot popup
+            win.buttonCloseSpotPopup.Click += ButtonCloseSpotPopup_Click;
+        }
+
+        private void ButtonCloseSpotPopup_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void SpotSessionsInfo(object sender, RoutedEventArgs e)
+        {
+            // ...
         }
 
         private async void LoadMap()
@@ -93,11 +108,36 @@ namespace SurfScout.WindowLogic
             }
         }
 
-        private void MyMapView_GeoView_Click(object sender, GeoViewInputEventArgs e)
+        private void SpotView_MouseLeftButtonDown(object sender, GeoViewInputEventArgs g)
         {
-            MapPoint clickedPoint = e.Location;
-            savedCoordinates.Add(clickedPoint);
-            Console.WriteLine($"Clicked coordinates: {clickedPoint.X}, {clickedPoint.Y}");
+            // WebMercator coordinates to WGS84
+            var mapPointOriginal = g.Location;
+            var mapPoint4326 = (MapPoint)GeometryEngine.Project(mapPointOriginal, SpatialReferences.Wgs84);
+
+            // Check for spots nearby (search distance = ...)
+            Spot spotSelected = null;
+            foreach (Spot spot in SpotStore.Spots)
+            {
+                if (spot.CheckWithinDistance(mapPoint4326.X, mapPoint4326.Y, 200))
+                    spotSelected = spot;
+            }
+
+            if (spotSelected == null)
+                return;
+
+            // Place spot popup on UI
+            var screenPos = win.SpotView.LocationToScreen(mapPointOriginal);    // alternative test: mapPointOriginal
+
+            win.PopupSpotName.Text = spotSelected.name;
+            win.SpotPopup.Placement = PlacementMode.AbsolutePoint;
+            win.SpotPopup.HorizontalOffset = screenPos.X;
+            win.SpotPopup.VerticalOffset = screenPos.Y;
+            win.SpotPopup.IsOpen = true;
+        }
+
+        private void OnCloseSpotPopup(object sender, RoutedEventArgs e)
+        {
+            win.SpotPopup.IsOpen = false;
         }
 
         private void buttonMapAddSpot_Click(object sender, RoutedEventArgs e)
@@ -136,13 +176,13 @@ namespace SurfScout.WindowLogic
             }
         }
 
-        private void SpotView_GeoView_Tapped(object sender, GeoViewInputEventArgs e)
+        private void SpotView_GeoView_Tapped(object sender, GeoViewInputEventArgs g)
         {
             if (!addSpotIsActive && !addSessionIsActive)
-                return;
+                SpotView_MouseLeftButtonDown(sender, g);
 
             // Get tapped location
-            MapPoint location = e.Location;
+            MapPoint location = g.Location;
 
             // Convert to WGS84 (Longitude/Latitude)
             var wgsPoint = (MapPoint)GeometryEngine.Project(location, SpatialReferences.Wgs84);
