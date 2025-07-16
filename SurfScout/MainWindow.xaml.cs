@@ -39,6 +39,9 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
+        // Maximized window
+        WindowState = WindowState.Maximized;
+
         AddButtons();
         AddGrids();
 

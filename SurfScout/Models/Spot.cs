@@ -13,10 +13,9 @@ namespace SurfScout.Models
         public int id { get; set; }
         public string name { get; set; }
         public Point location { get; set; }
-        //public Geometry polygon { get; set;}      // i.e. wind field area in GeoJSON format (geo polygon)
+        //public Geometry polygon { get; set;}          // i.e. wind field area in GeoJSON format (geo polygon)
 
-        // Navigation property
-        public List<Session> sessions { get; set; }
+        public List<Session> sessions { get; set; }     // Navigation property
 
         public bool CheckWithinDistance(double longitude, double latitude, double maxDistance)
         {

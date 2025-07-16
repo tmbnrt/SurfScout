@@ -32,5 +32,16 @@ namespace SurfScout.DataStores
         {
             _sessions.Clear();
         }
+
+        public static List<Session> GetSessionOfSpot(Spot spot)
+        {
+            List<Session> sessionList = new List<Session>();
+
+            foreach (Session s in _sessions)
+                if (s.Spot == spot)
+                    sessionList.Add(s);
+
+            return sessionList;
+        }
     }
 }

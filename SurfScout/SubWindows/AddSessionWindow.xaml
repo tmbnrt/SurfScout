@@ -5,8 +5,77 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SurfScout.SubWindows"
         mc:Ignorable="d"
-        Title="AddSessionWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="Add Session" Height="450" Width="380"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        Background="#f0f5f9" FontFamily="Segoe UI" FontSize="14">
+
+    <Border CornerRadius="10" Padding="20" Background="White" Margin="10">
+        <StackPanel>
+            <TextBlock Text="🗓️ Date" Margin="0,0,0,3"/>
+            <DatePicker x:Name="datePicker" Margin="0,0,0,10"/>
+
+            <TextBlock Text="🕒 Start time" Margin="0,0,0,3"/>
+            <ComboBox x:Name="comboStartTime" Margin="0,0,0,10">
+                <ComboBoxItem Content="06:00" />
+                <ComboBoxItem Content="07:00" />
+                <ComboBoxItem Content="08:00" />
+                <ComboBoxItem Content="09:00" />
+                <ComboBoxItem Content="10:00" />
+                <ComboBoxItem Content="11:00" />
+                <ComboBoxItem Content="12:00" />
+                <ComboBoxItem Content="13:00" />
+                <ComboBoxItem Content="14:00" />
+                <ComboBoxItem Content="15:00" />
+                <ComboBoxItem Content="16:00" />
+                <ComboBoxItem Content="17:00" />
+                <ComboBoxItem Content="18:00" />
+                <ComboBoxItem Content="19:00" />
+                <ComboBoxItem Content="20:00" />
+                <ComboBoxItem Content="21:00" />
+            </ComboBox>
+
+            <TextBlock Text="🕓 End time" Margin="0,0,0,3"/>
+            <ComboBox x:Name="comboEndTime" Margin="0,0,0,10">
+                <ComboBoxItem Content="07:00" />
+                <ComboBoxItem Content="08:00" />
+                <ComboBoxItem Content="09:00" />
+                <ComboBoxItem Content="10:00" />
+                <ComboBoxItem Content="11:00" />
+                <ComboBoxItem Content="12:00" />
+                <ComboBoxItem Content="13:00" />
+                <ComboBoxItem Content="14:00" />
+                <ComboBoxItem Content="15:00" />
+                <ComboBoxItem Content="16:00" />
+                <ComboBoxItem Content="17:00" />
+                <ComboBoxItem Content="18:00" />
+                <ComboBoxItem Content="19:00" />
+                <ComboBoxItem Content="20:00" />
+                <ComboBoxItem Content="21:00" />
+                <ComboBoxItem Content="22:00" />
+                <ComboBoxItem Content="23:00" />
+            </ComboBox>
+
+            <TextBlock Text="🌊 Wave height" Margin="0,0,0,3"/>
+            <ComboBox x:Name="comboWaveHeight" Margin="0,0,0,10" SelectedIndex="2">
+                <ComboBoxItem Content="waist high"/>
+                <ComboBoxItem Content="chest high"/>
+                <ComboBoxItem Content="head high"/>
+                <ComboBoxItem Content="logo high"/>
+                <ComboBoxItem Content="mast high"/>
+                <ComboBoxItem Content="1 1/2 mast high"/>
+                <ComboBoxItem Content="double mast high"/>
+            </ComboBox>
+
+            <TextBlock Text="⛵ Sail size (m²)" Margin="0,0,0,3"/>
+            <TextBox x:Name="txtSailSize" Margin="0,0,0,10"/>
+
+            <TextBlock Text="⭐ Rating (1–5)" Margin="0,0,0,3"/>
+            <Slider x:Name="sliderRating" Minimum="1" Maximum="5" TickFrequency="1" IsSnapToTickEnabled="True" Margin="0,0,0,10"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="✔️ Save" Click="SaveSession_Click" Width="100" Margin="5"/>
+                <Button Content="❌ Cancel" Click="Cancel_Click" Width="100" Margin="5"/>
+            </StackPanel>
+        </StackPanel>
+    </Border>
 </Window>

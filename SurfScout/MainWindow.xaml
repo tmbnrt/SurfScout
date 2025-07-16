@@ -118,7 +118,6 @@
                     Panel.ZIndex="1"
                     Background="#AAFFFFFF">
                     <Button x:Name="buttonMapAddSpot" Content="Add new spot" Width="150" Height="30" Margin="0,0,10,0"/>
-                    <Button x:Name="buttonMapAddSession" Content="Add session to existing spot" Width="300" Height="30"/>
                 </StackPanel>
             </Grid>
             
@@ -169,28 +168,68 @@
 
             <!-- Sessions list popup !-->
             <Popup x:Name="SessionsPopup"
-                Placement="RelativePoint"
-                StaysOpen="False"
-                AllowsTransparency="True"
-                IsOpen="False">
+       Placement="RelativePoint"
+       StaysOpen="False"
+       AllowsTransparency="True"
+       IsOpen="False">
                 <Border Background="White" CornerRadius="5" BorderBrush="Gray" BorderThickness="1">
-                    <Grid Width="300" Height="200" Margin="5">
+                    <Grid Width="300" Height="220" Margin="5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
+                            <!-- Title -->
+                            <RowDefinition Height="Auto"/>
+                            <!-- Column headers -->
                             <RowDefinition Height="*"/>
+                            <!-- List -->
                         </Grid.RowDefinitions>
 
                         <TextBlock Text="Surf Sessions" FontWeight="Bold" Margin="10"/>
 
-                        <ScrollViewer Grid.Row="1">
+                        <!-- Header line -->
+                        <Grid Grid.Row="1" Margin="10,0,10,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="120"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Date" FontWeight="SemiBold" Grid.Column="0"/>
+                            <TextBlock Text="Surfer" FontWeight="SemiBold" Grid.Column="1"/>
+                            <TextBlock Text="Rating" FontWeight="SemiBold" Grid.Column="2"/>
+                        </Grid>
+
+                        <!-- Session list -->
+                        <ScrollViewer Grid.Row="2">
                             <ListView x:Name="SessionListView" Margin="10">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding Date}" Width="80"/>
-                                            <TextBlock Text="{Binding Rating}" Width="60" HorizontalAlignment="Center"/>
-                                            <TextBlock Text="{Binding Username}" Width="100"/>
-                                        </StackPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="80"/>
+                                                <ColumnDefinition Width="80"/>
+                                                <ColumnDefinition Width="120"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Text="{Binding Date}" Grid.Column="0"/>
+                                            <TextBlock Text="{Binding Username}" Grid.Column="1" HorizontalAlignment="Center"/>
+
+                                            <!-- Star rating -->
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                                <ItemsControl ItemsSource="{Binding RatingStars}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Horizontal"/>
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="★" Foreground="Gold" FontSize="14" Margin="0,0,2,0"/>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                            
+                                        </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                             </ListView>

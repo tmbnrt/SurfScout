@@ -37,14 +37,16 @@ namespace SurfScout.WindowLogic
     {
         MainWindow win;
         private static bool addSpotIsActive;
-        private static bool addSessionIsActive;
         private List<MapPoint> savedCoordinates;
+
+        // Current UI selections
+        private Spot selectedSpot;
+        private Session selectedSession;
 
         public Grid_MapViewer(object sender, RoutedEventArgs e, MainWindow window)
         {
             this.win = window;
             addSpotIsActive = false;
-            addSessionIsActive = false;
             this.savedCoordinates = new List<MapPoint>();
 
             LoadMap();
@@ -53,7 +55,6 @@ namespace SurfScout.WindowLogic
             Pull_SpotsFromServer();
 
             win.buttonMapAddSpot.Click += ButtonMapAddSpot_Click;
-            win.buttonMapAddSession.Click += ButtonMapAddSession_Click;
 
             // Click interaction with map
             win.SpotView.GeoViewTapped += SpotView_GeoView_Tapped;
@@ -69,22 +70,57 @@ namespace SurfScout.WindowLogic
             win.SpotPopup.IsOpen = false;
         }
 
-        private static void ButtonSpotAddSession_Click(object sender, RoutedEventArgs e)
+        private void ButtonSpotAddSession_Click(object sender, RoutedEventArgs e)
         {
+            // Open new session window
+            AddSessionWindow newSessionWin = new AddSessionWindow();
+            bool? result = newSessionWin.ShowDialog();
+
+            // Create a new session and use "SessionService" to sync with backend endpoint
+            if (result.HasValue && selectedSpot != null)
+            {
+                Session session = new Session
+                {
+                    Date = newSessionWin.date,
+                    Spot = selectedSpot,
+                    StartTime = newSessionWin.startTime,
+                    EndTime = newSessionWin.endTime,
+                    Wave_height = newSessionWin.waveHeight,
+                    Sail_size = newSessionWin.sailSize,
+                    Rating = newSessionWin.rating,
+                    Username = UserSession.Username
+                };
+
+                SessionStore.AddSession(session);
+            }
+
+            // TO DO: Sync with server endpoint
             // ...
         }
 
         private void ButtonSpotShowSessions_Click(object sender, RoutedEventArgs e)
         {
-            var sessions = new List<Session>
-            {
-                new Session { Date = DateOnly.ParseExact("14.02.2025", "dd.MM.yyyy"), Rating = 5, UserId = 1 },
-                new Session { Date = DateOnly.ParseExact("19.04.2025", "dd.MM.yyyy"), Rating = 2, UserId = 3 },
-                new Session { Date = DateOnly.ParseExact("14.07.2024", "dd.MM.yyyy"), Rating = 1, UserId = 2 }
-            };
+            // TO DO: Sync with database
+            // ...
 
-            win.SessionListView.ItemsSource = sessions;
+            // Info: "selectedSpot" is the actual selected spot in the UI
+            List<Session> sessionsForSelectedSpot = SessionStore.GetSessionOfSpot(selectedSpot);
+
+            // Mapping to create star-figures
+            var sessionDisplayModels = sessionsForSelectedSpot
+                .Select(s => new
+                {
+                    Date = s.Date.ToString("yyyy-MM-dd"),
+                    Username = s.Username ?? "–",
+                    RatingStars = GenerateStars(s.Rating)
+                })
+                .ToList();
+
+            win.SessionListView.ItemsSource = sessionDisplayModels;
             win.SessionsPopup.IsOpen = true;
+
+            // TO DO: Create button in popup grid to show selected session information (show info from backend)
+            // ...
         }
 
         private async void LoadMap()
@@ -128,21 +164,21 @@ namespace SurfScout.WindowLogic
             var mapPointOriginal = g.Location;
             var mapPoint4326 = (MapPoint)GeometryEngine.Project(mapPointOriginal, SpatialReferences.Wgs84);
 
-            // Check for spots nearby (search distance = ...)
-            Spot spotSelected = null;
+            // Check for spots nearby (search distance = 300m)
+            this.selectedSpot = null;
             foreach (Spot spot in SpotStore.Spots)
             {
-                if (spot.CheckWithinDistance(mapPoint4326.X, mapPoint4326.Y, 200))
-                    spotSelected = spot;
+                if (spot.CheckWithinDistance(mapPoint4326.X, mapPoint4326.Y, 300))
+                    this.selectedSpot = spot;
             }
 
-            if (spotSelected == null)
+            if (selectedSpot == null)
                 return;
 
             // Place spot popup on UI
             var screenPos = win.SpotView.LocationToScreen(mapPointOriginal);    // alternative test: mapPointOriginal
 
-            win.PopupSpotName.Text = spotSelected.name;
+            win.PopupSpotName.Text = selectedSpot.name;
             win.SpotPopup.Placement = PlacementMode.AbsolutePoint;
             win.SpotPopup.HorizontalOffset = screenPos.X;
             win.SpotPopup.VerticalOffset = screenPos.Y;
@@ -156,9 +192,6 @@ namespace SurfScout.WindowLogic
 
         private void ButtonMapAddSpot_Click(object sender, RoutedEventArgs e)
         {
-            addSessionIsActive = false;
-            this.win.buttonMapAddSession.Foreground = SystemColors.ControlTextBrush;
-
             // Toggle new-spot-mode: on / off
             if (!addSpotIsActive)
             {
@@ -172,27 +205,9 @@ namespace SurfScout.WindowLogic
             }
         }
 
-        private void ButtonMapAddSession_Click(object sender, RoutedEventArgs e)
-        {
-            addSpotIsActive = false;
-            this.win.buttonMapAddSpot.Foreground = SystemColors.ControlTextBrush;
-
-            // Toggle new-spot-mode: on / off
-            if (!addSessionIsActive)
-            {
-                this.win.buttonMapAddSession.Foreground = Brushes.Goldenrod;
-                addSessionIsActive = true;
-            }
-            else
-            {
-                this.win.buttonMapAddSession.Foreground = SystemColors.ControlTextBrush;
-                addSessionIsActive = false;
-            }
-        }
-
         private void SpotView_GeoView_Tapped(object sender, GeoViewInputEventArgs g)
         {
-            if (!addSpotIsActive && !addSessionIsActive)
+            if (!addSpotIsActive)
                 SpotView_MouseLeftButtonDown(sender, g);
 
             // Get tapped location
@@ -289,6 +304,11 @@ namespace SurfScout.WindowLogic
                 if (graphics.Count > 0)
                     graphics.RemoveAt(graphics.Count - 1);
             }
+        }
+
+        private List<string> GenerateStars(int rating)
+        {
+            return Enumerable.Repeat("★", rating).ToList();
         }
     }
 }
