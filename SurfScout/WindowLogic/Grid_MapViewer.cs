@@ -72,6 +72,13 @@ namespace SurfScout.WindowLogic
 
         private async void ButtonSpotAddSession_Click(object sender, RoutedEventArgs e)
         {
+            // Check user login
+            if (!UserSession.IsLoggedIn)
+            {
+                MessageBox.Show("Please log in.", "Unauthorized");
+                return;
+            }
+
             // Open new session window
             AddSessionWindow newSessionWin = new AddSessionWindow();
             bool? result = newSessionWin.ShowDialog();
@@ -100,6 +107,13 @@ namespace SurfScout.WindowLogic
 
         private void ButtonSpotShowSessions_Click(object sender, RoutedEventArgs e)
         {
+            // Check user login
+            if (!UserSession.IsLoggedIn)
+            {
+                MessageBox.Show("Please log in.", "Unauthorized");
+                return;
+            }
+
             // Pull session of the spot from api endpoint
             SessionService.GetSessionsAsync(selectedSpot);
 

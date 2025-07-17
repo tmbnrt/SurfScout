@@ -39,7 +39,14 @@ namespace SurfScout.Services
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
-                    return result;
+                    if (result != null && result.Success)
+                    {
+                        UserSession.JwtToken = result.Token;
+                        UserSession.UserId = result.User.Id;
+                        UserSession.Username = result.User.Username;
+                        UserSession.Role = result.User.Role;
+                        return result;
+                    }
                 }
                 else
                 {

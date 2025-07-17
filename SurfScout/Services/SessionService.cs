@@ -22,7 +22,6 @@ namespace SurfScout.Services
         // Get session list from server
         public static async Task<IReadOnlyList<Session>> GetSessionsAsync(Spot spot)
         {
-
             using var client = new HttpClient
             {
                 BaseAddress = new Uri("https://localhost:7190/")
