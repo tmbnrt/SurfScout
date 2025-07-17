@@ -94,14 +94,14 @@ namespace SurfScout.WindowLogic
                 SessionStore.AddSession(session);
             }
 
-            // TO DO: Sync with server endpoint
-            // ...
+            // TO DO: Sync spot with server endpoint
+            //...
         }
 
         private void ButtonSpotShowSessions_Click(object sender, RoutedEventArgs e)
         {
-            // TO DO: Sync with database
-            // ...
+            // Pull session of the spot from api endpoint
+            SessionService.GetSessionsAsync(selectedSpot);
 
             // Info: "selectedSpot" is the actual selected spot in the UI
             List<Session> sessionsForSelectedSpot = SessionStore.GetSessionOfSpot(selectedSpot);
