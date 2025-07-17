@@ -26,5 +26,16 @@ namespace SurfScout.DataStores
         {
             _spots.Clear();
         }
+
+        public static int GetLatestId()
+        {
+            int latestId = 0;
+
+            foreach (var spot in _spots)
+                if (spot.id > latestId)
+                    latestId = spot.id;
+
+            return latestId;
+        }
     }
 }

@@ -57,6 +57,8 @@
 
             <TextBlock Text="🌊 Wave height" Margin="0,0,0,3"/>
             <ComboBox x:Name="comboWaveHeight" Margin="0,0,0,10" SelectedIndex="2">
+                <ComboBoxItem Content="flat"/>
+                <ComboBoxItem Content="chop only"/>
                 <ComboBoxItem Content="waist high"/>
                 <ComboBoxItem Content="chest high"/>
                 <ComboBoxItem Content="head high"/>

@@ -70,7 +70,7 @@ namespace SurfScout.WindowLogic
             win.SpotPopup.IsOpen = false;
         }
 
-        private void ButtonSpotAddSession_Click(object sender, RoutedEventArgs e)
+        private async void ButtonSpotAddSession_Click(object sender, RoutedEventArgs e)
         {
             // Open new session window
             AddSessionWindow newSessionWin = new AddSessionWindow();
@@ -88,14 +88,14 @@ namespace SurfScout.WindowLogic
                     Wave_height = newSessionWin.waveHeight,
                     Sail_size = newSessionWin.sailSize,
                     Rating = newSessionWin.rating,
-                    Username = UserSession.Username
+                    UserId = UserSession.UserId
                 };
 
                 SessionStore.AddSession(session);
-            }
 
-            // TO DO: Sync spot with server endpoint
-            //...
+                // Spot sync with server endpoint
+                await SessionService.PostSessionAsync(session);
+            }
         }
 
         private void ButtonSpotShowSessions_Click(object sender, RoutedEventArgs e)
@@ -111,7 +111,7 @@ namespace SurfScout.WindowLogic
                 .Select(s => new
                 {
                     Date = s.Date.ToString("yyyy-MM-dd"),
-                    Username = s.Username ?? "–",
+                    Username = s.User.Username ?? "–",
                     RatingStars = GenerateStars(s.Rating)
                 })
                 .ToList();
@@ -248,6 +248,9 @@ namespace SurfScout.WindowLogic
                 }
 
                 RemoveLastPin();    // dummy pin to create new location
+
+                // Set new spot Id
+                //int newSpotId = SpotStore.GetLatestId() + 1;
 
                 // Create new spot
                 var newSpotObj = new Spot
