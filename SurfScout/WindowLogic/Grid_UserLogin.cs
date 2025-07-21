@@ -65,11 +65,9 @@ namespace SurfScout.WindowLogic
                     win.LoggedUser.Text = response.User.Username;
                     win.ChangeGrid(win.UserInfo);
 
-                    // Add data i.e. login time to UI
+                    // Get User data from server
+                    // ... Fill "AllUserStore"
                     // ...
-
-                    // Get spots
-                    // ... [HttpGet"spots"]
                 }
             }
             catch

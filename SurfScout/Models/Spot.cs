@@ -10,17 +10,17 @@ namespace SurfScout.Models
 {
     public class Spot
     {
-        public int id { get; set; }
-        public string name { get; set; }
-        public Point location { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public Point Location { get; set; }
         //public Geometry polygon { get; set;}          // i.e. wind field area in GeoJSON format (geo polygon)
 
-        public List<Session> sessions { get; set; }     // Navigation property
+        public List<Session> Sessions { get; set; }     // Navigation property
 
         public bool CheckWithinDistance(double longitude, double latitude, double maxDistance)
         {
             // Calculate Distance with Geometry engine (Haversine formula)
-            var spotPoint = new MapPoint(location.X, location.Y, SpatialReferences.Wgs84);
+            var spotPoint = new MapPoint(Location.X, Location.Y, SpatialReferences.Wgs84);
             var inputPoint = new MapPoint(longitude, latitude, SpatialReferences.Wgs84);
 
             // ESRI Geometry engine to distance in [m]

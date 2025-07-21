@@ -167,8 +167,8 @@ namespace SurfScout.WindowLogic
             // Show spots on map
             foreach (var spot in SpotStore.Spots)
             {
-                if (spot.location != null)
-                    SetPin(spot.location.Y, spot.location.X, spot.name, spot.id);
+                if (spot.Location != null)
+                    SetPin(spot.Location.Y, spot.Location.X, spot.Name, spot.Id);
             }
         }
 
@@ -192,7 +192,7 @@ namespace SurfScout.WindowLogic
             // Place spot popup on UI
             var screenPos = win.SpotView.LocationToScreen(mapPointOriginal);    // alternative test: mapPointOriginal
 
-            win.PopupSpotName.Text = selectedSpot.name;
+            win.PopupSpotName.Text = selectedSpot.Name;
             win.SpotPopup.Placement = PlacementMode.AbsolutePoint;
             win.SpotPopup.HorizontalOffset = screenPos.X;
             win.SpotPopup.VerticalOffset = screenPos.Y;
@@ -253,9 +253,9 @@ namespace SurfScout.WindowLogic
                 // Check for existing spots nearby
                 foreach (var spot in SpotStore.Spots)
                 {
-                    if (spot.CheckWithinDistance(latitude, longitude, 500) || spotName == spot.name)
+                    if (spot.CheckWithinDistance(latitude, longitude, 500) || spotName == spot.Name)
                     {
-                        MessageBox.Show($"Spot {spot.name} already available!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show($"Spot {spot.Name} already available!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
                         RemoveLastPin();
                         return;
                     }
@@ -269,9 +269,9 @@ namespace SurfScout.WindowLogic
                 // Create new spot
                 var newSpotObj = new Spot
                 {
-                    name = spotName,
-                    location = new NetTopologySuite.Geometries.Point(longitude, latitude),
-                    sessions = new List<Session>()
+                    Name = spotName,
+                    Location = new NetTopologySuite.Geometries.Point(longitude, latitude),
+                    Sessions = new List<Session>()
                 };
                 SpotStore.AddSpot(newSpotObj);
 

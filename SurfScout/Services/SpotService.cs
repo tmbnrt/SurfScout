@@ -38,7 +38,11 @@ namespace SurfScout.Services
             var json = await response.Content.ReadAsStringAsync();
             //var spots = JsonSerializer.Deserialize<List<Spot>>(json);
 
-            var options = new JsonSerializerOptions();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
             options.Converters.Add(new NetTopologySuite.IO.Converters.GeoJsonConverterFactory());
 
             var spots = JsonSerializer.Deserialize<List<Spot>>(json, options);

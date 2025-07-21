@@ -32,8 +32,8 @@ namespace SurfScout.DataStores
             int latestId = 0;
 
             foreach (var spot in _spots)
-                if (spot.id > latestId)
-                    latestId = spot.id;
+                if (spot.Id > latestId)
+                    latestId = spot.Id;
 
             return latestId;
         }

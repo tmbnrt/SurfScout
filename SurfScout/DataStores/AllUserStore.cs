@@ -18,6 +18,15 @@ namespace SurfScout.DataStores
             _users = new List<User>(users);
         }
 
+        public static string GetUserName(int id)
+        {
+            foreach (User u in _users)
+                if (u.Id == id)
+                    return u.Username;
+
+            return "-unknown-";
+        }
+
         // Method delete user --> API function     ** for admin role only **
         // ...
     }

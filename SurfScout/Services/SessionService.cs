@@ -12,6 +12,7 @@ using System.Text.Json;
 using System.Windows;
 using NetTopologySuite.IO.Converters;
 using System.Net.Http.Json;
+using System.Net;
 
 namespace SurfScout.Services
 {
@@ -29,27 +30,44 @@ namespace SurfScout.Services
 
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
-
-            var response = await client.GetAsync($"api/sessions/spotsessions?spot={spot.name}");
+            
+            var response = await client.GetAsync($"api/sessions/spotsessions?spotId={spot.Id}");
 
             if (!response.IsSuccessStatusCode)
             {
-                MessageBox.Show("Error while getting spot locations from server!", "Error");
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return Array.Empty<Session>();
+                }
+
+                MessageBox.Show("Error while getting sessions from server!", "Error");
                 return Array.Empty<Session>();
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            //var spots = JsonSerializer.Deserialize<List<Spot>>(json);
 
-            var options = new JsonSerializerOptions();
-            options.Converters.Add(new NetTopologySuite.IO.Converters.GeoJsonConverterFactory());
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
 
             var sessions = JsonSerializer.Deserialize<List<Session>>(json, options);
+
+            // Assign known spot instances and user to sessions
+            var spotLookup = SpotStore.Spots.ToDictionary(s => s.Id);
+            var userLookup = AllUserStore.Users.ToDictionary(s => s.Id);
+            foreach (var session in sessions)
+            {
+                if (spotLookup.TryGetValue(session.Spotid, out var knownSpot))
+                    session.Spot = knownSpot;
+                if (userLookup.TryGetValue(session.UserId, out var user))
+                    session.User = user;
+            }
 
             if (sessions != null)
                 SessionStore.SetSessions(sessions);
 
-            return SessionStore.Sessions;
+            return SessionStore.Sessions;   
         }
 
         // Post to server
@@ -60,7 +78,7 @@ namespace SurfScout.Services
                 Date = session.Date,
                 StartTime = session.StartTime,
                 EndTime = session.EndTime,
-                SpotId = session.Spot.id,
+                SpotId = session.Spot.Id,
                 UserId = session.UserId,
                 Sail_size = session.Sail_size,
                 Rating = session.Rating,
