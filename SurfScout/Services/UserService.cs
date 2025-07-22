@@ -1,4 +1,5 @@
-﻿using SurfScout.Models;
+﻿using SurfScout.DataStores;
+using SurfScout.Models;
 using SurfScout.Services;
 using System;
 using System.Net;
@@ -95,6 +96,44 @@ namespace SurfScout.Services
             }
 
             return false;
+        }
+        
+        public static async Task<IReadOnlyList<User>> GetAllUsersAsync()
+        {
+            using var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7190/")
+            };
+
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
+
+            var response = await client.GetAsync($"api/users/getallusers");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return Array.Empty<User>();
+                }
+
+                MessageBox.Show("Error while getting user info from server!", "Error");
+                return Array.Empty<User>();
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var users = JsonSerializer.Deserialize<List<User>>(json, options);
+
+            if (users != null)
+                AllUserStore.SetAllUsers(users);
+
+            return AllUserStore.Users;
         }
     }
 }

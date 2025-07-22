@@ -105,7 +105,7 @@ namespace SurfScout.WindowLogic
             }
         }
 
-        private void ButtonSpotShowSessions_Click(object sender, RoutedEventArgs e)
+        private async void ButtonSpotShowSessions_Click(object sender, RoutedEventArgs e)
         {
             // Check user login
             if (!UserSession.IsLoggedIn)
@@ -115,7 +115,7 @@ namespace SurfScout.WindowLogic
             }
 
             // Pull session of the spot from api endpoint
-            SessionService.GetSessionsAsync(selectedSpot);
+            await SessionService.GetSessionsAsync(selectedSpot);
 
             // Info: "selectedSpot" is the actual selected spot in the UI
             List<Session> sessionsForSelectedSpot = SessionStore.GetSessionOfSpot(selectedSpot);
@@ -232,9 +232,6 @@ namespace SurfScout.WindowLogic
 
             if (addSpotIsActive)
                 CreateSpot(wgsPoint.Y, wgsPoint.X);
-
-            //if (addSessionIsActive)
-            // ...
         }
 
         private void CreateSpot(double latitude, double longitude)

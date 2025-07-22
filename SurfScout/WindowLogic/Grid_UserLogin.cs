@@ -66,8 +66,7 @@ namespace SurfScout.WindowLogic
                     win.ChangeGrid(win.UserInfo);
 
                     // Get User data from server
-                    // ... Fill "AllUserStore"
-                    // ...
+                    await UserService.GetAllUsersAsync();
                 }
             }
             catch

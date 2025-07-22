@@ -27,6 +27,11 @@ namespace SurfScout.DataStores
             return "-unknown-";
         }
 
+        public static void SetAllUsers(IEnumerable<User> users)
+        {
+            _users = new List<User>(users);
+        }
+
         // Method delete user --> API function     ** for admin role only **
         // ...
     }

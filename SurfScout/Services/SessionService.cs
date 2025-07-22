@@ -31,43 +31,43 @@ namespace SurfScout.Services
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
             
-            var response = await client.GetAsync($"api/sessions/spotsessions?spotId={spot.Id}");
+             var response = await client.GetAsync($"api/sessions/spotsessions?spotId={spot.Id}");
 
-            if (!response.IsSuccessStatusCode)
-            {
-                if (response.StatusCode == HttpStatusCode.NotFound)
-                {
-                    return Array.Empty<Session>();
-                }
+             if (!response.IsSuccessStatusCode)
+             {
+                 if (response.StatusCode == HttpStatusCode.NotFound)
+                 {
+                     return Array.Empty<Session>();
+                 }
 
-                MessageBox.Show("Error while getting sessions from server!", "Error");
-                return Array.Empty<Session>();
-            }
+                 MessageBox.Show("Error while getting sessions from server!", "Error");
+                 return Array.Empty<Session>();
+             }
 
-            var json = await response.Content.ReadAsStringAsync();
+             var json = await response.Content.ReadAsStringAsync();
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
+             var options = new JsonSerializerOptions
+             {
+                 PropertyNameCaseInsensitive = true
+             };
 
-            var sessions = JsonSerializer.Deserialize<List<Session>>(json, options);
+             var sessions = JsonSerializer.Deserialize<List<Session>>(json, options);
 
-            // Assign known spot instances and user to sessions
-            var spotLookup = SpotStore.Spots.ToDictionary(s => s.Id);
-            var userLookup = AllUserStore.Users.ToDictionary(s => s.Id);
-            foreach (var session in sessions)
-            {
-                if (spotLookup.TryGetValue(session.Spotid, out var knownSpot))
-                    session.Spot = knownSpot;
-                if (userLookup.TryGetValue(session.UserId, out var user))
-                    session.User = user;
-            }
+             // Assign known spot instances and user to sessions
+             var spotLookup = SpotStore.Spots.ToDictionary(s => s.Id);
+             var userLookup = AllUserStore.Users.ToDictionary(s => s.Id);
+             foreach (var session in sessions)
+             {
+                 if (spotLookup.TryGetValue(session.Spotid, out var knownSpot))
+                     session.Spot = knownSpot;
+                 if (userLookup.TryGetValue(session.UserId, out var user))
+                     session.User = user;
+             }
 
-            if (sessions != null)
-                SessionStore.SetSessions(sessions);
+             if (sessions != null)
+                 SessionStore.SetSessions(sessions);
 
-            return SessionStore.Sessions;   
+             return SessionStore.Sessions;
         }
 
         // Post to server
