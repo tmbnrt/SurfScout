@@ -21,8 +21,15 @@ namespace SurfScout.SubWindows
     {
         public string SpotName {  get; private set; }
 
-        public AddSpotWindow()
+        public AddSpotWindow(string? mode = null)
         {
+            if (mode != null && mode == "rename")
+            {
+                this.Title = "Rename Spot";
+                textBoxSpotName.Text = "New spot name";
+                SaveButton.Content = "Rename";
+            }
+
             InitializeComponent();
         }
 

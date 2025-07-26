@@ -37,5 +37,16 @@ namespace SurfScout.DataStores
 
             return latestId;
         }
+
+        public static void RenameSpot(int id, string newName)
+        {
+            foreach (Spot spot in _spots)
+            {
+                if (spot.Id == id)
+                    spot.Name = newName;
+            }
+
+
+        }
     }
 }

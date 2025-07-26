@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Title="Create new spot" Height="150" Width="300">
     <StackPanel Margin="20">
-        <TextBlock Text="Spot name:" Margin="0,0,0,10"/>
+        <TextBlock x:Name="textBoxSpotName" Text="Spot name:" Margin="0,0,0,10"/>
         <TextBox x:Name="NameTextBox" Margin="0,0,0,10"/>
-        <Button Content="Create" Click="SaveButton_Click"/>
+        <Button x:Name="SaveButton" Content="Create" Click="SaveButton_Click"/>
     </StackPanel>
 </Window>

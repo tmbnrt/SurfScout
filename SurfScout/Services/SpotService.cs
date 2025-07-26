@@ -10,6 +10,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Windows;
 using NetTopologySuite.IO.Converters;
+using System.IO.Packaging;
 
 namespace SurfScout.Services
 {
@@ -87,6 +88,28 @@ namespace SurfScout.Services
                 MessageBox.Show("Error while pushing spots to the server!", "Error");
                 return false;
             }
+        }
+
+        public static async Task<bool> UpdateSpotNameAsync(int spotId, string newSpotName)
+        {
+            if (spotId < 1 || string.IsNullOrWhiteSpace(newSpotName))
+                return false;
+
+            using var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7190/")
+            };
+
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
+
+            // Serialize new name as JSON
+            var content = new StringContent(JsonSerializer.Serialize(newSpotName), Encoding.UTF8, "application/json");
+
+            // PUT request
+            var response = await client.PostAsync($"api/spots/{spotId}/rename", content);
+
+            return response.IsSuccessStatusCode;
         }
     }
 }

@@ -60,14 +60,53 @@ namespace SurfScout.WindowLogic
             win.SpotView.GeoViewTapped += SpotView_GeoView_Tapped;
 
             // Click interaction with spot popup
+            win.buttonCloseSpotPopup.Click += ButtonCloseSpotPopup_Click;
             win.buttonSpotAddSession.Click += ButtonSpotAddSession_Click;
             win.buttonSpotShowSessions.Click += ButtonSpotShowSessions_Click;
-            win.buttonCloseSpotPopup.Click += ButtonCloseSpotPopup_Click;
+            win.buttonSpotRename.Click += buttonSpotRename_Click;
+
+
         }
 
         private void ButtonCloseSpotPopup_Click(object sender, RoutedEventArgs e)
         {
             win.SpotPopup.IsOpen = false;
+        }
+
+        private async void buttonSpotRename_Click(object sender, RoutedEventArgs e)
+        {
+            // Check user login and admin rights
+            if (!UserSession.IsLoggedIn || !UserSession.IsAdmin)
+            {
+                MessageBox.Show("Only access with admin rights.", "Unauthorized");
+                return;
+            }
+
+            int spotId = selectedSpot.Id;
+
+            // Open new window
+            AddSpotWindow spotNameWin = new AddSpotWindow();
+            bool? result = spotNameWin.ShowDialog();
+
+            if (result == true && !string.IsNullOrWhiteSpace(spotNameWin.SpotName))
+            {
+                string newSpotName = spotNameWin.SpotName;
+
+                // Check for spots with same name
+                foreach (var spot in SpotStore.Spots)
+                {
+                    if (spot.Name == newSpotName)
+                    {
+                        MessageBox.Show($"Spot {spot.Name} already available!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                        return;
+                    }
+                }
+
+                SpotStore.RenameSpot(spotId, newSpotName);
+
+                // Update spot name to server
+                SpotService.UpdateSpotNameAsync(spotId, newSpotName);
+            }
         }
 
         private async void ButtonSpotAddSession_Click(object sender, RoutedEventArgs e)
