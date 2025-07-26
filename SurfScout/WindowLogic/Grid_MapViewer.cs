@@ -105,7 +105,12 @@ namespace SurfScout.WindowLogic
                 SpotStore.RenameSpot(spotId, newSpotName);
 
                 // Update spot name to server
-                SpotService.UpdateSpotNameAsync(spotId, newSpotName);
+                bool renameSuccessful = await SpotService.UpdateSpotNameAsync(spotId, newSpotName);
+
+                if (renameSuccessful)
+                    MessageBox.Show("Spot name successfully renamed.", "Succeeded");
+                else
+                    MessageBox.Show("Error trying to rename the spot.", "Failed");
             }
         }
 
