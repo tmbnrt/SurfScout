@@ -52,6 +52,8 @@ namespace SurfScout.WindowLogic
                     UserSession.JwtToken = response.Token;
                     UserSession.Username = response.User.Username;
                     UserSession.UserId = response.User.Id;
+                    if (!string.IsNullOrWhiteSpace(response.User.Role))
+                        UserSession.Role = response.User.Role;
 
                     MessageBox.Show($"Login successful. Welcome back, {username}!");
                     win.UsernameBox.Text = string.Empty;

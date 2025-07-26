@@ -29,7 +29,9 @@ using SurfScout.SubWindows;
 using SurfScout.Services;
 using SurfScout.DataStores;
 using SurfScout.Models;
+using SurfScout.Functions.GeoFunctions;
 using System.Windows.Controls.Primitives;
+using Esri.ArcGISRuntime.Location;
 
 namespace SurfScout.WindowLogic
 {
@@ -37,7 +39,11 @@ namespace SurfScout.WindowLogic
     {
         MainWindow win;
         private static bool addSpotIsActive;
+        private bool isPolygonDrawingMode;
         private List<MapPoint> savedCoordinates;
+        private PolygonEditor polygon;
+
+        private string mouseClick;
 
         // Current UI selections
         private Spot selectedSpot;
@@ -47,6 +53,7 @@ namespace SurfScout.WindowLogic
         {
             this.win = window;
             addSpotIsActive = false;
+            isPolygonDrawingMode = false;
             this.savedCoordinates = new List<MapPoint>();
 
             LoadMap();
@@ -59,13 +66,25 @@ namespace SurfScout.WindowLogic
             // Click interaction with map
             win.SpotView.GeoViewTapped += SpotView_GeoView_Tapped;
 
+            // Parallel check for left/right mouse klick
+            win.SpotView.MouseDown += SpotView_MouseDown;
+
             // Click interaction with spot popup
             win.buttonCloseSpotPopup.Click += ButtonCloseSpotPopup_Click;
             win.buttonSpotAddSession.Click += ButtonSpotAddSession_Click;
             win.buttonSpotShowSessions.Click += ButtonSpotShowSessions_Click;
-            win.buttonSpotRename.Click += buttonSpotRename_Click;
+            win.buttonSpotRename.Click += ButtonSpotRename_Click;
+            win.buttonSpotSetWindFetch.Click += ButtonSpotSetWindFetch_Click;
+            //win.buttonSavePolygon.Click += ButtonSavePolygon_Click;
+            win.buttonCancelPolygon.Click += ButtonCancelPolygon_Click;
+        }
 
-
+        private void SpotView_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Right)
+                this.mouseClick = "right";
+            if (e.ChangedButton == MouseButton.Left)
+                this.mouseClick = "left";
         }
 
         private void ButtonCloseSpotPopup_Click(object sender, RoutedEventArgs e)
@@ -73,7 +92,51 @@ namespace SurfScout.WindowLogic
             win.SpotPopup.IsOpen = false;
         }
 
-        private async void buttonSpotRename_Click(object sender, RoutedEventArgs e)
+        private void ButtonSpotSetWindFetch_Click(object sender, RoutedEventArgs e)
+        {
+            // Switch to polygon drawing mode and create polygin instance
+            win.PolygonPopup.IsOpen = true;
+            this.isPolygonDrawingMode = true;
+            SetButtonState(win.buttonSavePolygon, "disable");
+            
+            this.polygon = new PolygonEditor();
+        }
+
+        private void AddPolygonPoint(object sender, GeoViewInputEventArgs g)
+        {
+            MapPoint location = g.Location;
+
+            // Convert to WGS84 (Longitude/Latitude)
+            var wgsPoint = (MapPoint)GeometryEngine.Project(location, SpatialReferences.Wgs84);
+
+            // Set point in polygon instance
+            double[] p = new double[] { wgsPoint.Y, wgsPoint.X };
+            polygon.SetPoint(p);
+
+            // If last point == first point --> create json in pBuilder (precision function to target first point!!!)
+            if (polygon.isClosed)
+                SetButtonState(win.buttonSavePolygon, "enable");
+        }
+
+        private void ShowPolygon()
+        {
+            // ...
+
+            if (polygon.isClosed)
+            {
+                // Visualize in bold green lines instead normal lines
+            }
+        }
+
+        private void ButtonCancelPolygon_Click(object sender, RoutedEventArgs e)
+        {
+            this.isPolygonDrawingMode = false;
+            this.polygon = null!;
+            this.mouseClick = "";
+            win.PolygonPopup.IsOpen = false;
+        }
+
+        private async void ButtonSpotRename_Click(object sender, RoutedEventArgs e)
         {
             // Check user login and admin rights
             if (!UserSession.IsLoggedIn || !UserSession.IsAdmin)
@@ -214,7 +277,7 @@ namespace SurfScout.WindowLogic
                 if (spot.Location != null)
                     SetPin(spot.Location.Y, spot.Location.X, spot.Name, spot.Id);
             }
-        }
+        }        
 
         private void SpotView_MouseLeftButtonDown(object sender, GeoViewInputEventArgs g)
         {
@@ -281,8 +344,19 @@ namespace SurfScout.WindowLogic
 
         private void SpotView_GeoView_Tapped(object sender, GeoViewInputEventArgs g)
         {
-            if (!addSpotIsActive)
+            if (!addSpotIsActive && !isPolygonDrawingMode)
                 SpotView_MouseLeftButtonDown(sender, g);
+
+            if (isPolygonDrawingMode)
+            {
+                if (mouseClick == "left" && !polygon.isClosed)
+                    AddPolygonPoint(sender, g);
+                if (mouseClick == "right")
+                    polygon.DeleteLastPoint();
+
+                ShowPolygon();
+                return;
+            }                
 
             // Get tapped location
             MapPoint location = g.Location;
@@ -318,10 +392,8 @@ namespace SurfScout.WindowLogic
                     }
                 }
 
-                RemoveLastPin();    // dummy pin to create new location
-
-                // Set new spot Id
-                //int newSpotId = SpotStore.GetLatestId() + 1;
+                // Remove dummy pin to create new location
+                RemoveLastPin();
 
                 // Create new spot
                 var newSpotObj = new Spot
@@ -377,6 +449,28 @@ namespace SurfScout.WindowLogic
                 var graphics = win.SpotView.GraphicsOverlays[0].Graphics;
                 if (graphics.Count > 0)
                     graphics.RemoveAt(graphics.Count - 1);
+            }
+        }
+
+        private void SetButtonState(Button btn, string command)
+        {
+            if (btn == null || string.IsNullOrWhiteSpace(command)) return;
+
+            if (command.ToLower() == "enable")
+            {
+                btn.IsEnabled = true;
+                btn.ClearValue(Button.BackgroundProperty);
+                btn.ClearValue(Button.ForegroundProperty);
+                btn.ClearValue(Button.BorderBrushProperty);
+                btn.ClearValue(Button.OpacityProperty);
+            }
+            else if (command.ToLower() == "disable")
+            {
+                btn.IsEnabled = false;
+                btn.Background = new SolidColorBrush(Color.FromRgb(224, 224, 224));
+                btn.Foreground = Brushes.Gray;
+                btn.BorderBrush = new SolidColorBrush(Color.FromRgb(170, 170, 170));
+                btn.Opacity = 0.6;
             }
         }
 
