@@ -13,7 +13,7 @@ namespace SurfScout.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public Point Location { get; set; }
-        //public Geometry polygon { get; set;}          // i.e. wind field area in GeoJSON format (geo polygon)
+        public NetTopologySuite.Geometries.Polygon? WindFetchPolygon { get; set;}       // wind field area in GeoJSON format (geo polygon)
 
         public List<Session> Sessions { get; set; }     // Navigation property
 

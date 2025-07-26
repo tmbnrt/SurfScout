@@ -128,10 +128,10 @@
                 AllowsTransparency="True"
                 IsOpen="False">
                 <Border Background="White" CornerRadius="5" BorderBrush="Gray" BorderThickness="1">
-                    <Grid Width="220" Height="120" Margin="5">
+                    <Grid Width="220" Margin="5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
@@ -148,18 +148,39 @@
                         </DockPanel>
 
                         <!-- Content -->
-                        <TextBlock Text="Lorem ipsum ..." Margin="5" Grid.Row="1" />
-
-                        <!-- Action buttons -->
-                        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
-                            <Button x:Name="buttonSpotShowSessions"
-                                Content="List sessions"
-                                Width="80"
-                                Margin="5"/>
-                        <Button x:Name="buttonSpotAddSession"
-                                Content="Add Session"
-                                Width="80"
-                                Margin="5"/>
+                        <TextBlock Grid.Row="1" Text="Lorem ipsum ..." Margin="5" />
+                        
+                        <StackPanel Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Center" Margin="5">
+                            <!-- Action buttons -->
+                            <StackPanel Orientation="Horizontal">
+                                <Button x:Name="buttonSpotShowSessions"
+                                    Content="List sessions"
+                                    Width="80"
+                                    Margin="5"/>
+                                <Button x:Name="buttonSpotAddSession"
+                                    Content="Add Session"
+                                    Width="80"
+                                    Margin="5"/>
+                            </StackPanel>
+                            <!-- Admin buttons -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+                                <Button x:Name="buttonSpotSetWindFetch"
+                                    IsEnabled="False"
+                                    Content="Set wind field"
+                                    Width="80"
+                                    Margin="5"/>
+                                <Button x:Name="buttonSpotShowWindFetch"
+                                    Content="Show wind field"
+                                    Width="90"
+                                    Margin="5"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+                                <Button x:Name="buttonSpotRename"
+                                    IsEnabled="False"
+                                    Content="Rename spot"
+                                    Width="80"
+                                    Margin="5"/>
+                            </StackPanel>
                         </StackPanel>
 
                     </Grid>

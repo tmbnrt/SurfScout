@@ -192,6 +192,22 @@ namespace SurfScout.WindowLogic
             // Place spot popup on UI
             var screenPos = win.SpotView.LocationToScreen(mapPointOriginal);    // alternative test: mapPointOriginal
 
+            // Enable buttons for Admin roles
+            if (UserSession.IsAdmin)
+            {
+                win.buttonSpotSetWindFetch.IsEnabled = true;
+                win.buttonSpotRename.IsEnabled = true;
+            }
+            else
+            {
+                win.buttonSpotSetWindFetch.IsEnabled = false;
+                win.buttonSpotRename.IsEnabled = false;
+            }
+
+            win.buttonSpotSetWindFetch.IsEnabled = true;
+            win.buttonSpotShowWindFetch.IsEnabled = true;
+            win.buttonSpotRename.IsEnabled = true;
+
             win.PopupSpotName.Text = selectedSpot.Name;
             win.SpotPopup.Placement = PlacementMode.AbsolutePoint;
             win.SpotPopup.HorizontalOffset = screenPos.X;
