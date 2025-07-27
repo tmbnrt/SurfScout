@@ -29,7 +29,7 @@
 | Framework / Library        | Purpose                                                   |
 |---------------------------|------------------------------------------------------------|
 | ArcGIS Runtime SDK        | Mapping, geometry capture, and symbol rendering            |
-| NetTopologySuite          | Spatial processing (union, intersection, buffering, etc.)  |
+| NetTopologySuite          | Spatial processing (union, intersection)                   |
 | System.Drawing / WPF      | UI rendering, color processing                             |
 | Newtonsoft.Json (optional)| JSON parsing for API interactions                          |
 | ASP.NET Core Web API      | Backend communication interface                            |
@@ -40,7 +40,7 @@
 
 - Map visualization of wind raster points with dynamic styling
 - Polygon overlays showing windsurfing sessions by location
-- Selective removal or fit of wind fetch areas (illstrated by polygons)
+- Selective removal or fit of wind fetch areas (illustrated by polygons)
 - Comparison between forecast and real-world conditions
 - Tide-aware recommendations for surf spots
 - Spot-specific forecast model evaluation
@@ -60,7 +60,5 @@
 _A visual overview showing interaction between the WPF frontend, ASP.NET Core backend, PostgreSQL/PostGIS database._
 
 ## 🖼️ Screenshot Examples
-
-> ![Screenshot of raster point display for storing wind data in the wind field](windfeld_rasterpunkte.png)
 
 > ![Screenshot of raster points inside the created wind fetch polygon for storing wind data](screenshot_map_wind_raster.png)
