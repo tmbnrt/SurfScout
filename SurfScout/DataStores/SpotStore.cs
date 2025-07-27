@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NetTopologySuite.Geometries;
 using SurfScout.Models;
 
 namespace SurfScout.DataStores
@@ -41,12 +42,15 @@ namespace SurfScout.DataStores
         public static void RenameSpot(int id, string newName)
         {
             foreach (Spot spot in _spots)
-            {
                 if (spot.Id == id)
                     spot.Name = newName;
-            }
+        }
 
-
+        public static void SetWindFetchField(int id, Polygon polygon)
+        {
+            foreach (Spot spot in _spots)
+                if (spot.Id == id)
+                    spot.WindFetchPolygon = polygon;
         }
     }
 }

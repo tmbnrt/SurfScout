@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,12 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Data;
-using System.IO;
 using System.ComponentModel;
 using NetTopologySuite.Geometries;
-using Esri.ArcGISRuntime;
 using Esri.ArcGISRuntime.Geometry;
 using Esri.ArcGISRuntime.Mapping;
 using Esri.ArcGISRuntime.Data;
@@ -42,6 +37,7 @@ namespace SurfScout.WindowLogic
         private bool isPolygonDrawingMode;
         private List<MapPoint> savedCoordinates;
         private PolygonEditor polygon;
+        private GraphicsOverlay polygonOverlay;
 
         private string mouseClick;
 
@@ -75,21 +71,74 @@ namespace SurfScout.WindowLogic
             win.buttonSpotShowSessions.Click += ButtonSpotShowSessions_Click;
             win.buttonSpotRename.Click += ButtonSpotRename_Click;
             win.buttonSpotSetWindFetch.Click += ButtonSpotSetWindFetch_Click;
-            //win.buttonSavePolygon.Click += ButtonSavePolygon_Click;
+            win.buttonSpotShowWindFetch.Click += ButtonSpotShowWindFetch_Click;
+            win.buttonSavePolygon.Click += ButtonSavePolygon_Click;
             win.buttonCancelPolygon.Click += ButtonCancelPolygon_Click;
         }
 
         private void SpotView_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ChangedButton == MouseButton.Right)
-                this.mouseClick = "right";
-            if (e.ChangedButton == MouseButton.Left)
+            if (e.ChangedButton == MouseButton.Left) { }
                 this.mouseClick = "left";
+
+            if (e.ChangedButton == MouseButton.Right)
+            {
+                this.mouseClick = "right";
+                if (isPolygonDrawingMode)
+                {
+                    polygon.DeleteLastPoint();
+                    ShowPolygon();
+                }
+            }
         }
 
         private void ButtonCloseSpotPopup_Click(object sender, RoutedEventArgs e)
         {
             win.SpotPopup.IsOpen = false;
+        }
+
+        private void ButtonSavePolygon_Click(object sender, RoutedEventArgs e)
+        {
+            // Add polygon to spot instance
+            SpotStore.SetWindFetchField(selectedSpot.Id, polygon.polygon);
+
+            // Send polygon to backend
+            // ...
+
+            DeletePolygonVisualization();
+
+            // Free polygon and close window
+            ClearPolygonOverlay();
+            this.polygon = null!;
+            win.PolygonPopup.IsOpen = false;
+            this.isPolygonDrawingMode = false;
+            this.mouseClick = "";
+        }
+
+        private void ClearPolygonOverlay()
+        {
+            var overlay = win.SpotView.GraphicsOverlays
+                .FirstOrDefault(o => o.Id == "polygonGroupOverlay");
+
+            if (overlay != null)
+            {
+                var polygonsToRemove = overlay.Graphics
+                    .Where(g => g.Attributes.ContainsKey("group") && g.Attributes["group"].ToString() == "polygonGroup")
+                    .ToList();
+
+                foreach (var graphic in polygonsToRemove)
+                    overlay.Graphics.Remove(graphic);
+            }
+        }
+
+        private void ButtonSpotShowWindFetch_Click(object sender, RoutedEventArgs e)
+        {
+            // Create polygon instance
+            // polygon.mapPoints
+            ShowPolygon();
+            
+            // If close-button pressed, delete polygon
+            DeletePolygonVisualization();
         }
 
         private void ButtonSpotSetWindFetch_Click(object sender, RoutedEventArgs e)
@@ -120,20 +169,33 @@ namespace SurfScout.WindowLogic
 
         private void ShowPolygon()
         {
-            // ...
+            ClearPolygonOverlay();
 
+            var polyline = new Polyline(polygon.mapPoints);
+
+            var lineSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Green, 2);
             if (polygon.isClosed)
-            {
-                // Visualize in bold green lines instead normal lines
-            }
+                lineSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Green, 4);
+
+            var graphic = new Graphic(polyline, lineSymbol);
+            graphic.Attributes["group"] = "polygonGroup";
+
+            // Graphics overlay
+            //var graphicsOverlay = new GraphicsOverlay();
+            //graphicsOverlay.Id = "polygonGroupOverlay";
+            polygonOverlay.Graphics.Add(graphic);
+            //win.SpotView.GraphicsOverlays.Add(graphicsOverlay);
         }
 
         private void ButtonCancelPolygon_Click(object sender, RoutedEventArgs e)
         {
             this.isPolygonDrawingMode = false;
             this.polygon = null!;
+            ClearPolygonOverlay();
             this.mouseClick = "";
             win.PolygonPopup.IsOpen = false;
+
+            DeletePolygonVisualization();            
         }
 
         private async void ButtonSpotRename_Click(object sender, RoutedEventArgs e)
@@ -262,6 +324,11 @@ namespace SurfScout.WindowLogic
             myMap.OperationalLayers.Add(shapeLayer);
             win.SpotView.Map = myMap;
 
+            // Add polygon overlays
+            this.polygonOverlay = new GraphicsOverlay();
+            this.polygonOverlay.Id = "polygonGroupOverlay";
+            win.SpotView.GraphicsOverlays.Add(polygonOverlay);
+
             // Wait until layer has been loaded
             await shapeLayer.LoadAsync();
         }
@@ -351,12 +418,10 @@ namespace SurfScout.WindowLogic
             {
                 if (mouseClick == "left" && !polygon.isClosed)
                     AddPolygonPoint(sender, g);
-                if (mouseClick == "right")
-                    polygon.DeleteLastPoint();
 
                 ShowPolygon();
                 return;
-            }                
+            }
 
             // Get tapped location
             MapPoint location = g.Location;
@@ -434,21 +499,52 @@ namespace SurfScout.WindowLogic
             graphic.Attributes.Add("Name", spotName);
             graphic.Attributes.Add("Id", spotId);
 
-            if (win.SpotView.GraphicsOverlays.Count == 0)
-                win.SpotView.GraphicsOverlays.Add(new GraphicsOverlay());
+            var pointOverlay = win.SpotView.GraphicsOverlays
+                .FirstOrDefault(o => o.Id == "pointOverlay");
 
-            var overlay = win.SpotView.GraphicsOverlays[0];
+            //if (win.SpotView.GraphicsOverlays.Count == 0)
+            //    win.SpotView.GraphicsOverlays.Add(new GraphicsOverlay());
+            //
+            //var overlay = win.SpotView.GraphicsOverlays[0];
 
-            overlay.Graphics.Add(graphic);
+            if (pointOverlay == null)
+            {
+                pointOverlay = new GraphicsOverlay { Id = "pointOverlay" };
+                win.SpotView.GraphicsOverlays.Add(pointOverlay);
+            }
+
+            pointOverlay.Graphics.Add(graphic);
         }
 
         private void RemoveLastPin()
         {
-            if (win.SpotView.GraphicsOverlays.Count > 0)
+            //if (win.SpotView.GraphicsOverlays.Count > 0)
+            //{
+            //    var graphics = win.SpotView.GraphicsOverlays[0].Graphics;
+            //    if (graphics.Count > 0)
+            //        graphics.RemoveAt(graphics.Count - 1);
+            //}
+
+            var pointOverlay = win.SpotView.GraphicsOverlays
+                .FirstOrDefault(o => o.Id == "pointOverlay");
+
+            if (pointOverlay != null && pointOverlay.Graphics.Count > 0)
+                pointOverlay.Graphics.RemoveAt(pointOverlay.Graphics.Count - 1);
+        }
+
+        private void DeletePolygonVisualization()
+        {
+            var overlay = win.SpotView.GraphicsOverlays
+                .FirstOrDefault(o => o.Id == "polygonGroupOverlay");
+            
+            if (overlay != null)
             {
-                var graphics = win.SpotView.GraphicsOverlays[0].Graphics;
-                if (graphics.Count > 0)
-                    graphics.RemoveAt(graphics.Count - 1);
+                var deletes = overlay.Graphics
+                    .Where(g => g.Attributes.ContainsKey("group") && g.Attributes["group"].ToString() == "polygonGroup")
+                    .ToList();
+                
+                foreach (var del in deletes)
+                    overlay.Graphics.Remove(del);
             }
         }
 

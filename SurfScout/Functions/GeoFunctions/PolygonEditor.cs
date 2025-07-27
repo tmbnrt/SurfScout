@@ -7,21 +7,26 @@ using System.Threading.Tasks;
 using System.Windows.Documents;
 using System.Xml;
 using System.Text.Json;
+using NetTopologySuite.Geometries;
+using Esri.ArcGISRuntime.Geometry;
 
 namespace SurfScout.Functions.GeoFunctions
 {
     public class PolygonEditor
     {
+        public NetTopologySuite.Geometries.Polygon polygon {  get; private set; }
         public string json { get; private set; }
         private List<double[]> coordinates;     // Global coordinates
-        private List<double[]> mapPosition;     // Map point for visualization
+        public List<MapPoint> mapPoints;
+        //private List<double[]> mapPosition;     // Map point for visualization
         public bool isClosed;
         
 
         public PolygonEditor()
         {
             this.coordinates = new List<double[]>();
-            this.mapPosition = new List<double[]>();
+            this.mapPoints = new List<MapPoint>();
+            //this.mapPosition = new List<double[]>();
             this.isClosed = false;
         }
 
@@ -42,42 +47,54 @@ namespace SurfScout.Functions.GeoFunctions
             }
 
             this.coordinates.Add(new double[] { lat, lng });
-            
-            // Also add map point
-            // ...
+            var mapPoint = new MapPoint(lng, lat, SpatialReferences.Wgs84);
+            this.mapPoints.Add(mapPoint);
 
             if (coordinates.Count > 2 && coordinates.First()[0] == lat && coordinates.First()[1] == lng)
             {
                 isClosed = true;
-                CreateJson();
+                CreatePolygon();
+                CreateGeoJson();
             }
 
             return coordinates;
         }
 
-        public List<double[]> DeleteLastPoint()
+        private void CreatePolygon()
+        {
+            var coords = mapPoints.Select(p => new Coordinate(p.X, p.Y)).ToList();
+            var shell = new LinearRing(coords.ToArray());
+            this.polygon = new NetTopologySuite.Geometries.Polygon(shell);
+        }
+
+        public void DeleteLastPoint()
         {
             if (coordinates.Count > 0)
                 this.coordinates.RemoveAt(coordinates.Count - 1);
 
-            if (mapPosition.Count > 0)
-                this.mapPosition.RemoveAt(mapPosition.Count - 1);
+            if (mapPoints.Count > 0)
+                this.mapPoints.RemoveAt(mapPoints.Count - 1);
 
             this.isClosed = false;
             this.json = "";
+            this.polygon = null!;
 
-            return coordinates;
+            //return coordinates;
         }
 
-        private void CreateJson()
+        private void CreateGeoJson()
         {
+            var coords = mapPoints
+                .Select(p => new double[] { p.X, p.Y })
+                .ToList();
+
             var geoJson = new
             {
                 type = "Polygon",
-                coordinates = new List<List<double[]>> { coordinates }
+                coordinates = new List<List<double[]>> { coords }
             };
 
-            this.json = JsonSerializer.Serialize(coordinates);
+            this.json = JsonSerializer.Serialize(geoJson);
         }
     }
 }
