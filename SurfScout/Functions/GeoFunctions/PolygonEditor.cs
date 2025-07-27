@@ -67,6 +67,20 @@ namespace SurfScout.Functions.GeoFunctions
             this.polygon = new NetTopologySuite.Geometries.Polygon(shell);
         }
 
+        public void AddExistingPolygon(NetTopologySuite.Geometries.Polygon polygon)
+        {
+            this.polygon = polygon;
+
+            var shell = polygon.Shell;
+
+            // Iteriere über alle Koordinaten
+            foreach (var coor in shell.Coordinates)
+            {
+                var point = new MapPoint(coor.X, coor.Y, SpatialReferences.Wgs84);
+                this.mapPoints.Add(point);
+            }
+        }
+
         public void DeleteLastPoint()
         {
             if (coordinates.Count > 0)

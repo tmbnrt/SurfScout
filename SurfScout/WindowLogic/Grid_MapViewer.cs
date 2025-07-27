@@ -133,12 +133,19 @@ namespace SurfScout.WindowLogic
 
         private void ButtonSpotShowWindFetch_Click(object sender, RoutedEventArgs e)
         {
-            // Create polygon instance
-            // polygon.mapPoints
+            if (selectedSpot.WindFetchPolygon == null)
+                return;
+
+            SetButtonState(win.buttonSavePolygon, "disable");
+            win.PolygonPopup.IsOpen = true;
+
+            // Create polygon instance from spot storage
+            this.polygon = new PolygonEditor();
+            polygon.AddExistingPolygon(selectedSpot.WindFetchPolygon);
             ShowPolygon();
             
             // If close-button pressed, delete polygon
-            DeletePolygonVisualization();
+            //DeletePolygonVisualization();
         }
 
         private void ButtonSpotSetWindFetch_Click(object sender, RoutedEventArgs e)

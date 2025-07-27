@@ -121,7 +121,7 @@
                 </StackPanel>
             </Grid>
 
-            <!-- Polygon interaction popup -->
+            <!-- Polygon interaction popups -->
             <Popup x:Name="PolygonPopup"
                 Placement="Relative"
                 HorizontalOffset="{Binding ActualWidth, ElementName=MainGrid}"
@@ -131,7 +131,7 @@
                 StaysOpen="True">
                 <Border Background="White" BorderBrush="Black" BorderThickness="1" Padding="10">
                     <StackPanel>
-                        <TextBlock Text="Define wind fetch area!"/>
+                        <TextBlock Text="Wind fetch area"/>
                         <Button x:Name="buttonSavePolygon" Content="Save"/>
                         <Button x:Name="buttonCancelPolygon" Content="Cancel"/>
                     </StackPanel>
