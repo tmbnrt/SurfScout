@@ -55,10 +55,12 @@
 
 ## 🖼️ Architecture Overview
 
-> ![Global Architecture of SurfScout](global_architecture.png)
+> ![.](global_architecture.png)
 
 _A visual overview showing interaction between the WPF frontend, ASP.NET Core backend, PostgreSQL/PostGIS database._
 
 ## 🖼️ Screenshot Examples
 
-> ![Screenshot of raster points inside the created wind fetch polygon for storing wind data](screenshot_map_wind_raster.png)
+> ![.](screenshot_map_wind_raster.png)
+
+> _Screenshot of raster points inside the created wind fetch polygon for storing wind data._
