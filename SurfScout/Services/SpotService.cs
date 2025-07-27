@@ -11,6 +11,9 @@ using System.Text.Json;
 using System.Windows;
 using NetTopologySuite.IO.Converters;
 using System.IO.Packaging;
+using NetTopologySuite.Geometries;
+using SurfScout.Models.GeoModel;
+using Esri.ArcGISRuntime.Geometry;
 
 namespace SurfScout.Services
 {
@@ -108,6 +111,41 @@ namespace SurfScout.Services
 
             // PUT request
             var response = await client.PostAsync($"api/spots/{spotId}/rename", content);
+
+            return response.IsSuccessStatusCode;
+        }
+
+        public static async Task<bool> UpdateWindFetchArea(int spotId, WindFetchPolygon polygon)
+        {
+            if (spotId < 1 || !polygon.isClosed)
+                return false;
+
+            // ...
+
+            // Create GeoJson
+            var coords = polygon.mapPoints
+                .Select(p => new double[] { p.X, p.Y })
+                .ToList();
+
+            var geoJson = new
+            {
+                type = "Polygon",
+                coordinates = new List<List<double[]>> { coords }
+            };
+
+            string json = JsonSerializer.Serialize(geoJson);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            using var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7190/")
+            };
+
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
+
+            // PUT request
+            var response = await client.PostAsync($"api/spots/{spotId}/definewindfetch", content);
 
             return response.IsSuccessStatusCode;
         }

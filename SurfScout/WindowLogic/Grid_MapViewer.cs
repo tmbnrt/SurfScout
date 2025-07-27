@@ -24,9 +24,10 @@ using SurfScout.SubWindows;
 using SurfScout.Services;
 using SurfScout.DataStores;
 using SurfScout.Models;
-using SurfScout.Functions.GeoFunctions;
+using SurfScout.Functions;
 using System.Windows.Controls.Primitives;
 using Esri.ArcGISRuntime.Location;
+using SurfScout.Models.GeoModel;
 
 namespace SurfScout.WindowLogic
 {
@@ -36,7 +37,7 @@ namespace SurfScout.WindowLogic
         private static bool addSpotIsActive;
         private bool isPolygonDrawingMode;
         private List<MapPoint> savedCoordinates;
-        private PolygonEditor polygon;
+        private WindFetchPolygon polygon;
         private GraphicsOverlay polygonOverlay;
 
         private string mouseClick;
@@ -49,12 +50,10 @@ namespace SurfScout.WindowLogic
         {
             this.win = window;
             addSpotIsActive = false;
-            isPolygonDrawingMode = false;
+            this.isPolygonDrawingMode = false;
             this.savedCoordinates = new List<MapPoint>();
 
             LoadMap();
-
-            // Pull spots with location from server (stroe in SpotStore) and place on the map
             Pull_SpotsFromServer();
 
             win.buttonMapAddSpot.Click += ButtonMapAddSpot_Click;
@@ -136,16 +135,13 @@ namespace SurfScout.WindowLogic
             if (selectedSpot.WindFetchPolygon == null)
                 return;
 
-            SetButtonState(win.buttonSavePolygon, "disable");
+            UI_Helpers.SetButtonState(win.buttonSavePolygon, "disable");
             win.PolygonPopup.IsOpen = true;
 
             // Create polygon instance from spot storage
-            this.polygon = new PolygonEditor();
+            this.polygon = new WindFetchPolygon();
             polygon.AddExistingPolygon(selectedSpot.WindFetchPolygon);
             ShowPolygon();
-            
-            // If close-button pressed, delete polygon
-            //DeletePolygonVisualization();
         }
 
         private void ButtonSpotSetWindFetch_Click(object sender, RoutedEventArgs e)
@@ -153,9 +149,9 @@ namespace SurfScout.WindowLogic
             // Switch to polygon drawing mode and create polygin instance
             win.PolygonPopup.IsOpen = true;
             this.isPolygonDrawingMode = true;
-            SetButtonState(win.buttonSavePolygon, "disable");
+            UI_Helpers.SetButtonState(win.buttonSavePolygon, "disable");
             
-            this.polygon = new PolygonEditor();
+            this.polygon = new WindFetchPolygon();
         }
 
         private void AddPolygonPoint(object sender, GeoViewInputEventArgs g)
@@ -171,7 +167,7 @@ namespace SurfScout.WindowLogic
 
             // If last point == first point --> create json in pBuilder (precision function to target first point!!!)
             if (polygon.isClosed)
-                SetButtonState(win.buttonSavePolygon, "enable");
+                UI_Helpers.SetButtonState(win.buttonSavePolygon, "enable");
         }
 
         private void ShowPolygon()
@@ -302,7 +298,7 @@ namespace SurfScout.WindowLogic
                 {
                     Date = s.Date.ToString("yyyy-MM-dd"),
                     Username = s.User.Username ?? "–",
-                    RatingStars = GenerateStars(s.Rating)
+                    RatingStars = UI_Helpers.GenerateStars(s.Rating)
                 })
                 .ToList();
 
@@ -493,7 +489,7 @@ namespace SurfScout.WindowLogic
         {
             var symbol = new SimpleMarkerSymbol(SimpleMarkerSymbolStyle.Circle,
                                                  System.Drawing.Color.Red,
-                                                 12); // Size of the pin
+                                                 12);
             if (spotName == "")
                 symbol = new SimpleMarkerSymbol(SimpleMarkerSymbolStyle.Circle,
                                                  System.Drawing.Color.Black, 8);
@@ -509,11 +505,6 @@ namespace SurfScout.WindowLogic
             var pointOverlay = win.SpotView.GraphicsOverlays
                 .FirstOrDefault(o => o.Id == "pointOverlay");
 
-            //if (win.SpotView.GraphicsOverlays.Count == 0)
-            //    win.SpotView.GraphicsOverlays.Add(new GraphicsOverlay());
-            //
-            //var overlay = win.SpotView.GraphicsOverlays[0];
-
             if (pointOverlay == null)
             {
                 pointOverlay = new GraphicsOverlay { Id = "pointOverlay" };
@@ -525,13 +516,6 @@ namespace SurfScout.WindowLogic
 
         private void RemoveLastPin()
         {
-            //if (win.SpotView.GraphicsOverlays.Count > 0)
-            //{
-            //    var graphics = win.SpotView.GraphicsOverlays[0].Graphics;
-            //    if (graphics.Count > 0)
-            //        graphics.RemoveAt(graphics.Count - 1);
-            //}
-
             var pointOverlay = win.SpotView.GraphicsOverlays
                 .FirstOrDefault(o => o.Id == "pointOverlay");
 
@@ -553,33 +537,6 @@ namespace SurfScout.WindowLogic
                 foreach (var del in deletes)
                     overlay.Graphics.Remove(del);
             }
-        }
-
-        private void SetButtonState(Button btn, string command)
-        {
-            if (btn == null || string.IsNullOrWhiteSpace(command)) return;
-
-            if (command.ToLower() == "enable")
-            {
-                btn.IsEnabled = true;
-                btn.ClearValue(Button.BackgroundProperty);
-                btn.ClearValue(Button.ForegroundProperty);
-                btn.ClearValue(Button.BorderBrushProperty);
-                btn.ClearValue(Button.OpacityProperty);
-            }
-            else if (command.ToLower() == "disable")
-            {
-                btn.IsEnabled = false;
-                btn.Background = new SolidColorBrush(Color.FromRgb(224, 224, 224));
-                btn.Foreground = Brushes.Gray;
-                btn.BorderBrush = new SolidColorBrush(Color.FromRgb(170, 170, 170));
-                btn.Opacity = 0.6;
-            }
-        }
-
-        private List<string> GenerateStars(int rating)
-        {
-            return Enumerable.Repeat("★", rating).ToList();
         }
     }
 }
