@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Esri.ArcGISRuntime.Geometry;
 using NetTopologySuite.Geometries;
+using SurfScout.Models.WindModel;
 
 namespace SurfScout.Models
 {
@@ -13,9 +14,14 @@ namespace SurfScout.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public Point Location { get; set; }
-        public NetTopologySuite.Geometries.Polygon? WindFetchPolygon { get; set;}   // i.e. wind field area in GeoJSON format (geo polygon)
+        public NetTopologySuite.Geometries.Polygon? WindFetchPolygon { get; set;}
+        public List<Session>? Sessions { get; set; }
+        public WindFetchData? WindFetchData { get; set; }
 
-        public List<Session> Sessions { get; set; }     // Navigation property
+        public void GenerateRasterPoints()
+        {
+            this.WindFetchData = new WindFetchData(Id, WindFetchPolygon);
+        }
 
         public bool CheckWithinDistance(double longitude, double latitude, double maxDistance)
         {

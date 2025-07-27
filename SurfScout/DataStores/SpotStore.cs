@@ -50,7 +50,10 @@ namespace SurfScout.DataStores
         {
             foreach (Spot spot in _spots)
                 if (spot.Id == id)
+                {
                     spot.WindFetchPolygon = polygon;
+                    spot.GenerateRasterPoints();
+                }                    
         }
     }
 }

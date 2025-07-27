@@ -147,8 +147,8 @@
                 <Border Background="White" BorderBrush="Black" BorderThickness="1" Padding="10">
                     <StackPanel>
                         <TextBlock Text="Wind fetch area"/>
-                        <Button x:Name="buttonShowPolygonPoints" Content="Save"/>
-                        <Button x:Name="buttonClosePolygon" Content="Cancel"/>
+                        <Button x:Name="buttonShowPolygonRasterPoints" Content="Show raster"/>
+                        <Button x:Name="buttonClosePolygon" Content="Close"/>
                     </StackPanel>
                 </Border>
             </Popup>

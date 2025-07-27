@@ -74,7 +74,7 @@ namespace SurfScout.WindowLogic
             win.buttonSavePolygon.Click += ButtonSavePolygon_Click;
             win.buttonCancelPolygon.Click += ButtonCancelPolygon_Click;
             win.buttonClosePolygon.Click += ButtonCancelPolygon_Click;
-            win.buttonShowPolygonPoints.Click += PuttonShowPolygonPoints_Click;
+            win.buttonShowPolygonRasterPoints.Click += ButtonShowPolygonRasterPoints_Click;
         }
 
         private void SpotView_MouseDown(object sender, MouseButtonEventArgs e)
@@ -138,7 +138,8 @@ namespace SurfScout.WindowLogic
                 return;
 
             UI_Helpers.SetButtonState(win.buttonSavePolygon, "disable");
-            win.PolygonPopup.IsOpen = true;
+            win.PolygonPopup.IsOpen = false;
+            win.ShowPolygonPopup.IsOpen = true;
 
             // Create polygon instance from spot storage
             this.polygon = new WindFetchPolygon();
@@ -172,6 +173,36 @@ namespace SurfScout.WindowLogic
                 UI_Helpers.SetButtonState(win.buttonSavePolygon, "enable");
         }
 
+        private void ButtonShowPolygonRasterPoints_Click(object sender, RoutedEventArgs e)
+        {
+            ShowPolygon();
+            ShowRaster();
+        }
+
+        private void ShowRaster()
+        {
+            if (selectedSpot.WindFetchData == null)
+                return;
+            if (selectedSpot.WindFetchData.RasterPoints == null)
+                return;
+
+            foreach (var point in selectedSpot.WindFetchData.RasterPoints)
+            {
+                var pointSymbol = new SimpleMarkerSymbol
+                {
+                    Style = SimpleMarkerSymbolStyle.Circle,
+                    Color = System.Drawing.Color.Black,
+                    Size = 4
+                };
+
+                var pointGraphic = new Graphic(point, pointSymbol);
+                pointGraphic.Attributes["group"] = "polygonGroup";
+
+                polygonOverlay.Graphics.Add(pointGraphic);
+            }
+
+        }
+
         private void ShowPolygon()
         {
             ClearPolygonOverlay();
@@ -199,6 +230,7 @@ namespace SurfScout.WindowLogic
             ClearPolygonOverlay();
             this.mouseClick = "";
             win.PolygonPopup.IsOpen = false;
+            win.ShowPolygonPopup.IsOpen = false;
 
             DeletePolygonVisualization();            
         }
