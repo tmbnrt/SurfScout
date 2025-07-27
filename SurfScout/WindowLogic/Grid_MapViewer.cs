@@ -73,6 +73,8 @@ namespace SurfScout.WindowLogic
             win.buttonSpotShowWindFetch.Click += ButtonSpotShowWindFetch_Click;
             win.buttonSavePolygon.Click += ButtonSavePolygon_Click;
             win.buttonCancelPolygon.Click += ButtonCancelPolygon_Click;
+            win.buttonClosePolygon.Click += ButtonCancelPolygon_Click;
+            win.buttonShowPolygonPoints.Click += PuttonShowPolygonPoints_Click;
         }
 
         private void SpotView_MouseDown(object sender, MouseButtonEventArgs e)

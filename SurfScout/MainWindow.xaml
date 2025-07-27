@@ -137,6 +137,21 @@
                     </StackPanel>
                 </Border>
             </Popup>
+            <Popup x:Name="ShowPolygonPopup"
+                Placement="Relative"
+                HorizontalOffset="{Binding ActualWidth, ElementName=MainGrid}"
+                VerticalOffset="0"
+                IsOpen="False"
+                AllowsTransparency="True"
+                StaysOpen="True">
+                <Border Background="White" BorderBrush="Black" BorderThickness="1" Padding="10">
+                    <StackPanel>
+                        <TextBlock Text="Wind fetch area"/>
+                        <Button x:Name="buttonShowPolygonPoints" Content="Save"/>
+                        <Button x:Name="buttonClosePolygon" Content="Cancel"/>
+                    </StackPanel>
+                </Border>
+            </Popup>
 
             <!-- Interaction-Popup on click -->
             <Popup x:Name="SpotPopup"
