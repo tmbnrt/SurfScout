@@ -98,13 +98,16 @@ namespace SurfScout.WindowLogic
             win.SpotPopup.IsOpen = false;
         }
 
-        private void ButtonSavePolygon_Click(object sender, RoutedEventArgs e)
+        private async void ButtonSavePolygon_Click(object sender, RoutedEventArgs e)
         {
+            if (selectedSpot.Id < 0 || polygon == null)
+                return;
+
             // Add polygon to spot instance
             SpotStore.SetWindFetchField(selectedSpot.Id, polygon.polygon);
 
             // Send polygon to backend
-            // ...
+            await SpotService.UpdateWindFetchArea(selectedSpot.Id, polygon);
 
             DeletePolygonVisualization();
 

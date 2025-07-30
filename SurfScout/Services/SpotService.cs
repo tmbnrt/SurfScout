@@ -13,6 +13,7 @@ using NetTopologySuite.IO.Converters;
 using System.IO.Packaging;
 using NetTopologySuite.Geometries;
 using SurfScout.Models.GeoModel;
+using SurfScout.Models.DTOs;
 using Esri.ArcGISRuntime.Geometry;
 
 namespace SurfScout.Services
@@ -127,13 +128,19 @@ namespace SurfScout.Services
                 .Select(p => new double[] { p.X, p.Y })
                 .ToList();
 
-            var geoJson = new
+            GeoJsonDto geoJson = new GeoJsonDto
             {
-                type = "Polygon",
-                coordinates = new List<List<double[]>> { coords }
+                Type = "Polygon",
+                Coordinates = new List<List<double[]>> { coords }
             };
 
-            string json = JsonSerializer.Serialize(geoJson);
+            WindFetchAreaDto windfetch = new WindFetchAreaDto
+            {
+                Id = spotId,
+                Geometry = geoJson
+            };
+
+            string json = JsonSerializer.Serialize(windfetch);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             using var client = new HttpClient
@@ -145,7 +152,7 @@ namespace SurfScout.Services
                 new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
 
             // PUT request
-            var response = await client.PostAsync($"api/spots/{spotId}/definewindfetch", content);
+            var response = await client.PutAsync($"api/spots/{spotId}/definewindfetch", content);
 
             return response.IsSuccessStatusCode;
         }
