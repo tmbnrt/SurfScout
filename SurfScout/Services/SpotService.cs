@@ -179,8 +179,12 @@ namespace SurfScout.Services
                 return;
             }
 
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
             var json = await response.Content.ReadAsStringAsync();
-            var dto = JsonSerializer.Deserialize<GeoJsonDto>(json);
+            var dto = JsonSerializer.Deserialize<GeoJsonDto>(json, options);
 
             NetTopologySuite.Geometries.Polygon windfetchfield = Json_Helpers.CreatePolygonFromDto(dto);
 
