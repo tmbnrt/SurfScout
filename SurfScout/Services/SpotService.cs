@@ -14,6 +14,7 @@ using System.IO.Packaging;
 using NetTopologySuite.Geometries;
 using SurfScout.Models.GeoModel;
 using SurfScout.Models.DTOs;
+using SurfScout.Functions;
 using Esri.ArcGISRuntime.Geometry;
 
 namespace SurfScout.Services
@@ -125,13 +126,13 @@ namespace SurfScout.Services
 
             // Create GeoJson
             var coords = polygon.mapPoints
-                .Select(p => new double[] { p.X, p.Y })
+                .Select(p => new List<double> { p.X, p.Y })
                 .ToList();
 
             GeoJsonDto geoJson = new GeoJsonDto
             {
                 Type = "Polygon",
-                Coordinates = new List<List<double[]>> { coords }
+                Coordinates = new List<List<List<double>>> { coords }
             };
 
             WindFetchAreaDto windfetch = new WindFetchAreaDto
@@ -155,6 +156,35 @@ namespace SurfScout.Services
             var response = await client.PutAsync($"api/spots/{spotId}/definewindfetch", content);
 
             return response.IsSuccessStatusCode;
+        }
+
+        public static async Task GetWindFetchArea(int spotId)
+        {
+            if (spotId < 1)
+                return;
+
+            using var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7190/")
+            };
+
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
+
+            var response = await client.GetAsync($"api/spots/returnwindfetch?spotId={spotId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                MessageBox.Show("Error while getting polygon from server!", "Error");
+                return;
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            var dto = JsonSerializer.Deserialize<GeoJsonDto>(json);
+
+            NetTopologySuite.Geometries.Polygon windfetchfield = Json_Helpers.CreatePolygonFromDto(dto);
+
+            SpotStore.SetWindFetchField(spotId, windfetchfield);
         }
     }
 }

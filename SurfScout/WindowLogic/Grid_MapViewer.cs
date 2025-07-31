@@ -135,10 +135,16 @@ namespace SurfScout.WindowLogic
             }
         }
 
-        private void ButtonSpotShowWindFetch_Click(object sender, RoutedEventArgs e)
+        private async void ButtonSpotShowWindFetch_Click(object sender, RoutedEventArgs e)
         {
+            // Get wind fetch polygon from server
+            await SpotService.GetWindFetchArea(selectedSpot.Id);
+
             if (selectedSpot.WindFetchPolygon == null)
+            {
+                MessageBox.Show($"No wind fetch field available!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
+            }
 
             UI_Helpers.SetButtonState(win.buttonSavePolygon, "disable");
             win.PolygonPopup.IsOpen = false;
