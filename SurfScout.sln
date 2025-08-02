@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35828.75 d17.13
+VisualStudioVersion = 17.13.35828.75
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurfScout", "SurfScout\SurfScout.csproj", "{3DEACBC0-AA8A-4DB8-AA4D-D36DEE1FE2F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurfScout.Tests", "SurfScout.Tests\SurfScout.Tests.csproj", "{974AAAC1-6A8A-4889-9626-987EF1D0C3DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{3DEACBC0-AA8A-4DB8-AA4D-D36DEE1FE2F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DEACBC0-AA8A-4DB8-AA4D-D36DEE1FE2F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DEACBC0-AA8A-4DB8-AA4D-D36DEE1FE2F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{974AAAC1-6A8A-4889-9626-987EF1D0C3DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{974AAAC1-6A8A-4889-9626-987EF1D0C3DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{974AAAC1-6A8A-4889-9626-987EF1D0C3DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{974AAAC1-6A8A-4889-9626-987EF1D0C3DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
