@@ -11,7 +11,7 @@ namespace SurfScout.Tests
         [Fact]
         public void CheckWithinDistance_Test()
         {
-            // Location for Wijk aa nZee
+            // Location for Wijk aan Zee
             var spot = new Spot
             {
                 Location = new NetTopologySuite.Geometries.Point(4.5941, 52.4936)
