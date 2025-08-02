@@ -1,0 +1,35 @@
+name: Run xUnit Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore SurfScout.sln
+
+    - name: Build solution
+      run: dotnet build SurfScout.sln --no-restore
+
+    - name: Run tests
+      run: dotnet test SurfScout.Tests/SurfScout.Tests.csproj --no-build --logger "trx;LogFileName=TestResults.trx"
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: TestResults
+        path: SurfScout.Tests/TestResults/TestResults.trx
