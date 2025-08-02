@@ -28,8 +28,10 @@ namespace SurfScout.Tests
             Assert.True(resultIjmuiden);
 
             // Location for Ijmuiden (Test 1 --> should be false)
-            double hanstholmLng = 8.6177;
-            double hanstholmLat = 57.1129;
+            //double hanstholmLng = 8.6177;
+            double hanstholmLng = 4.6105;
+            //double hanstholmLat = 57.1129;
+            double hanstholmLat = 52.4603;
 
             bool resultHanstholm = spot.CheckWithinDistance(hanstholmLng, hanstholmLat, maxDistance);
             Assert.False(resultHanstholm);
