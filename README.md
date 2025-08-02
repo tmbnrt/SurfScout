@@ -46,6 +46,11 @@
 - Spot-specific forecast model evaluation
 - Backend persistence and spatial analysis of session history
 
+## 🧪 Tests & CI
+
+SurfScout uses **GitHub Actions** as its CI pipeline to automatically build and run tests on every push.  
+Unit tests are located in the `SurfScout.Tests` project under `/SurfScout.Tests/`.
+
 ## 📍 To Do
 
 - Expand API integration with Stormglass.io data fields
