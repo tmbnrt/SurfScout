@@ -8,7 +8,7 @@ namespace SurfScout.Models.WindModel
 {
     public class WindFetchDataSetPoint
     {
-
-
+        public double WindSpeedKnots;
+        public double WindDirectionDegree;
     }
 }

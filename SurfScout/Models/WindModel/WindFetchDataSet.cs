@@ -7,12 +7,12 @@ using Esri.ArcGISRuntime.Geometry;
 
 namespace SurfScout.Models.WindModel
 {
-    // Class representing the time data set in list format
+    // Class representing the wind data for datapoints (in list) for a specific time (hourly)
     public class WindFetchDataSet
     {
         // TO DO: navigation property to specific session is needed here!
         // ...
         public List<WindFetchDataSetPoint> DataPoint { get; set; } = new();
-
+        public TimeOnly time;
     }
 }

@@ -8,14 +8,15 @@ using SurfScout.Functions.GeoFunctions;
 
 namespace SurfScout.Models.WindModel
 {
-    // Class representing the windfetch data for the spot
+    // This class represents the windfetch data for a spot (instance can be real data or foracast data)
     public class WindFetchData
     {
         public int SpotId { get; set; } // Verknüpfung zum Spot
-        //public Spot Spot { get; set; } // Optional: Navigation für EF Core
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public List<MapPoint>? RasterPoints { get; set; }
-        public List<WindFetchDataSet> DataSet { get; set; } = new();
+        
+        // Dictionaries containing the hourly wind data sets - Key: i.e. AROME or ICON
+        public Dictionary<string, List<WindFetchDataSet>> Model_ForecastDataSet { get; set; } = new();
+        public List<WindFetchDataSet> HistoricDataSet { get; set; } = new();
 
         public WindFetchData(int spotId, NetTopologySuite.Geometries.Polygon? polygon)
         {
