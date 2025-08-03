@@ -21,6 +21,8 @@ namespace SurfScout.Models
         public int Spotid { get; set; }
         public Spot Spot { get; set; }              // Navigation property
         public string Tide { get; set; }
+        public double? WindSpeedKnots { get; set; }
+        public double? WindDirectionDegree { get; set; }
 
         public int UserId { get; set; }             // External key
         public User User { get; set; } = null!;     // Navigation property

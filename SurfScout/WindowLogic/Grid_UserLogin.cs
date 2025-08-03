@@ -47,7 +47,7 @@ namespace SurfScout.WindowLogic
 
             try
             {
-                if (response.Success)
+                if (response != null && response.Success)
                 {
                     UserSession.JwtToken = response.Token;
                     UserSession.Username = response.User.Username;
@@ -69,6 +69,10 @@ namespace SurfScout.WindowLogic
 
                     // Get User data from server
                     await UserService.GetAllUsersAsync();
+                }
+                else
+                {
+                    return;
                 }
             }
             catch
