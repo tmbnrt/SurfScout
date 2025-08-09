@@ -310,7 +310,8 @@ namespace SurfScout.WindowLogic
                     Wave_height = newSessionWin.waveHeight,
                     Sail_size = newSessionWin.sailSize,
                     Rating = newSessionWin.rating,
-                    UserId = UserSession.UserId
+                    UserId = UserSession.UserId,
+                    Sport = UserSession.SelectedSportMode
                 };
 
                 SessionStore.AddSession(session);
@@ -348,7 +349,7 @@ namespace SurfScout.WindowLogic
             win.SessionListView.ItemsSource = sessionDisplayModels;
             win.SessionsPopup.IsOpen = true;
 
-            // TO DO: Create button in popup grid to show selected session information (show info from backend)
+            // TODO: Create button in popup grid to show selected session information (show info from backend)
             // ...
         }
 

@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using SurfScout.Models;
+using SurfScout.Services;
 
 namespace SurfScout.DataStores
 {
@@ -38,7 +39,7 @@ namespace SurfScout.DataStores
             List<Session> sessionList = new List<Session>();
 
             foreach (Session s in _sessions)
-                if (s.Spot == spot)
+                if (s.Spot == spot && s.Sport == UserSession.SelectedSportMode)
                     sessionList.Add(s);
 
             return sessionList;

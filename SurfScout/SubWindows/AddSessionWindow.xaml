@@ -75,6 +75,7 @@
             <Slider x:Name="sliderRating" Minimum="1" Maximum="5" TickFrequency="1" IsSnapToTickEnabled="True" Margin="0,0,0,10"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Label x:Name="label_SportMode" Margin="0,0,5,0"/>
                 <Button Content="✔️ Save" Click="SaveSession_Click" Width="100" Margin="5"/>
                 <Button Content="❌ Cancel" Click="Cancel_Click" Width="100" Margin="5"/>
             </StackPanel>

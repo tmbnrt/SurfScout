@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SurfScout.Services;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -30,6 +31,8 @@ namespace SurfScout.SubWindows
         public AddSessionWindow()
         {
             InitializeComponent();
+
+            label_SportMode.Content = UserSession.SelectedSportMode;
 
             System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
 

@@ -46,6 +46,7 @@ namespace SurfScout.Services
                         UserSession.UserId = result.User.Id;
                         UserSession.Username = result.User.Username;
                         UserSession.Role = result.User.Role;
+                        UserSession.SelectedSportMode = result.User.Sports[0];  // Default to first sport in list
                         return result;
                     }
                 }

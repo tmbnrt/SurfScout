@@ -53,18 +53,22 @@ namespace SurfScout.Services
 
              var sessions = JsonSerializer.Deserialize<List<Session>>(json, options);
 
-             // Assign known spot instances and user to sessions
+             // Assign known spot instances and the session's user (owner of the session) to sessions
              var spotLookup = SpotStore.Spots.ToDictionary(s => s.Id);
              var userLookup = AllUserStore.Users.ToDictionary(s => s.Id);
              foreach (var session in sessions)
              {
-                 if (spotLookup.TryGetValue(session.Spotid, out var knownSpot))
-                     session.Spot = knownSpot;
-                 if (userLookup.TryGetValue(session.UserId, out var user))
-                     session.User = user;
+                // TODO: Check for the selected sport mode, i.e. "Windsurfing" etc.
+                if (session.Sport == UserSession.SelectedSportMode)
+                {
+                    if (spotLookup.TryGetValue(session.Spotid, out var knownSpot))
+                        session.Spot = knownSpot;
+                    if (userLookup.TryGetValue(session.UserId, out var user))
+                        session.User = user;
+                }                 
              }
 
-             if (sessions != null)
+            if (sessions != null)
                  SessionStore.SetSessions(sessions);
 
              return SessionStore.Sessions;
@@ -80,6 +84,7 @@ namespace SurfScout.Services
                 EndTime = session.EndTime,
                 SpotId = session.Spot.Id,
                 UserId = session.UserId,
+                Sport = session.Sport,
                 Sail_size = session.Sail_size,
                 Rating = session.Rating,
                 Wave_height = session.Wave_height

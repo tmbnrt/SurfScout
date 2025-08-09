@@ -19,6 +19,7 @@ namespace SurfScout.Models
         public int Rating { get; set; }
         public double Sail_size { get; set; }
         public int Spotid { get; set; }
+        public string Sport { get; set; }
         public Spot Spot { get; set; }              // Navigation property
         public string Tide { get; set; }
         public double? WindSpeedKnots { get; set; }

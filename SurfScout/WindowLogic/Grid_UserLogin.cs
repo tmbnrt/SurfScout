@@ -22,6 +22,16 @@ namespace SurfScout.WindowLogic
             win.buttonLogin.Click += ButtonLogin_Click;
             win.buttonRegister.Click += ButtonRegister_Click;
             win.buttonLogout.Click += ButtonLogout_Click;
+            win.buttonSwitchSportMode.Click += ButtonSwitchSportMode_Click;
+        }
+
+        private void ButtonSwitchSportMode_Click(object sender, RoutedEventArgs e)
+        {
+            if (String.IsNullOrEmpty(win.comboSportOptions.Text))
+                return;
+
+            // Set the selected sport mode in the user session
+            UserSession.SelectedSportMode = win.comboSportOptions.Text;
         }
 
         private async void ButtonLogout_Click(object sender, RoutedEventArgs e)
@@ -65,6 +75,13 @@ namespace SurfScout.WindowLogic
                     // Change button name to user name and swap grid from *login to *userinfo
                     win.buttonUserName.Text = response.User.Username;
                     win.LoggedUser.Text = response.User.Username;
+                    win.textBlockSportMode.Text = UserSession.SelectedSportMode;
+
+                    // Fill combo box with sport modes
+                    win.comboSportOptions.Items.Clear();
+                    foreach (var sport in response.User.Sports)
+                        win.comboSportOptions.Items.Add(sport);
+
                     win.ChangeGrid(win.UserInfo);
 
                     // Get User data from server
