@@ -48,7 +48,7 @@ public partial class MainWindow : Window
         // Button interaction
         buttonUser.Click += ButtonUser_Click;
         buttonMapViewer.Click += ButtonMapViewer_Click;
-        buttonWindModel.Click += ButtonWindModel_Click;
+        buttonWindAnalytics.Click += buttonWindAnalytics_Click;
     }
 
     private void ButtonUser_Click(object sender, RoutedEventArgs e)
@@ -75,10 +75,10 @@ public partial class MainWindow : Window
         }
     }
 
-    private void ButtonWindModel_Click(object sender, RoutedEventArgs e)
+    private void buttonWindAnalytics_Click(object sender, RoutedEventArgs e)
     {
-        ChangeColor(buttonWindModel);
-        ChangeGrid(WindModel);
+        ChangeColor(buttonWindAnalytics);
+        ChangeGrid(WindAnalytics);
 
         if (!eventHandlerIsAttached_Grid_WindModel)
         {
@@ -94,7 +94,7 @@ public partial class MainWindow : Window
         this.grids.Add(UserLogin);
         this.grids.Add(UserInfo);
         this.grids.Add(MapViewer);
-        this.grids.Add(WindModel);
+        this.grids.Add(WindAnalytics);
     }
 
     private void AddButtons()
@@ -102,7 +102,7 @@ public partial class MainWindow : Window
         this.buttons = new List<Button>();
         this.buttons.Add(buttonUser);
         this.buttons.Add(buttonMapViewer);
-        this.buttons.Add(buttonWindModel);
+        this.buttons.Add(buttonWindAnalytics);
     }
 
     public void ChangeGrid(Grid act)

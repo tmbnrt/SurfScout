@@ -28,10 +28,10 @@
                         <TextBlock Text="Map Viewer" FontSize="16" Margin="10,0,0,0" VerticalAlignment="Center"/>
                     </DockPanel>
                 </Button>
-                <Button x:Name="buttonWindModel" Height="55" Background="WhiteSmoke" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0">
+                <Button x:Name="buttonWindAnalytics" Height="55" Background="WhiteSmoke" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0">
                     <DockPanel LastChildFill="False">
                         <Image Source="pack://application:,,,/SurfScout;component/graphics/tools_logo.png" DockPanel.Dock="Left" Margin="0,0,0,-0.4"/>
-                        <TextBlock Text="Wind Model" FontSize="16" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Wind Analytics" FontSize="16" Margin="10,0,0,0" VerticalAlignment="Center"/>
                     </DockPanel>
                 </Button>
                 <TextBlock Height="200"></TextBlock>
@@ -53,25 +53,42 @@
                     <!-- Vertical offset -->
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
+
                 <Grid Grid.Row="1" HorizontalAlignment="Center">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
+                        <!-- Username -->
                         <RowDefinition Height="Auto"/>
+                        <!-- Email -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- Password -->
                         <RowDefinition Height="40"/>
+                        <!-- Login Button -->
                         <RowDefinition Height="40"/>
+                        <!-- Register Button -->
                     </Grid.RowDefinitions>
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="200"/>
-                        <!-- Tight width -->
                     </Grid.ColumnDefinitions>
+
+                    <!-- Username -->
                     <TextBlock Text="User name:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10"/>
                     <TextBox x:Name="UsernameBox" Grid.Row="0" Grid.Column="1" Margin="0,0,0,10" Width="180"/>
-                    <TextBlock Text="Password:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10"/>
-                    <PasswordBox x:Name="PasswordBox" Grid.Row="1" Grid.Column="1" Margin="0,0,0,10" Width="180"/>
-                    <Button x:Name="buttonLogin" Content="Login" Grid.Row="2" Grid.ColumnSpan="2" 
+
+                    <!-- Email -->
+                    <TextBlock Text="Email:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10"/>
+                    <TextBox x:Name="EmailBox" Grid.Row="1" Grid.Column="1" Margin="0,0,0,10" Width="180"/>
+
+                    <!-- Password -->
+                    <TextBlock Text="Password:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10"/>
+                    <PasswordBox x:Name="PasswordBox" Grid.Row="2" Grid.Column="1" Margin="0,0,0,10" Width="180"/>
+
+                    <!-- Buttons -->
+                    <Button x:Name="buttonLogin" Content="Login" Grid.Row="3" Grid.ColumnSpan="2" 
                             Margin="0,5,0,5" Width="120" HorizontalAlignment="Center"/>
-                    <Button x:Name="buttonRegister" Content="Register" Grid.Row="3" Grid.ColumnSpan="2" 
+                    <Button x:Name="buttonRegister" Content="Register" Grid.Row="4" Grid.ColumnSpan="2" 
                             Width="120" HorizontalAlignment="Center"/>
                 </Grid>
             </Grid>
@@ -313,8 +330,8 @@
 
         </Grid>
 
-        <!-- Wind Model Grid !-->
-        <Grid Name="WindModel" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
+        <!-- Wind Analytics Grid !-->
+        <Grid Name="WindAnalytics" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
 
         </Grid>
     </Grid>

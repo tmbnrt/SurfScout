@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using SurfScout.Functions.UserDataFunction;
 
 namespace SurfScout.Services
 {
@@ -64,11 +65,18 @@ namespace SurfScout.Services
             return null;
         }
 
-        public async Task<bool> RegisterUserAsync(string username, string password)
+        public async Task<bool> RegisterUserAsync(string username, string email, string password)
         {
+            if (!EmailCheck.EmailIsValid(email))
+            {
+                MessageBox.Show("Email address is not valid.");
+                return false;
+            }
+
             var user = new
             {
                 username = username.Trim(),
+                email = email.Trim(),
                 password_hash = password.Trim()
             };
 

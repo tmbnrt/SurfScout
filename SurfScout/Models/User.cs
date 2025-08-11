@@ -11,6 +11,7 @@ namespace SurfScout.Models
     {
         public int Id { get; set; }
         public string Username { get; set; }
+        public string Email { get; set; }
         public string Role { get; set; }            // "Admin"  or  "User"
         public string[] Sports { get; set; }
     }

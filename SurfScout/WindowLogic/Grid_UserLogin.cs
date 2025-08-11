@@ -102,10 +102,11 @@ namespace SurfScout.WindowLogic
         {
             string username = win.UsernameBox.Text.Trim();
             string password = win.PasswordBox.Password;
+            string email = win.EmailBox.Text.Trim();
 
             // API Registration
             var service = new UserService();
-            if (await service.RegisterUserAsync(username, password))
+            if (await service.RegisterUserAsync(username, email, password))
             {
                 MessageBox.Show("Registration successful. Please log in.");
                 win.UsernameBox = null;
