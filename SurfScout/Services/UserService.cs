@@ -65,7 +65,7 @@ namespace SurfScout.Services
             return null;
         }
 
-        public async Task<bool> RegisterUserAsync(string username, string email, string password)
+        public async Task<bool> RegisterUserAsync(string username, string email, string password, string[] sportSelection)
         {
             if (!EmailCheck.EmailIsValid(email))
             {
@@ -73,11 +73,18 @@ namespace SurfScout.Services
                 return false;
             }
 
+            if (sportSelection.Length < 1)
+            {
+                MessageBox.Show("Please select wind sports.");
+                return false;
+            }
+
             var user = new
             {
                 username = username.Trim(),
                 email = email.Trim(),
-                password_hash = password.Trim()
+                password_hash = password.Trim(),
+                sports = sportSelection
             };
 
             var json = JsonSerializer.Serialize(user);

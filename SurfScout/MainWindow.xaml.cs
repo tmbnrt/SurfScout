@@ -20,6 +20,7 @@ using System.ComponentModel;
 using System.Security.Cryptography.X509Certificates;
 using SurfScout.WindowLogic;
 using Esri.ArcGISRuntime.UI.Controls;
+using SurfScout.Services;
 
 
 namespace SurfScout;
@@ -33,7 +34,8 @@ public partial class MainWindow : Window
     private List<Grid> grids;
     public bool eventHandlerIsAttached_Grid_UserLogin = false;
     public bool eventHandlerIsAttached_Grid_MapViewer = false;
-    public bool eventHandlerIsAttached_Grid_WindModel = false;
+    public bool eventHandlerIsAttached_Grid_WindAnalytics = false;
+    public bool eventHandlerIsAttached_Grid_ForecastAnalysis = false;
 
     public MainWindow()
     {
@@ -46,15 +48,26 @@ public partial class MainWindow : Window
         AddGrids();
 
         // Button interaction
-        buttonUser.Click += ButtonUser_Click;
+        buttonDashboard.Click += buttonDashboard_Click;
         buttonMapViewer.Click += ButtonMapViewer_Click;
         buttonWindAnalytics.Click += buttonWindAnalytics_Click;
+        buttonForecastAnalysis.Click += buttonForecastAnalysis_Click;
     }
 
-    private void ButtonUser_Click(object sender, RoutedEventArgs e)
+    private void MenuToggleButton_Checked(object sender, RoutedEventArgs e)
     {
-        ChangeColor(buttonUser);
-        ChangeGrid(UserLogin);
+        MenuOverlay.Visibility = Visibility.Visible;
+    }
+
+    private void MenuToggleButton_Unchecked(object sender, RoutedEventArgs e)
+    {
+        MenuOverlay.Visibility = Visibility.Collapsed;
+    }
+
+    private void buttonDashboard_Click(object sender, RoutedEventArgs e)
+    {
+        ChangeColor(buttonDashboard);
+        ChangeGrid(Dashboard);
 
         if (!eventHandlerIsAttached_Grid_UserLogin)
         {
@@ -75,15 +88,26 @@ public partial class MainWindow : Window
         }
     }
 
+    private void buttonForecastAnalysis_Click(object sender, RoutedEventArgs e)
+    {
+        ChangeColor(buttonForecastAnalysis);
+        ChangeGrid(ForecastAnalysis);
+        if (!eventHandlerIsAttached_Grid_ForecastAnalysis)
+        {
+            //Grid_ForecastAnalysis grid_forecastanalysis = new Grid_ForecastAnalysis(sender, e, this);
+            eventHandlerIsAttached_Grid_ForecastAnalysis = true;
+        }
+    }
+
     private void buttonWindAnalytics_Click(object sender, RoutedEventArgs e)
     {
         ChangeColor(buttonWindAnalytics);
         ChangeGrid(WindAnalytics);
 
-        if (!eventHandlerIsAttached_Grid_WindModel)
+        if (!eventHandlerIsAttached_Grid_WindAnalytics)
         {
             Grid_WindModel grid_windmodel = new Grid_WindModel(sender, e, this);
-            eventHandlerIsAttached_Grid_WindModel = true;
+            eventHandlerIsAttached_Grid_WindAnalytics = true;
         }
     }
 
@@ -91,28 +115,34 @@ public partial class MainWindow : Window
     {
         this.grids = new List<Grid>();
         this.grids.Add(HomeScreen);
+        this.grids.Add(Dashboard);
         this.grids.Add(UserLogin);
-        this.grids.Add(UserInfo);
         this.grids.Add(MapViewer);
         this.grids.Add(WindAnalytics);
+        this.grids.Add(ForecastAnalysis);
     }
 
     private void AddButtons()
     {
         this.buttons = new List<Button>();
-        this.buttons.Add(buttonUser);
+        this.buttons.Add(buttonDashboard);
         this.buttons.Add(buttonMapViewer);
         this.buttons.Add(buttonWindAnalytics);
+        this.buttons.Add(buttonForecastAnalysis);
     }
 
     public void ChangeGrid(Grid act)
     {
-        foreach (Grid b in this.grids)
+        // Show user login if not logged in
+        if (!UserSession.IsLoggedIn)
+            act = UserLogin;
+
+            foreach (Grid b in this.grids)
         {
             if (b != act)
                 b.Visibility = System.Windows.Visibility.Hidden;
             else
-                b.Visibility = System.Windows.Visibility.Visible;
+                b.Visibility = System.Windows.Visibility.Visible;             
         }
     }
 

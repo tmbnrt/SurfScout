@@ -8,64 +8,105 @@
         mc:Ignorable="d"
         Title="SurfScout" Height="450" Width="800">
     <Grid Name ="MainGrid">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="107*"/>
-            <RowDefinition Height="618*"/>
-        </Grid.RowDefinitions>
-        <Image Source="pack://application:,,,/SurfScout;component/graphics/underline.png" Margin="0,602.2,0.6,-0.2" Stretch="UniformToFill" Grid.Row="1"/>
-        <Grid Width="{Binding ElementName=MainWindow, Path=ActualWidth}" Height="{Binding ElementName=MainWindow, Path=ActualHeight}" Margin="0,0,1073.6,15.8" Name="SelectProgram"  Background="WhiteSmoke" Grid.RowSpan="2">
-            <StackPanel Background="WhiteSmoke">
-                <Image Source="pack://application:,,,/SurfScout;component/graphics/logo.png" Margin="0,0,-0.4,0"/>
-                <Button x:Name="buttonUser" Height="55" Background="WhiteSmoke" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0">
-                    <DockPanel LastChildFill="False">
-                        <Image Source="pack://application:,,,/SurfScout;component/graphics/tools_logo.png" DockPanel.Dock="Left" Margin="0,0,0,-0.4"/>
-                        <TextBlock x:Name="buttonUserName" Text="User Login" FontSize="16" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                    </DockPanel>
+        
+        <!-- Burger menu toggle -->
+        <ToggleButton x:Name="MenuToggleButton"
+                        Width="50" Height="50" Margin="20"
+                        VerticalAlignment="Top" HorizontalAlignment="Left"
+                        Content="☰"
+                        FontSize="28"
+                        Background="#40FFFFFF"
+                        BorderBrush="Transparent"
+                        Foreground="Black"
+                        Cursor="Hand"
+                        Checked="MenuToggleButton_Checked"
+                        Unchecked="MenuToggleButton_Unchecked"
+                        Panel.ZIndex="10">
+            <ToggleButton.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="2"/>
+            </ToggleButton.Effect>
+        </ToggleButton>
+
+        <!-- Overlay menu -->
+        <Border x:Name="MenuOverlay" Background="WhiteSmoke" Width="250"
+        VerticalAlignment="Stretch" HorizontalAlignment="Left"
+        Visibility="Collapsed" Panel.ZIndex="9" Padding="10">
+            <StackPanel>
+                <Image Source="pack://application:,,,/SurfScout;component/graphics/logo.png" Margin="0,0,0,10"/>
+
+                <Button x:Name="buttonDashboard" Style="{StaticResource MenuButtonStyle}">
+                    <TextBlock Text="Dashboard" FontSize="16"/>
                 </Button>
-                <Button x:Name="buttonMapViewer" Height="55" Background="WhiteSmoke" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0">
-                    <DockPanel LastChildFill="False">
-                        <Image Source="pack://application:,,,/SurfScout;component/graphics/tools_logo.png" DockPanel.Dock="Left" Margin="0,0,0,-0.4"/>
-                        <TextBlock Text="Map Viewer" FontSize="16" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                    </DockPanel>
+
+                <Button x:Name="buttonMapViewer" Style="{StaticResource MenuButtonStyle}">
+                    <TextBlock Text="Map Viewer" FontSize="16"/>
                 </Button>
-                <Button x:Name="buttonWindAnalytics" Height="55" Background="WhiteSmoke" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0">
-                    <DockPanel LastChildFill="False">
-                        <Image Source="pack://application:,,,/SurfScout;component/graphics/tools_logo.png" DockPanel.Dock="Left" Margin="0,0,0,-0.4"/>
-                        <TextBlock Text="Wind Analytics" FontSize="16" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                    </DockPanel>
+
+                <Button x:Name="buttonWindAnalytics" Style="{StaticResource MenuButtonStyle}">
+                    <TextBlock Text="Wind Analytics" FontSize="16"/>
                 </Button>
-                <TextBlock Height="200"></TextBlock>
-                <Button x:Name="buttonInfo" Content="Info" Height="40.0" FontSize="16" Background="WhiteSmoke"/>
-                <Button x:Name="buttonQuit" Content="Quit" FontWeight="Bold" Height="42" FontSize="18" Background="LightGray"/>
+
+                <Button x:Name="buttonForecastAnalysis" Style="{StaticResource MenuButtonStyle}">
+                    <TextBlock Text="Forecast Analysis" FontSize="16"/>
+                </Button>
+
+                <TextBlock Height="200"/>
+
+                <Button x:Name="buttonInfo" Content="Info" Height="40" FontSize="16" Background="WhiteSmoke" Margin="5,2"/>
+                <Button x:Name="buttonQuit" Content="Quit" FontWeight="Bold" Height="42" FontSize="18" Background="LightGray" Margin="5,2"/>
             </StackPanel>
-        </Grid>
+        </Border>
+
         <!-- Home Grid !-->
-        <Grid Name="HomeScreen" Margin="264,0,-0.4,15.8" Visibility="Visible" Grid.RowSpan="2">
-            <Label HorizontalAlignment="Center" FontSize="18" Margin="0,29,876,629" Width="198">Surf Scout</Label>
-            <Image Source= "pack://application:,,,/SurfScout;component/graphics/home.jpg" DockPanel.Dock="Left" Margin="0,80,0,0" Stretch="Fill"/>
+        <Grid Name="HomeScreen" Grid.Row="0" Grid.RowSpan="2" Margin="0" Visibility="Visible">
+            <!-- Background image -->
+            <Image Source="pack://application:,,,/SurfScout;component/graphics/home.jpg"
+           Stretch="Fill"/>
+
+            <!-- Overlay including welcome text -->
+            <Border Background="#AA000000" VerticalAlignment="Top" Height="100">
+                <TextBlock Text="Welcome to Surf Scout"
+                   Foreground="White"
+                   FontSize="36"
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   TextAlignment="Center"
+                   Margin="20"/>
+            </Border>
         </Grid>
-        <!-- User Login Grid !-->
+
+        <!-- User login !-->
         <Grid Name="UserLogin" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
             <Grid>
-                <!-- Outer grid for vertical offset -->
                 <Grid.RowDefinitions>
                     <RowDefinition Height="200"/>
-                    <!-- Vertical offset -->
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
+                <!-- Switch login / register -->
+                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,40,0,0">
+                    <ToggleButton x:Name="LoginToggle" Content="Login" IsChecked="True" Height="25" Width="100" Margin="5"
+                  Style="{StaticResource ToggleTabStyle}"/>
+                    <ToggleButton x:Name="RegisterToggle" Content="Register" Height="25" Width="100" Margin="5"
+                  Style="{StaticResource ToggleTabStyle}"/>
+                </StackPanel>
+
+                <!-- Form -->
                 <Grid Grid.Row="1" HorizontalAlignment="Center">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
                         <!-- Username -->
                         <RowDefinition Height="Auto"/>
                         <!-- Email -->
                         <RowDefinition Height="Auto"/>
                         <!-- Password -->
-                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Sportarten -->
+                        <RowDefinition Height="Auto"/>
                         <!-- Login Button -->
                         <RowDefinition Height="40"/>
                         <!-- Register Button -->
+                        <RowDefinition Height="40"/>                        
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
@@ -75,26 +116,39 @@
 
                     <!-- Username -->
                     <TextBlock Text="User name:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10"/>
-                    <TextBox x:Name="UsernameBox" Grid.Row="0" Grid.Column="1" Margin="0,0,0,10" Width="180"/>
+                    <TextBox x:Name="UsernameBox" Grid.Row="0" Grid.Column="1"/>
 
-                    <!-- Email -->
-                    <TextBlock Text="Email:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10"/>
-                    <TextBox x:Name="EmailBox" Grid.Row="1" Grid.Column="1" Margin="0,0,0,10" Width="180"/>
+                    <!-- Email (only for registration) -->
+                    <TextBlock x:Name="EmailLabel" Text="Email:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10" Visibility="Collapsed"/>
+                    <TextBox x:Name="EmailBox" Grid.Row="1" Grid.Column="1" Visibility="Collapsed"/>
 
                     <!-- Password -->
                     <TextBlock Text="Password:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10"/>
-                    <PasswordBox x:Name="PasswordBox" Grid.Row="2" Grid.Column="1" Margin="0,0,0,10" Width="180"/>
+                    <PasswordBox x:Name="PasswordBox" Grid.Row="2" Grid.Column="1"/>
 
-                    <!-- Buttons -->
-                    <Button x:Name="buttonLogin" Content="Login" Grid.Row="3" Grid.ColumnSpan="2" 
-                            Margin="0,5,0,5" Width="120" HorizontalAlignment="Center"/>
-                    <Button x:Name="buttonRegister" Content="Register" Grid.Row="4" Grid.ColumnSpan="2" 
-                            Width="120" HorizontalAlignment="Center"/>
+                    <!-- Sport selection (only for registration) -->
+                    <TextBlock x:Name="SportLabel" Text="Windsports:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Top" Margin="0,0,10,10" Visibility="Collapsed"/>
+                    <WrapPanel x:Name="SportSelectionPanel" Grid.Row="3" Grid.Column="1" Visibility="Collapsed" HorizontalAlignment="Left">
+                        <ToggleButton x:Name="ToggleWindsurfing" Content="Windsurfing" Style="{StaticResource CompactSportToggleStyle}"/>
+                        <ToggleButton x:Name="ToggleKitesurfing" Content="Kitesurfing" Style="{StaticResource CompactSportToggleStyle}"/>
+                        <ToggleButton x:Name="ToggleWingfoiling" Content="Wingfoiling" Style="{StaticResource CompactSportToggleStyle}"/>
+                    </WrapPanel>
+
+                    <!-- Login button -->
+                    <Button x:Name="buttonLogin" Content="Login" Grid.Row="3" Grid.ColumnSpan="2"
+                        Style="{StaticResource FormButtonStyle}" HorizontalAlignment="Center" Visibility="Visible"/>
+
+                    <!-- Register button -->
+                    <Button x:Name="buttonRegister" Content="Register" Grid.Row="4" Grid.ColumnSpan="2"
+                        Style="{StaticResource FormButtonStyle}" HorizontalAlignment="Center" Visibility="Collapsed"/>
+
                 </Grid>
             </Grid>
         </Grid>
-        <!-- User info Grid (user logged in) !-->
-        <Grid Name="UserInfo" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
+
+
+        <!-- Dashboard !-->
+        <Grid Name="Dashboard" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
             <Grid>
                 <!-- Outer grid for vertical offset -->
                 <Grid.RowDefinitions>
@@ -109,9 +163,9 @@
                         <RowDefinition Height="40"/>
                         <RowDefinition Height="40"/>
                         <RowDefinition Height="Auto"/>
-                        <!-- Zeile für Label -->
+                        <!-- Row for label -->
                         <RowDefinition Height="40"/>
-                        <!-- Zeile für Button + Dropdown -->
+                        <!-- Row for buttons -->
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -131,9 +185,9 @@
                     </StackPanel>
                     <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,5">
                         <ComboBox x:Name="comboSportOptions" Width="150">
-                            <ComboBoxItem Content="Option 1"/>
-                            <ComboBoxItem Content="Option 2"/>
-                            <ComboBoxItem Content="Option 3"/>
+                            <ComboBoxItem Content="Windsurfing"/>
+                            <ComboBoxItem Content="Kitesurfing"/>
+                            <ComboBoxItem Content="Wingfoiling"/>
                         </ComboBox>
                         <Label Width="10"/>
                         <Button x:Name="buttonSwitchSportMode" Content="Switch" Width="120" Margin="0,0,10,0"/>
@@ -332,6 +386,11 @@
 
         <!-- Wind Analytics Grid !-->
         <Grid Name="WindAnalytics" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
+
+        </Grid>
+
+        <!-- Forecast Analysis Grid !-->
+        <Grid Name="ForecastAnalysis" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
 
         </Grid>
     </Grid>
