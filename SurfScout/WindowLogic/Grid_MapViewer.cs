@@ -350,9 +350,6 @@ namespace SurfScout.WindowLogic
 
             win.SessionListView.ItemsSource = sessionDisplayModels;
             win.SessionsPopup.IsOpen = true;
-
-            // TODO: Create button in popup grid to show selected session information (show info from backend)
-            // ...
         }
 
         private async void LoadMap()
@@ -401,19 +398,21 @@ namespace SurfScout.WindowLogic
             var mapPointOriginal = g.Location;
             var mapPoint4326 = (MapPoint)GeometryEngine.Project(mapPointOriginal, SpatialReferences.Wgs84);
 
-            // Check for spots nearby (search distance = 300m)
-            this.selectedSpot = null;
+            // Check for spots nearby (search distance = 600m)
+            Spot checkFound = null;
             foreach (Spot spot in SpotStore.Spots)
             {
-                if (spot.CheckWithinDistance(mapPoint4326.X, mapPoint4326.Y, 300))
-                    this.selectedSpot = spot;
+                if (spot.CheckWithinDistance(mapPoint4326.X, mapPoint4326.Y, 500))
+                    checkFound = spot;
             }
 
-            if (selectedSpot == null)
+            if (checkFound == null)
                 return;
 
+            this.selectedSpot = checkFound;
+
             // Place spot popup on UI
-            var screenPos = win.SpotView.LocationToScreen(mapPointOriginal);    // alternative test: mapPointOriginal
+            var screenPos = win.SpotView.LocationToScreen(mapPointOriginal);
 
             // Show spot sidebar
             win.MapToolbar.Visibility = Visibility.Collapsed;
