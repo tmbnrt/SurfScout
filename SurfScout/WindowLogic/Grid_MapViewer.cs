@@ -65,12 +65,12 @@ namespace SurfScout.WindowLogic
             win.SpotView.MouseDown += SpotView_MouseDown;
 
             // Click interaction with spot popup
-            win.buttonCloseSpotPopup.Click += ButtonCloseSpotPopup_Click;
-            win.buttonSpotAddSession.Click += ButtonSpotAddSession_Click;
-            win.buttonSpotShowSessions.Click += ButtonSpotShowSessions_Click;
-            win.buttonSpotRename.Click += ButtonSpotRename_Click;
-            win.buttonSpotSetWindFetch.Click += ButtonSpotSetWindFetch_Click;
-            win.buttonSpotShowWindFetch.Click += ButtonSpotShowWindFetch_Click;
+            win.buttonCloseSidebar.Click += ButtonCloseSpotPopup_Click;
+            win.buttonSidebarAddSession.Click += ButtonSpotAddSession_Click;
+            win.buttonSidebarShowSessions.Click += ButtonSpotShowSessions_Click;
+            win.buttonSidebarSpotRename.Click += ButtonSpotRename_Click;
+            win.buttonSidebarSetWindFetch.Click += ButtonSpotSetWindFetch_Click;
+            win.buttonSidebarShowWindFetch.Click += ButtonSpotShowWindFetch_Click;
             win.buttonSavePolygon.Click += ButtonSavePolygon_Click;
             win.buttonCancelPolygon.Click += ButtonCancelPolygon_Click;
             win.buttonClosePolygon.Click += ButtonCancelPolygon_Click;
@@ -95,7 +95,9 @@ namespace SurfScout.WindowLogic
 
         private void ButtonCloseSpotPopup_Click(object sender, RoutedEventArgs e)
         {
-            win.SpotPopup.IsOpen = false;
+            //win.SpotPopup.IsOpen = false;
+            win.SpotSidebar.Visibility = Visibility.Collapsed;
+            win.MapToolbar.Visibility = Visibility.Visible;
         }
 
         private async void ButtonSavePolygon_Click(object sender, RoutedEventArgs e)
@@ -413,32 +415,37 @@ namespace SurfScout.WindowLogic
             // Place spot popup on UI
             var screenPos = win.SpotView.LocationToScreen(mapPointOriginal);    // alternative test: mapPointOriginal
 
+            // Show spot sidebar
+            win.MapToolbar.Visibility = Visibility.Collapsed;
+            win.SpotSidebar.Visibility = Visibility.Visible;
+            win.SidebarSpotName.Text = selectedSpot.Name;
+
             // Enable buttons for Admin roles
             if (UserSession.IsAdmin)
             {
-                win.buttonSpotSetWindFetch.IsEnabled = true;
-                win.buttonSpotRename.IsEnabled = true;
+                win.buttonSidebarSetWindFetch.IsEnabled = true;
+                win.buttonSidebarSpotRename.IsEnabled = true;
             }
             else
             {
-                win.buttonSpotSetWindFetch.IsEnabled = false;
-                win.buttonSpotRename.IsEnabled = false;
+                win.buttonSidebarSetWindFetch.IsEnabled = false;
+                win.buttonSidebarSpotRename.IsEnabled = false;
             }
 
-            win.buttonSpotSetWindFetch.IsEnabled = true;
-            win.buttonSpotShowWindFetch.IsEnabled = true;
-            win.buttonSpotRename.IsEnabled = true;
+            win.buttonSidebarShowWindFetch.IsEnabled = true;
 
-            win.PopupSpotName.Text = selectedSpot.Name;
-            win.SpotPopup.Placement = PlacementMode.AbsolutePoint;
-            win.SpotPopup.HorizontalOffset = screenPos.X;
-            win.SpotPopup.VerticalOffset = screenPos.Y;
-            win.SpotPopup.IsOpen = true;
+            
+            //win.SpotPopup.Placement = PlacementMode.AbsolutePoint;
+            //win.SpotPopup.HorizontalOffset = screenPos.X;
+            //win.SpotPopup.VerticalOffset = screenPos.Y;
+            //win.SpotPopup.IsOpen = true;
         }
 
         private void OnCloseSpotPopup(object sender, RoutedEventArgs e)
         {
-            win.SpotPopup.IsOpen = false;
+            //win.SpotPopup.IsOpen = false;
+            win.SpotSidebar.Visibility = Visibility.Collapsed;
+            win.MapToolbar.Visibility = Visibility.Visible;
         }
 
         private void ButtonMapAddSpot_Click(object sender, RoutedEventArgs e)
