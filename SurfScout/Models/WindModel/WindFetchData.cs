@@ -24,7 +24,14 @@ namespace SurfScout.Models.WindModel
                 return;
 
             this.SpotId = spotId;
-            this.RasterPoints = SpatialOperations.GenerateRasterPointsInPolygon(polygon, 10000);
+
+            // Using ESRI engine
+            //this.RasterPoints = SpatialOperations.GenerateRasterPointsInPolygon(polygon, 25000);
+
+            List<NetTopologySuite.Geometries.Point> ntsPoints = SpatialOperations.GenerateRasterPointsInPolygon(polygon, 25000);
+
+            // Convert NTS points to ESRI MapPoints
+            this.RasterPoints = ntsPoints.Select(p => new MapPoint(p.X, p.Y, SpatialReferences.Wgs84)).ToList();
         }
 
     }

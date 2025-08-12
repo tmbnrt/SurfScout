@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Esri.ArcGISRuntime.Geometry;
+using NetTopologySuite;
 using NetTopologySuite.Geometries;
 
 namespace SurfScout.Functions.GeoFunctions
@@ -32,7 +33,45 @@ namespace SurfScout.Functions.GeoFunctions
             return distanceInMeters <= maxDistance;
         }
 
-        public static List<MapPoint> GenerateRasterPointsInPolygon(NetTopologySuite.Geometries.Polygon ntsPolygon,
+        public static List<Point> GenerateRasterPointsInPolygon(NetTopologySuite.Geometries.Polygon ntsPolygon,
+                                                                double spacingMeters)
+        {
+            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+            var pointsInsidePolygon = new List<Point>();
+
+            // Bounding box of polygon
+            var env = ntsPolygon.EnvelopeInternal;
+            double minLon = env.MinX;
+            double maxLon = env.MaxX;
+            double minLat = env.MinY;
+            double maxLat = env.MaxY;
+
+            // Approximate geodetic step size using latitude-dependent conversion
+            // 1 degree latitude is approx 111320 meters
+            double stepLat = spacingMeters / 111320.0;
+
+            // 1 degree longitude is approx 111320 * cos(latitude) meters
+            // Use center latitude for approximation
+            double centerLatRad = (minLat + maxLat) / 2.0 * Math.PI / 180.0;
+            double metersPerDegreeLon = 111320.0 * Math.Cos(centerLatRad);
+            double stepLon = spacingMeters / metersPerDegreeLon;
+
+            // Create raster points
+            for (double lon = minLon; lon <= maxLon; lon += stepLon)
+            {
+                for (double lat = minLat; lat <= maxLat; lat += stepLat)
+                {
+                    var candidate = geometryFactory.CreatePoint(new Coordinate(lon, lat));
+
+                    if (ntsPolygon.Contains(candidate))
+                        pointsInsidePolygon.Add(candidate);
+                }
+            }
+
+            return pointsInsidePolygon;
+        }
+
+        public static List<MapPoint> GenerateRasterPointsInPolygonESRI(NetTopologySuite.Geometries.Polygon ntsPolygon,
                                                                   double spacingMeters)
         {
             var pointsInsidePolygon = new List<MapPoint>();
