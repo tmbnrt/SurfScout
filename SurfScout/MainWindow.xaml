@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="SurfScout" Height="450" Width="800">
     <Grid Name ="MainGrid">
-        
+
         <!-- Burger menu toggle -->
         <ToggleButton x:Name="MenuToggleButton"
                         Width="50" Height="50" Margin="20"
@@ -77,7 +77,7 @@
         </Grid>
 
         <!-- User login !-->
-        <Grid Name="UserLogin" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
+        <Grid Name="UserLogin" Margin="100,0,0,0" Visibility="Collapsed" Grid.RowSpan="2">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="200"/>
@@ -146,9 +146,8 @@
             </Grid>
         </Grid>
 
-
         <!-- Dashboard !-->
-        <Grid Name="Dashboard" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
+        <Grid Name="Dashboard" Margin="100,0,0,0" Visibility="Collapsed" Grid.RowSpan="2">
             <Grid>
                 <!-- Outer grid for vertical offset -->
                 <Grid.RowDefinitions>
@@ -195,22 +194,33 @@
                 </Grid>
             </Grid>
         </Grid>
+        
         <!-- Map Viewer Grid !-->
-        <Grid Name="MapViewer" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
-            <Grid>
+        <Grid Name="MapViewer" Margin="100,0,0,0" Visibility="Collapsed" Grid.RowSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <!-- Tool bar -->
+                <ColumnDefinition Width="*"/>
                 <!-- Map -->
-                <esri:MapView x:Name="SpotView" />
+            </Grid.ColumnDefinitions>
 
-                <!-- Upper buttons -->
-                <StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Margin="20,20,20,0"
-                    Panel.ZIndex="1"
-                    Background="#AAFFFFFF">
-                    <Button x:Name="buttonMapAddSpot" Content="Add new spot" Width="150" Height="30" Margin="0,0,10,0"/>
-                </StackPanel>
-            </Grid>
+            <!-- Vertical tool bar -->
+            <StackPanel Grid.Column="0"
+                Orientation="Vertical"
+                Background="#AAFFFFFF"
+                Margin="10"
+                Width="160"
+                Panel.ZIndex="1">
+                <TextBlock Text="Tools" FontWeight="Bold" FontSize="16" Margin="10"/>
+                <Button x:Name="buttonMapAddSpot" Content="Add new spot" Height="40" Margin="10"/>
+                <!-- ... additional buttons -->
+                <Button x:Name="buttonDrawPoint" Content="Draw Point" Height="40" Margin="10"/>
+                <Button x:Name="buttonDrawPolygon" Content="Draw Polygon" Height="40" Margin="10"/>
+                <Button x:Name="buttonMeasureDistance" Content="Measure Distance" Height="40" Margin="10"/>
+            </StackPanel>
+
+            <!-- Map -->
+            <esri:MapView x:Name="SpotView" Grid.Column="1"/>           
 
             <!-- Polygon interaction popups -->
             <Popup x:Name="PolygonPopup"
@@ -381,16 +391,15 @@
                     </Grid>
                 </Border>
             </Popup>
-
         </Grid>
 
         <!-- Wind Analytics Grid !-->
-        <Grid Name="WindAnalytics" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
+        <Grid Name="WindAnalytics" Margin="100,0,0,0" Visibility="Collapsed" Grid.RowSpan="2">
 
         </Grid>
 
         <!-- Forecast Analysis Grid !-->
-        <Grid Name="ForecastAnalysis" Margin="264,0,-0.4,15.8" Visibility="Collapsed" Grid.RowSpan="2">
+        <Grid Name="ForecastAnalysis" Margin="100,0,0,0" Visibility="Collapsed" Grid.RowSpan="2">
 
         </Grid>
     </Grid>
