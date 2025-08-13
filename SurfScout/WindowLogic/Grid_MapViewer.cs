@@ -74,7 +74,7 @@ namespace SurfScout.WindowLogic
             win.buttonSavePolygon.Click += ButtonSavePolygon_Click;
             win.buttonCancelPolygon.Click += ButtonCancelPolygon_Click;
             win.buttonClosePolygon.Click += ButtonCancelPolygon_Click;
-            win.buttonShowPolygonRasterPoints.Click += ButtonShowPolygonRasterPoints_Click;
+            win.buttonShowPolygonVectorPoints.Click += ButtonShowPolygonVectorPoints_Click;
         }
 
         private void SpotView_MouseDown(object sender, MouseButtonEventArgs e)
@@ -184,20 +184,20 @@ namespace SurfScout.WindowLogic
                 UI_Helpers.SetButtonState(win.buttonSavePolygon, "enable");
         }
 
-        private void ButtonShowPolygonRasterPoints_Click(object sender, RoutedEventArgs e)
+        private void ButtonShowPolygonVectorPoints_Click(object sender, RoutedEventArgs e)
         {
             ShowPolygon();
-            ShowRaster();
+            ShowVectorPoints();
         }
 
-        private void ShowRaster()
+        private void ShowVectorPoints()
         {
             if (selectedSpot.WindFetchData == null)
                 return;
-            if (selectedSpot.WindFetchData.RasterPoints == null)
+            if (selectedSpot.WindFetchData.VectorPoints == null)
                 return;
 
-            foreach (var point in selectedSpot.WindFetchData.RasterPoints)
+            foreach (var point in selectedSpot.WindFetchData.VectorPoints)
             {
                 var pointSymbol = new SimpleMarkerSymbol
                 {
@@ -211,7 +211,6 @@ namespace SurfScout.WindowLogic
 
                 polygonOverlay.Graphics.Add(pointGraphic);
             }
-
         }
 
         private void ShowPolygon()

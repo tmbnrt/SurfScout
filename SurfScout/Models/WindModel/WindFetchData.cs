@@ -12,7 +12,7 @@ namespace SurfScout.Models.WindModel
     public class WindFetchData
     {
         public int SpotId { get; set; } // Verknüpfung zum Spot
-        public List<MapPoint>? RasterPoints { get; set; }
+        public List<MapPoint>? VectorPoints { get; set; }
         
         // Dictionaries containing the hourly wind data sets - Key: i.e. AROME or ICON
         public Dictionary<string, List<WindFetchDataSet>> Model_ForecastDataSet { get; set; } = new();
@@ -31,7 +31,7 @@ namespace SurfScout.Models.WindModel
             List<NetTopologySuite.Geometries.Point> ntsPoints = SpatialOperations.GenerateRasterPointsInPolygon(polygon, 25000);
 
             // Convert NTS points to ESRI MapPoints
-            this.RasterPoints = ntsPoints.Select(p => new MapPoint(p.X, p.Y, SpatialReferences.Wgs84)).ToList();
+            this.VectorPoints = ntsPoints.Select(p => new MapPoint(p.X, p.Y, SpatialReferences.Wgs84)).ToList();
         }
 
     }
