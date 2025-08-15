@@ -11,7 +11,7 @@ namespace SurfScout.Models.WindModel
     // This class represents the windfetch data for a spot (instance can be real data or foracast data)
     public class WindFetchData
     {
-        public int SpotId { get; set; } // Verknüpfung zum Spot
+        public int SpotId { get; set; }
         public List<MapPoint>? VectorPoints { get; set; }
         
         // Dictionaries containing the hourly wind data sets - Key: i.e. AROME or ICON

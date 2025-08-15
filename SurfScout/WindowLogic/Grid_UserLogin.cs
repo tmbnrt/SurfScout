@@ -149,9 +149,9 @@ namespace SurfScout.WindowLogic
             if (await service.RegisterUserAsync(username, email, password, sports))
             {
                 MessageBox.Show("Registration successful. Please log in.");
-                win.UsernameBox = null;
-                win.PasswordBox = null;
-                win.EmailBox = null;
+                win.UsernameBox.Text = null;
+                win.PasswordBox.Password = null;
+                win.EmailBox.Text = null;
             }
         }
     }
