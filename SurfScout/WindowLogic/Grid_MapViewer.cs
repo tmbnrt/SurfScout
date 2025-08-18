@@ -42,9 +42,11 @@ namespace SurfScout.WindowLogic
 
         private string mouseClick;
 
+        private WindFieldAnalyzer windAnalyzer;
+
         // Current UI selections
-        private Spot selectedSpot;
-        private Session selectedSession;
+        public Spot selectedSpot;
+        public Session selectedSession;
 
         public Grid_MapViewer(object sender, RoutedEventArgs e, MainWindow window)
         {
@@ -63,6 +65,9 @@ namespace SurfScout.WindowLogic
 
             // Parallel check for left/right mouse klick
             win.SpotView.MouseDown += SpotView_MouseDown;
+
+            // Open wind analytics
+            win.buttonWindAnalytics.Click += ButtonWindAnalytics_Click;
 
             // Click interaction with spot popup
             win.buttonCloseSidebar.Click += ButtonCloseSpotPopup_Click;
@@ -483,6 +488,20 @@ namespace SurfScout.WindowLogic
 
             if (addSpotIsActive)
                 CreateSpot(wgsPoint.Y, wgsPoint.X);
+        }
+
+        private void buttonWindAnalysis_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var session = button?.DataContext as Session;
+
+            if (session == null)
+                return;
+
+            this.selectedSession = session!;
+
+            // Create wind analysis instance
+            this.windAnalyzer = new WindFieldAnalyzer(win, selectedSession);
         }
 
         private void CreateSpot(double latitude, double longitude)

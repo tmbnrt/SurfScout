@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Windows.System;
 using NetTopologySuite.IO;
 using NetTopologySuite.Geometries;
+using SurfScout.Models.WindModel;
 
 namespace SurfScout.Models
 {
@@ -20,12 +21,13 @@ namespace SurfScout.Models
         public double Sail_size { get; set; }
         public int Spotid { get; set; }
         public string Sport { get; set; }
-        public Spot Spot { get; set; }              // Navigation property
+        public Spot Spot { get; set; }                      // Navigation property
         public string Tide { get; set; }
         public double? WindSpeedKnots { get; set; }
         public double? WindDirectionDegree { get; set; }
+        public List<WindField>? WindFields { get; set; }    // Historic wind fetch data for this session
 
-        public int UserId { get; set; }             // External key
-        public User User { get; set; } = null!;     // Navigation property
+        public int UserId { get; set; }                     // External key
+        public User User { get; set; } = null!;             // Navigation property
     }
 }

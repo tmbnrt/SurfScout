@@ -16,11 +16,11 @@ namespace SurfScout.Models
         public Point Location { get; set; }
         public NetTopologySuite.Geometries.Polygon? WindFetchPolygon { get; set;}
         public List<Session>? Sessions { get; set; }
-        public WindFetchData? WindFetchData { get; set; }
+        public WindFetchForecastData? WindFetchData { get; set; }
 
         public void GenerateRasterPoints()
         {
-            this.WindFetchData = new WindFetchData(Id, WindFetchPolygon);
+            this.WindFetchData = new WindFetchForecastData(Id, WindFetchPolygon);
         }
 
         public bool CheckWithinDistance(double longitude, double latitude, double maxDistance)

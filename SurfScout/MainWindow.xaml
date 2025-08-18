@@ -252,9 +252,8 @@
                 </Border>
             </Grid>
 
-
             <!-- Map -->
-            <esri:MapView x:Name="SpotView" Grid.Column="1"/>           
+            <esri:MapView x:Name="SpotView" Grid.Column="1"/>
 
             <!-- Polygon interaction popups -->
             <Popup x:Name="PolygonPopup"
@@ -288,16 +287,14 @@
                 </Border>
             </Popup>
 
-            
-
             <!-- Sessions list popup !-->
             <Popup x:Name="SessionsPopup"
-                Placement="RelativePoint"
-                StaysOpen="False"
-                AllowsTransparency="True"
-                IsOpen="False">
+                   Placement="RelativePoint"
+                   StaysOpen="False"
+                   AllowsTransparency="True"
+                   IsOpen="False">
                 <Border Background="White" CornerRadius="5" BorderBrush="Gray" BorderThickness="1">
-                    <Grid Width="300" Height="220" Margin="5">
+                    <Grid Width="320" Height="240" Margin="5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <!-- Title -->
@@ -314,12 +311,14 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="80"/>
                                 <ColumnDefinition Width="80"/>
-                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Text="Date" FontWeight="SemiBold" Grid.Column="0"/>
                             <TextBlock Text="Surfer" FontWeight="SemiBold" Grid.Column="1"/>
                             <TextBlock Text="Rating" FontWeight="SemiBold" Grid.Column="2"/>
+                            <TextBlock Text="Action" FontWeight="SemiBold" Grid.Column="3"/>
                         </Grid>
 
                         <!-- Session list -->
@@ -329,9 +328,10 @@
                                     <DataTemplate>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="80"/>
-                                                <ColumnDefinition Width="80"/>
                                                 <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
 
                                             <TextBlock Text="{Binding Date}" Grid.Column="0"/>
@@ -352,7 +352,11 @@
                                                     </ItemsControl.ItemTemplate>
                                                 </ItemsControl>
                                             </StackPanel>
-                                            
+
+                                            <!-- Wind analysis button -->
+                                            <Button x:Name="buttonWindAnalysis" Content="Wind Analysis" Grid.Column="3" Margin="5,0,0,0"
+                                                    Command="{Binding DataContext.ShowWindDetailsCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                                    CommandParameter="{Binding}" />
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
@@ -361,11 +365,48 @@
                     </Grid>
                 </Border>
             </Popup>
+
+            <!-- Slider bar for wind field plot !-->
+            <Slider x:Name="TimeSlider"
+                    Minimum="0"
+                    Maximum="23"
+                    TickFrequency="1"
+                    IsSnapToTickEnabled="True"
+                    Visibility="Collapsed"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Width="300"
+                    Margin="0,0,0,20">
+                <Slider.Style>
+                    <Style TargetType="Slider">
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="Background" Value="#AA000000"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Setter Property="Height" Value="40"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Slider">
+                                    <Grid>
+                                        <Track Name="PART_Track" 
+                                               IsDirectionReversed="False"
+                                               Maximum="{TemplateBinding Maximum}"
+                                               Minimum="{TemplateBinding Minimum}"
+                                               Value="{TemplateBinding Value}" />
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Slider.Style>
+            </Slider>
+            
         </Grid>
 
         <!-- Wind Analytics Grid !-->
-        <Grid Name="WindAnalytics" Margin="100,0,0,0" Visibility="Collapsed" Grid.RowSpan="2">
+        <Grid Name="WindAnalysis" Margin="100,0,0,0" Visibility="Collapsed" Grid.RowSpan="2">
+            <esri:MapView x:Name="WindView" Grid.Column="1"/>
 
+            <!-- Popup if no session is selected !-->
         </Grid>
 
         <!-- Forecast Analysis Grid !-->

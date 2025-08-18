@@ -102,11 +102,11 @@ public partial class MainWindow : Window
     private void buttonWindAnalytics_Click(object sender, RoutedEventArgs e)
     {
         ChangeColor(buttonWindAnalytics);
-        ChangeGrid(WindAnalytics);
+        ChangeGrid(WindAnalysis);
 
         if (!eventHandlerIsAttached_Grid_WindAnalytics)
         {
-            Grid_WindModel grid_windmodel = new Grid_WindModel(sender, e, this);
+            Grid_ForecastAnalysis grid_windmodel = new Grid_ForecastAnalysis(sender, e, this);
             eventHandlerIsAttached_Grid_WindAnalytics = true;
         }
     }
@@ -118,7 +118,7 @@ public partial class MainWindow : Window
         this.grids.Add(Dashboard);
         this.grids.Add(UserLogin);
         this.grids.Add(MapViewer);
-        this.grids.Add(WindAnalytics);
+        this.grids.Add(WindAnalysis);
         this.grids.Add(ForecastAnalysis);
     }
 

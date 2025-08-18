@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SurfScout.Models;
 using SurfScout.Models.DTOs;
+using SurfScout.Models.WindModel;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -103,6 +104,38 @@ namespace SurfScout.Services
             {
                 MessageBox.Show("Error while storing session on server!", "API-Error");
             }
+        }
+
+        // Request wind field data for a session
+        public static async Task<IReadOnlyList<WindField>> GetWindFieldDataAsync(Session session)
+        {
+            using var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7190/")
+            };
+
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
+
+            var response = await client.GetAsync($"api/sessions/windfields/{session.Id}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                MessageBox.Show("Error while getting wind field data from server!", "API-Error");
+                return null!;
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var windFields = JsonSerializer.Deserialize<List<WindField>>(json, options);
+            if (windFields != null)
+                SessionStore.PutWindFieldData(session.Id, windFields);
+
+            return windFields;
         }
     }
 }

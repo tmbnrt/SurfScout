@@ -12,13 +12,14 @@ using System.Windows.Media;
 
 namespace SurfScout.WindowLogic
 {
-    class Grid_WindModel
+    class Grid_ForecastAnalysis
     {
         MainWindow win;
-        
-        public Grid_WindModel(object sender, RoutedEventArgs e, MainWindow window)
+
+        public Grid_ForecastAnalysis(object sender, RoutedEventArgs e, MainWindow window)
         {
-            this.win = window;            
-        }        
+            this.win = window;
+            win.SpotView = window.SpotView;
+        }
     }
 }

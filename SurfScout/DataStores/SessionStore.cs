@@ -5,6 +5,8 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using SurfScout.Models;
+using SurfScout.Models.DTOs;
+using SurfScout.Models.WindModel;
 using SurfScout.Services;
 
 namespace SurfScout.DataStores
@@ -43,6 +45,27 @@ namespace SurfScout.DataStores
                     sessionList.Add(s);
 
             return sessionList;
+        }
+
+        public static void PutWindFieldData(int id, List<WindField> windfields)
+        {
+            foreach (Session session in _sessions)
+                if (session.Id == id)
+                    session.WindFields = windfields;
+        }
+
+        public static List<WindField> GetWindFieldData(int id)
+        {
+            foreach (Session session in _sessions)
+                if (session.Id == id)
+                {
+                    if (session.WindFields != null)
+                        return session.WindFields;
+                    else
+                        return new List<WindField>();
+                }
+
+            return null!;
         }
     }
 }

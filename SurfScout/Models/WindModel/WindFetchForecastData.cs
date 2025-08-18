@@ -9,16 +9,16 @@ using SurfScout.Functions.GeoFunctions;
 namespace SurfScout.Models.WindModel
 {
     // This class represents the windfetch data for a spot (instance can be real data or foracast data)
-    public class WindFetchData
+    public class WindFetchForecastData
     {
         public int SpotId { get; set; }
         public List<MapPoint>? VectorPoints { get; set; }
         
         // Dictionaries containing the hourly wind data sets - Key: i.e. AROME or ICON
-        public Dictionary<string, List<WindFetchDataSet>> Model_ForecastDataSet { get; set; } = new();
-        public List<WindFetchDataSet> HistoricDataSet { get; set; } = new();
+        public Dictionary<string, List<WindField>> Model_ForecastDataSet { get; set; } = new();
+        public List<WindField> HistoricDataSet { get; set; } = new();
 
-        public WindFetchData(int spotId, NetTopologySuite.Geometries.Polygon? polygon)
+        public WindFetchForecastData(int spotId, NetTopologySuite.Geometries.Polygon? polygon)
         {
             if (polygon == null)
                 return;
