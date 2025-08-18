@@ -47,6 +47,15 @@ namespace SurfScout.DataStores
             return sessionList;
         }
 
+        public static Session GetSessionById(int id)
+        {
+            foreach (Session session in _sessions)
+                if (session.Id == id)
+                    return session;
+
+            return null!;
+        }
+
         public static void PutWindFieldData(int id, List<WindField> windfields)
         {
             foreach (Session session in _sessions)

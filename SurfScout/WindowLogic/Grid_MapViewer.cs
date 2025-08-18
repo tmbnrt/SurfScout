@@ -66,9 +66,6 @@ namespace SurfScout.WindowLogic
             // Parallel check for left/right mouse klick
             win.SpotView.MouseDown += SpotView_MouseDown;
 
-            // Open wind analytics
-            win.buttonWindAnalytics.Click += ButtonWindAnalytics_Click;
-
             // Click interaction with spot popup
             win.buttonCloseSidebar.Click += ButtonCloseSpotPopup_Click;
             win.buttonSidebarAddSession.Click += ButtonSpotAddSession_Click;
@@ -346,6 +343,7 @@ namespace SurfScout.WindowLogic
             var sessionDisplayModels = sessionsForSelectedSpot
                 .Select(s => new
                 {
+                    SessionId = s.Id,
                     Date = s.Date.ToString("yyyy-MM-dd"),
                     Username = s.User.Username ?? "–",
                     RatingStars = UI_Helpers.GenerateStars(s.Rating)
@@ -354,6 +352,22 @@ namespace SurfScout.WindowLogic
 
             win.SessionListView.ItemsSource = sessionDisplayModels;
             win.SessionsPopup.IsOpen = true;
+        }
+
+        public async Task ShowWindField(object sender, RoutedEventArgs e)
+        {
+            if ((sender as Button)?.Tag is int sessionId)
+            {
+                Session session = SessionStore.GetSessionById(sessionId);
+                if (session == null)
+                    return;
+
+                this.selectedSession = session!;
+
+                // Create wind analysis instance
+                this.windAnalyzer = new WindFieldAnalyzer(win, selectedSession);
+                await windAnalyzer.RequestWindDataForSession();
+            }
         }
 
         private async void LoadMap()
@@ -488,20 +502,6 @@ namespace SurfScout.WindowLogic
 
             if (addSpotIsActive)
                 CreateSpot(wgsPoint.Y, wgsPoint.X);
-        }
-
-        private void buttonWindAnalysis_Click(object sender, RoutedEventArgs e)
-        {
-            var button = sender as Button;
-            var session = button?.DataContext as Session;
-
-            if (session == null)
-                return;
-
-            this.selectedSession = session!;
-
-            // Create wind analysis instance
-            this.windAnalyzer = new WindFieldAnalyzer(win, selectedSession);
         }
 
         private void CreateSpot(double latitude, double longitude)

@@ -117,7 +117,7 @@ namespace SurfScout.Services
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
 
-            var response = await client.GetAsync($"api/sessions/windfields/{session.Id}");
+            var response = await client.GetAsync($"api/sessions/windfields?sessionId={session.Id}");
 
             if (!response.IsSuccessStatusCode)
             {
@@ -130,6 +130,7 @@ namespace SurfScout.Services
             {
                 PropertyNameCaseInsensitive = true
             };
+            options.Converters.Add(new GeoJsonConverterFactory());
 
             var windFields = JsonSerializer.Deserialize<List<WindField>>(json, options);
             if (windFields != null)

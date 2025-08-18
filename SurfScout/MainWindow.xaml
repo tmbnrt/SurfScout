@@ -354,9 +354,11 @@
                                             </StackPanel>
 
                                             <!-- Wind analysis button -->
-                                            <Button x:Name="buttonWindAnalysis" Content="Wind Analysis" Grid.Column="3" Margin="5,0,0,0"
-                                                    Command="{Binding DataContext.ShowWindDetailsCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                                    CommandParameter="{Binding}" />
+                                            <Button Content="Wind Analysis"
+                                                    Grid.Column="3"
+                                                    Margin="5,0,0,0"
+                                                    Click="ButtonShowWindField_Click"
+                                                    Tag="{Binding SessionId}" />
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>

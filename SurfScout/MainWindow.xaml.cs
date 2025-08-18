@@ -37,6 +37,8 @@ public partial class MainWindow : Window
     public bool eventHandlerIsAttached_Grid_WindAnalytics = false;
     public bool eventHandlerIsAttached_Grid_ForecastAnalysis = false;
 
+    private Grid_MapViewer? grid_mapviever;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -83,7 +85,7 @@ public partial class MainWindow : Window
 
         if (!eventHandlerIsAttached_Grid_MapViewer)
         {
-            Grid_MapViewer grid_mapviever = new Grid_MapViewer(sender, e, this);
+            this.grid_mapviever = new Grid_MapViewer(sender, e, this);
             eventHandlerIsAttached_Grid_MapViewer = true;
         }
     }
@@ -109,6 +111,11 @@ public partial class MainWindow : Window
             Grid_ForecastAnalysis grid_windmodel = new Grid_ForecastAnalysis(sender, e, this);
             eventHandlerIsAttached_Grid_WindAnalytics = true;
         }
+    }
+
+    private void ButtonShowWindField_Click(object sender, RoutedEventArgs e)
+    {
+        grid_mapviever.ShowWindField(sender, e);
     }
 
     private void AddGrids()
