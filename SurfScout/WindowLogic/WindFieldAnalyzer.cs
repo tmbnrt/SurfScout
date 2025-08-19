@@ -61,8 +61,9 @@ namespace SurfScout.WindowLogic
         private void ShowTimeSlider()
         {
             win.TimeSlider.Visibility = Visibility.Visible;
+            // TODO: SLIDER NOT VISIBLE! FIND BUG
             win.TimeSlider.Minimum = windfields.First().Timestamp.Hour;
-            win.TimeSlider.MaxHeight = windfields.Last().Timestamp.Hour;
+            win.TimeSlider.Maximum = windfields.Last().Timestamp.Hour;
 
             // Set tick frequency: time difference between first and second windfield in hours as integer
             int timeDifference = (int)(windfields[1].Timestamp - windfields[0].Timestamp).TotalHours;

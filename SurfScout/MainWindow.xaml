@@ -372,13 +372,16 @@
             <Slider x:Name="TimeSlider"
                     Minimum="0"
                     Maximum="23"
-                    TickFrequency="1"
+                    TickFrequency="3"
                     IsSnapToTickEnabled="True"
                     Visibility="Collapsed"
+                    Grid.Column="1"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Bottom"
-                    Width="300"
-                    Margin="0,0,0,20">
+                    Width="200"
+                    Height="40"
+                    Margin="0,0,0,20"
+                    Panel.ZIndex="99">
                 <Slider.Style>
                     <Style TargetType="Slider">
                         <Setter Property="Foreground" Value="White"/>
@@ -389,11 +392,30 @@
                             <Setter.Value>
                                 <ControlTemplate TargetType="Slider">
                                     <Grid>
-                                        <Track Name="PART_Track" 
+                                        <!-- TickBar oben -->
+                                        <TickBar x:Name="TopTick"
+                                                 Placement="Top"
+                                                 Fill="White"
+                                                 Minimum="{TemplateBinding Minimum}"
+                                                 Maximum="{TemplateBinding Maximum}"
+                                                 TickFrequency="3"
+                                                 Visibility="Visible"
+                                                 Height="10"
+                                                 Margin="0,0,0,5"/>
+
+                                        <!-- Track mit Thumb -->
+                                        <Track x:Name="PART_Track"
                                                IsDirectionReversed="False"
                                                Maximum="{TemplateBinding Maximum}"
                                                Minimum="{TemplateBinding Minimum}"
-                                               Value="{TemplateBinding Value}" />
+                                               Value="{TemplateBinding Value}">
+                                            <Track.Thumb>
+                                                <Thumb x:Name="PART_Thumb"
+                                                       Width="10"
+                                                       Height="20"
+                                                       Background="White"/>
+                                            </Track.Thumb>
+                                        </Track>
                                     </Grid>
                                 </ControlTemplate>
                             </Setter.Value>
@@ -401,7 +423,8 @@
                     </Style>
                 </Slider.Style>
             </Slider>
-            
+
+
         </Grid>
 
         <!-- Wind Analytics Grid !-->
