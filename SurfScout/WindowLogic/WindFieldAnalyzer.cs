@@ -11,6 +11,7 @@ using SurfScout.Models;
 using SurfScout.Models.WindModel;
 using SurfScout.DataStores;
 using SurfScout.Services;
+using SurfScout.Functions.GeoFunctions;
 using System.Windows;
 using System.Diagnostics;
 using Windows.UI.Input.Inking.Analysis;
@@ -24,15 +25,18 @@ namespace SurfScout.WindowLogic
         private readonly MapView mapView;
         private GraphicsOverlay overlay_arrows;
         private GraphicsOverlay overlay_interpolated;
+        private Dictionary<int, GraphicsOverlay> overlays_interpolated_by_hours;
         private readonly MainWindow win;
         private List<WindField> windfields;
         private Session selectedSession;
+        private Spot selectedSpot;
 
-        public WindFieldAnalyzer(MainWindow win, Session session)
+        public WindFieldAnalyzer(MainWindow win, Session session, Spot spot)
         {
             this.win = win;
             this.mapView = win.SpotView;
             this.selectedSession = session;
+            this.selectedSpot = spot;
 
             win.TimeSlider.ValueChanged += TimeSlider_ValueChanged;
         }
@@ -40,18 +44,40 @@ namespace SurfScout.WindowLogic
         public async Task RequestWindDataForSession()
         {
             await SessionService.GetWindFieldDataAsync(selectedSession);
+            await SpotService.GetWindFetchArea(selectedSpot.Id);
             this.windfields = SessionStore.GetWindFieldData(selectedSession.Id);
 
-            if (windfields == null)
+            if (windfields == null || selectedSpot.WindFetchPolygon == null)
                 return;
 
+            // TODO: Fill List of graphics overlay
+            CreateInterpolatedWindspeedOverlays();
+
             ShowTimeSlider();
+        }
+
+        private async Task CreateInterpolatedWindspeedOverlays()
+        {
+            this.overlays_interpolated_by_hours = new Dictionary<int, GraphicsOverlay>();
+
+            foreach (WindField wf in windfields)
+            {
+                GraphicsOverlay overlay = SpatialOperations
+                                            .CreateGraphicsOverlayInterpolationIDW(wf,
+                                                                                selectedSpot.WindFetchPolygon!,
+                                                                                1000);
+                if (overlay != null)
+                    this.overlays_interpolated_by_hours.Add(wf.Timestamp.Hour, overlay);
+            }
         }
 
         private void ShowWindField(int hour)
         {
             if (overlay_arrows != null)
                 this.overlay_arrows.Graphics.Clear();
+
+            if (selectedSpot.WindFetchPolygon == null)
+                return;
 
             this.overlay_arrows = new GraphicsOverlay();
 
@@ -79,8 +105,20 @@ namespace SurfScout.WindowLogic
                 var graphic = new Graphic(location, arrowSymbol);
                 overlay_arrows.Graphics.Add(graphic);
             }
+
+            //// Create interpolated wind field graphics
+            //this.overlay_interpolated = SpatialOperations
+            //                                .CreateGraphicsOverlayInterpolationIDW(currentWindField,
+            //                                                                       selectedSpot.WindFetchPolygon,
+            //                                                                       1000);
             
             this.mapView.GraphicsOverlays.Add(overlay_arrows);
+
+            // Add interpolated overlay for the current hour
+            if (this.mapView.GraphicsOverlays.Contains(overlays_interpolated_by_hours[hour]))
+                this.mapView.GraphicsOverlays.Remove(overlays_interpolated_by_hours[hour]);
+            if (overlays_interpolated_by_hours.ContainsKey(hour))
+                this.mapView.GraphicsOverlays.Add(overlays_interpolated_by_hours[hour]);
         }
         
         private void ShowTimeSlider()

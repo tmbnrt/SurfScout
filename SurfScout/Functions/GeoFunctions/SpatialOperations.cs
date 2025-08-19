@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 using System.Threading.Tasks;
 using Esri.ArcGISRuntime.Geometry;
+using Esri.ArcGISRuntime.Symbology;
+using Esri.ArcGISRuntime.UI;
 using NetTopologySuite;
-using NetTopologySuite.Geometries;
+using NTS = NetTopologySuite.Geometries;
+using SurfScout.Models.WindModel;
 
 namespace SurfScout.Functions.GeoFunctions
 {
@@ -33,25 +37,23 @@ namespace SurfScout.Functions.GeoFunctions
             return distanceInMeters <= maxDistance;
         }
 
-        public static List<Point> GenerateRasterPointsInPolygon(NetTopologySuite.Geometries.Polygon ntsPolygon,
-                                                                double spacingMeters)
+        public static List<NTS.Point> GenerateRasterPointsInPolygon(NTS.Polygon ntsPolygon,
+                                                                    double spacingMeters)
         {
             var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
-            var pointsInsidePolygon = new List<Point>();
+            var pointsInsidePolygon = new List<NTS.Point>();
 
-            // Bounding box of polygon
+            // Polygon bounds
             var env = ntsPolygon.EnvelopeInternal;
             double minLon = env.MinX;
             double maxLon = env.MaxX;
             double minLat = env.MinY;
             double maxLat = env.MaxY;
 
-            // Approximate geodetic step size using latitude-dependent conversion
-            // 1 degree latitude is approx 111320 meters
+            // Approximate geodetic step size using lat-dependent conversion (1 degree lat ~ 111320m)
             double stepLat = spacingMeters / 111320.0;
 
-            // 1 degree longitude is approx 111320 * cos(latitude) meters
-            // Use center latitude for approximation
+            // Use center latitude for approximation (1 degree lng ~ 111320 * cos(lat) m)
             double centerLatRad = (minLat + maxLat) / 2.0 * Math.PI / 180.0;
             double metersPerDegreeLon = 111320.0 * Math.Cos(centerLatRad);
             double stepLon = spacingMeters / metersPerDegreeLon;
@@ -61,7 +63,7 @@ namespace SurfScout.Functions.GeoFunctions
             {
                 for (double lat = minLat; lat <= maxLat; lat += stepLat)
                 {
-                    var candidate = geometryFactory.CreatePoint(new Coordinate(lon, lat));
+                    var candidate = geometryFactory.CreatePoint(new NTS.Coordinate(lon, lat));
 
                     if (ntsPolygon.Contains(candidate))
                         pointsInsidePolygon.Add(candidate);
@@ -71,8 +73,8 @@ namespace SurfScout.Functions.GeoFunctions
             return pointsInsidePolygon;
         }
 
-        public static List<MapPoint> GenerateRasterPointsInPolygonESRI(NetTopologySuite.Geometries.Polygon ntsPolygon,
-                                                                  double spacingMeters)
+        public static List<MapPoint> GenerateRasterPointsInPolygonESRI(NTS.Polygon ntsPolygon,
+                                                                       double spacingMeters)
         {
             var pointsInsidePolygon = new List<MapPoint>();
 
@@ -117,8 +119,8 @@ namespace SurfScout.Functions.GeoFunctions
                     var candidate = new MapPoint(lon, lat, SpatialReferences.Wgs84);
 
                     // Check inside polygon
-                    var coor = new Coordinate(candidate.X, candidate.Y);
-                    var ntsPoint = new NetTopologySuite.Geometries.Point(coor);
+                    var coor = new NTS.Coordinate(candidate.X, candidate.Y);
+                    var ntsPoint = new NTS.Point(coor);
 
                     if (ntsPolygon.Contains(ntsPoint))
                         pointsInsidePolygon.Add(candidate);
@@ -126,6 +128,95 @@ namespace SurfScout.Functions.GeoFunctions
             }
 
             return pointsInsidePolygon;
+        }
+
+        public static GraphicsOverlay CreateGraphicsOverlayInterpolationIDW(WindField windfield,
+                                                                            NTS.Polygon ntsPolygon,
+                                                                            int cellSizeMeters)
+        {
+            GraphicsOverlay graphicsOverlay = new GraphicsOverlay();
+
+            // Convert to ArcGIS Polygon
+            var pointCollection = new PointCollection(SpatialReferences.Wgs84);
+            foreach (var coord in ntsPolygon.Coordinates)
+                pointCollection.Add(coord.X, coord.Y);
+
+            var arcgisPolygon = new Esri.ArcGISRuntime.Geometry.Polygon(pointCollection);
+
+            // Create MapPoint list and windspeed list
+            List<MapPoint> windPoints = new List<MapPoint>();
+            List<double> windspeedValues = new List<double>();
+            foreach (WindFieldPoint wfp in windfield.Points)
+            {
+                windPoints.Add(new MapPoint(wfp.Location.X, wfp.Location.Y, SpatialReferences.Wgs84));
+                windspeedValues.Add(wfp.WindSpeedKnots);
+            }
+
+            // Divide polygon into raster points and interpolate values to create colored cells
+            List<MapPoint> rasterPoints = GenerateRasterPointsInPolygonESRI(ntsPolygon, cellSizeMeters);
+            foreach (MapPoint point in rasterPoints)
+            {
+                double interpolatedWindspeed = InterpolateIDW(point, windPoints, windspeedValues);
+                var windspeedColor = GetColorForWindspeed(interpolatedWindspeed);
+                var cell = CreateCellPolygon(point, 1000);
+                SimpleFillSymbol symbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, windspeedColor, null);
+                var cellGraphic = new Graphic(cell, symbol);
+                graphicsOverlay.Graphics.Add(cellGraphic);
+            }
+
+            return graphicsOverlay;
+        }
+
+        private static Esri.ArcGISRuntime.Geometry.Polygon CreateCellPolygon(MapPoint center, double sizeMeters)
+        {
+            var halfSize = sizeMeters / 2;
+
+            var offsets = new[]
+            {
+                new MapPoint(center.X - halfSize, center.Y - halfSize),
+                new MapPoint(center.X + halfSize, center.Y - halfSize),
+                new MapPoint(center.X + halfSize, center.Y + halfSize),
+                new MapPoint(center.X - halfSize, center.Y + halfSize)
+            };
+
+            return new Esri.ArcGISRuntime.Geometry.Polygon(new PointCollection(offsets));
+        }
+
+        private static Color GetColorForWindspeed(double windSpeed)
+        {
+            if (windSpeed < 3)
+                return Color.White;
+            else if (windSpeed < 8)
+                return Color.Blue;
+            else if (windSpeed < 15)
+                return Color.LightBlue;
+            else if (windSpeed < 20)
+                return Color.Cyan;
+            else if (windSpeed < 25)
+                return Color.Green;
+            else if (windSpeed < 28)
+                return Color.Yellow;
+            else if (windSpeed < 32)
+                return Color.Orange;
+            else if (windSpeed < 42)
+                return Color.Red;
+            else
+                return Color.Purple;
+        }
+
+        private static double InterpolateIDW(MapPoint target, List<MapPoint> sources, List<double> values)
+        {
+            double numerator = 0;
+            double denominator = 0;
+            for (int i = 0; i < sources.Count; i++)
+            {
+                double dist = GeometryEngine.Distance(target, sources[i]);
+                // Set IDW weight
+                double weight = 1.0 / Math.Pow(dist, 2);
+                numerator += weight * values[i];
+                denominator += weight;
+            }
+            return numerator / denominator;
         }
     }
 }

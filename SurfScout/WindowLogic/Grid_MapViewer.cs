@@ -365,7 +365,7 @@ namespace SurfScout.WindowLogic
                 this.selectedSession = session!;
 
                 // Create wind analysis instance
-                this.windAnalyzer = new WindFieldAnalyzer(win, selectedSession);
+                this.windAnalyzer = new WindFieldAnalyzer(win, selectedSession, selectedSpot);
                 await windAnalyzer.RequestWindDataForSession();
             }
         }
