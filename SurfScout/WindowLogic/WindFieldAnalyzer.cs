@@ -14,13 +14,16 @@ using SurfScout.Services;
 using System.Windows;
 using System.Diagnostics;
 using Windows.UI.Input.Inking.Analysis;
+using Esri.ArcGISRuntime.Geometry;
+using System.Drawing;
 
 namespace SurfScout.WindowLogic
 {
     class WindFieldAnalyzer
     {
         private readonly MapView mapView;
-        private readonly GraphicsOverlay overlay;
+        private GraphicsOverlay overlay_arrows;
+        private GraphicsOverlay overlay_interpolated;
         private readonly MainWindow win;
         private List<WindField> windfields;
         private Session selectedSession;
@@ -45,23 +48,44 @@ namespace SurfScout.WindowLogic
             ShowTimeSlider();
         }
 
-       private void ShowWindField(int hour)
-       {
-            //this.overlay.Graphics.Clear();
-            //
-            //var symbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.FromArgb(100, 0, 0, 255), null);
-            //var graphic = new Graphic(polygon.polygon, symbol);
-            //this.overlay.Graphics.Add(graphic);
-            //
-            //// Further wind analyes ...
-            ///
-            return;
-       }
+        private void ShowWindField(int hour)
+        {
+            if (overlay_arrows != null)
+                this.overlay_arrows.Graphics.Clear();
 
+            this.overlay_arrows = new GraphicsOverlay();
+
+            // Get wind field for selected time
+            WindField currentWindField = windfields.FirstOrDefault(wf => wf.Timestamp.Hour == hour);
+            if (currentWindField == null)
+                return;
+
+            foreach (WindFieldPoint wfp in currentWindField.Points)
+            {
+                // Convert from Nettopology in esri point
+                var location = new Esri.ArcGISRuntime.Geometry.MapPoint(wfp.Location.X, wfp.Location.Y, SpatialReferences.Wgs84);
+
+                var arrowSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbolStyle.Triangle, System.Drawing.Color.Blue, wfp.WindSpeedKnots);
+                double size = Math.Clamp(wfp.WindSpeedKnots, 5, 50);
+                arrowSymbol.Size = size;
+
+                // Add 180 degree to the angle but result is in range 0-360
+                double angle = wfp.WindDirectionDegree + 180;
+                if (angle >= 360)
+                    angle -= 360;
+
+                arrowSymbol.Angle = angle;
+
+                var graphic = new Graphic(location, arrowSymbol);
+                overlay_arrows.Graphics.Add(graphic);
+            }
+            
+            this.mapView.GraphicsOverlays.Add(overlay_arrows);
+        }
+        
         private void ShowTimeSlider()
         {
             win.TimeSlider.Visibility = Visibility.Visible;
-            // TODO: SLIDER NOT VISIBLE! FIND BUG
             win.TimeSlider.Minimum = windfields.First().Timestamp.Hour;
             win.TimeSlider.Maximum = windfields.Last().Timestamp.Hour;
 
@@ -81,7 +105,8 @@ namespace SurfScout.WindowLogic
         public void ClearWindField()
         {
             win.TimeSlider.Visibility = Visibility.Collapsed;
-            this.overlay.Graphics.Clear();
+            this.overlay_arrows.Graphics.Clear();
+            this.overlay_interpolated.Graphics.Clear();
         }
     }
 }
