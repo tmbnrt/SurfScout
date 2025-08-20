@@ -37,5 +37,11 @@ namespace SurfScout.Services
             else
                 connectionRequesters.AddRange(requesters);
         }
+
+        public static void DeleteRequesterFromList(string requester)
+        {
+            if (connectionRequesters.Contains(requester))
+                connectionRequesters.Remove(requester);
+        }
     }
 }

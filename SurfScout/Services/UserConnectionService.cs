@@ -49,5 +49,114 @@ namespace SurfScout.Services
 
             return userConnections ?? new List<UserConnectionDto>();
         }
+
+        public static async Task<bool> SendNewRequest(string addresseeName)
+        {
+            using var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7190/")
+            };
+
+            var connectionDto = new UserConnectionDto
+            {
+                RequesterId = UserSession.UserId,
+                RequesterUsername = UserSession.Username,
+                AddresseeUsername = addresseeName
+            };
+
+            var json = JsonSerializer.Serialize(connectionDto);
+
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
+
+            var response = await client.PostAsJsonAsync($"api/userconnections/newrequest", content);
+
+            if (response.IsSuccessStatusCode)
+                return true;
+            else if (response.StatusCode == HttpStatusCode.Conflict)
+                return false;
+            else
+            {
+                MessageBox.Show("Error while sending connection request.");
+                return false;
+            }
+        }
+
+        public static async Task<bool> AcceptConnectionRequest(string requesterName)
+        {
+            using var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7190/")
+            };
+
+            var connectionDto = new UserConnectionDto
+            {
+                AddresseeId = UserSession.UserId,
+                AddresseeUsername = UserSession.Username,
+                RequesterUsername = requesterName
+            };
+
+            var json = JsonSerializer.Serialize(connectionDto);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
+
+            var response = await client.PostAsJsonAsync($"api/userconnections/acceptrequest", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Remove requester from the list
+                UserSession.DeleteRequesterFromList(requesterName);
+                return true;
+            }                
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+                MessageBox.Show("Connection request not found.");
+            else
+                MessageBox.Show("Error while accepting connection request.");
+
+            return false;
+        }
+
+        public static async Task<bool> RejectConnectionRequest(string requesterName)
+        {
+            using var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7190/")
+            };
+
+            var connectionDto = new UserConnectionDto
+            {
+                AddresseeId = UserSession.UserId,
+                AddresseeUsername = UserSession.Username,
+                RequesterUsername = requesterName
+            };
+
+            var json = JsonSerializer.Serialize(connectionDto);
+
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
+
+            var response = await client.PostAsJsonAsync($"api/userconnections/rejectrequest", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Remove requester from the list
+                UserSession.DeleteRequesterFromList(requesterName);
+                return true;
+            }
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+                MessageBox.Show("Connection request not found.");
+            else
+                MessageBox.Show("Error while rejecting connection request.");
+
+            return false;
+        }
     }
 }

@@ -22,7 +22,7 @@
 - **Geometry Operations**: Leverages NetTopologySuite for spatial tasks (e.g. union, intersection)
 - **Backend Communication**: Exchanges data via HTTP with the ASP.NET Core–based `SurfScoutBackend`
 - **Database Integration**: Session and spot metadata stored in PostgreSQL with PostGIS extension
-- **Weather Data Source**: Uses **Stormglass.io** exclusively for marine and wind forecast data
+- **Weather Data Source**: Uses **Stormglass.io** and **Open-Meteo** exclusively for marine and wind forecast data
 
 ## 📦 Used Frameworks and Libraries
 
@@ -35,6 +35,7 @@
 | ASP.NET Core Web API      | Backend communication interface                            |
 | PostgreSQL + PostGIS      | Persistent storage and geospatial querying of sessions     |
 | Stormglass.io             | Marine weather forecasts and wind data                     |
+| Open-meteo.com            | Historic wind data                                         |
 
 ## ✨ Key Features and Outlook
 
@@ -53,10 +54,7 @@ Unit tests are located in the `SurfScout.Tests` project under `/SurfScout.Tests/
 
 ## 📍 To Do
 
-- Expand API integration with Stormglass.io data fields
-- Improve UI components (e.g. popups, icons, notifications)
-- Enable session export/import
-- Add backend analytics
+- Enable users to have access to connected users' (friends) surf sessions
 
 ## 🖼️ Architecture Overview
 
@@ -68,4 +66,4 @@ _A visual overview showing interaction between the WPF frontend, ASP.NET Core ba
 
 > ![.](screenshot_map_wind_raster.png)
 
-> _Screenshot of raster points inside the created wind fetch polygon for storing wind data. I. e. for the spot Wijk aan Zee_
+> _Screenshot of raster center points inside the created wind fetch polygon for storing wind data. I. e. for the spot Wijk aan Zee_
