@@ -15,6 +15,7 @@ namespace SurfScout.Services
         public static bool IsLoggedIn => !string.IsNullOrEmpty(JwtToken);
         public static bool IsAdmin => Role?.Equals("Admin", StringComparison.OrdinalIgnoreCase) == true;
         public static string SelectedSportMode { get; set; } = "...";
+        public static List<string> connectedUsers { get; set; } = new List<string>();
         public static List<string> connectionRequesters { get; set; } = new List<string>();
 
         public static void Reset()
@@ -36,6 +37,11 @@ namespace SurfScout.Services
                 return;
             else
                 connectionRequesters.AddRange(requesters);
+        }
+
+        public static void UpdateUserConnections(List<>)
+        {
+
         }
 
         public static void DeleteRequesterFromList(string requester)
