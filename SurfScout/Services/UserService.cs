@@ -11,6 +11,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using SurfScout.Functions.UserDataFunction;
+using SurfScout.Models.DTOs;
 
 namespace SurfScout.Services
 {

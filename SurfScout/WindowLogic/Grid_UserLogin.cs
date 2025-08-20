@@ -1,4 +1,5 @@
 ﻿using SurfScout.DataStores;
+using SurfScout.Models.DTOs;
 using SurfScout.Services;
 using System;
 using System.Net;
@@ -98,6 +99,14 @@ namespace SurfScout.WindowLogic
                     MessageBox.Show($"Login successful. Welcome back, {username}!");
                     win.UsernameBox.Text = string.Empty;
                     win.PasswordBox.Password = string.Empty;
+
+                    // Call and store connection requesters
+                    var userConnections = await UserConnectionService.GetConnectionRequesters();
+
+                    List<string> requesters = new List<string>();
+                    foreach (var uc in userConnections)
+                        requesters.Add(uc.RequesterUsername);
+                    UserSession.AddConnectionRequesters(requesters);
 
                     // Store user info
                     //UserStore.Role
