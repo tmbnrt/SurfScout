@@ -112,7 +112,7 @@ namespace SurfScout.WindowLogic
                     //UserStore.Role
 
                     // Change button name to user name and swap grid from *login to *userinfo
-                    win.LoggedUser.Text = response.User.Username;
+                    //win.LoggedUser.Text = response.User.Username;
                     win.textBlockSportMode.Text = UserSession.SelectedSportMode;
 
                     // Fill combo box with sport modes

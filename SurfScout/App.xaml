@@ -131,5 +131,39 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <!-- Dashboard Style -->
+        <Style x:Key="DashboardExpanderStyle" TargetType="Expander">
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="BorderBrush" Value="#DDD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Expander">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5" Background="{TemplateBinding Background}">
+                            <StackPanel>
+                                <ToggleButton x:Name="HeaderSite" Content="{TemplateBinding Header}" FontWeight="Bold" FontSize="16"
+                                          Background="#EEE" Foreground="Black" Padding="10" BorderThickness="0"
+                                          IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                <ContentPresenter x:Name="ExpandSite" Visibility="Collapsed"/>
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="True">
+                                <Setter TargetName="ExpandSite" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <!-- ... new style ... -->
+
     </Application.Resources>
 </Application>

@@ -39,10 +39,10 @@ namespace SurfScout.Services
                 connectionRequesters.AddRange(requesters);
         }
 
-        public static void UpdateUserConnections(List<>)
-        {
-
-        }
+        //public static void UpdateUserConnections(List<User> connections)
+        //{
+        //
+        //}
 
         public static void DeleteRequesterFromList(string requester)
         {
