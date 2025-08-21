@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,8 +17,9 @@ namespace SurfScout.Services
         public static bool IsLoggedIn => !string.IsNullOrEmpty(JwtToken);
         public static bool IsAdmin => Role?.Equals("Admin", StringComparison.OrdinalIgnoreCase) == true;
         public static string SelectedSportMode { get; set; } = "...";
-        public static List<string> connectedUsers { get; set; } = new List<string>();
-        public static List<string> connectionRequesters { get; set; } = new List<string>();
+        public static List<string> Sports { get; set; } = new List<string>();
+        public static Dictionary<string, int> ConnectedUsersWithIDs { get; set; } = new Dictionary<string, int>();
+        public static ObservableCollection<string> ConnectionRequesters { get; set; } = new ObservableCollection<string>();
 
         public static void Reset()
         {
@@ -24,6 +27,10 @@ namespace SurfScout.Services
             Username = null;
             Role = null;
             JwtToken = null;
+            SelectedSportMode = "...";
+            Sports = new List<string>();
+            ConnectedUsersWithIDs = new Dictionary<string, int>();
+            ConnectionRequesters = new ObservableCollection<string>();
         }
 
         public static void SetSportMode(string sportMode)
@@ -31,23 +38,45 @@ namespace SurfScout.Services
             SelectedSportMode = sportMode;
         }
 
+        public static void AddSportModes(string[] sportModes)
+        {
+            Sports = sportModes.ToList();
+            SetSportMode(Sports.FirstOrDefault() ?? "...");
+        }
+
+        public static bool IsConnectedWith(string name)
+        {
+            if (ConnectedUsersWithIDs.ContainsKey(name))
+                return true;
+            else
+                return false;
+        }
+
         public static void AddConnectionRequesters(List<string> requesters)
         {
             if (requesters == null)
                 return;
             else
-                connectionRequesters.AddRange(requesters);
+            {
+                foreach (string name in requesters)
+                    ConnectionRequesters.Add(name);
+            }
         }
 
-        //public static void UpdateUserConnections(List<User> connections)
-        //{
-        //
-        //}
-
-        public static void DeleteRequesterFromList(string requester)
+        public static void UpdateUserConnections(string name, int id)
         {
-            if (connectionRequesters.Contains(requester))
-                connectionRequesters.Remove(requester);
+            ConnectedUsersWithIDs.Add(name, id);
+        }
+
+        public static void DeleteUserConnection(string name)
+        {
+            ConnectedUsersWithIDs.Remove(name);
+        }
+
+        public static void RemoveRequesterFromList(string requester)
+        {
+            if (ConnectionRequesters.Contains(requester))
+                ConnectionRequesters.Remove(requester);
         }
     }
 }

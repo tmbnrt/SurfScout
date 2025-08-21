@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using SurfScout.Functions.UserDataFunction;
 using SurfScout.Models.DTOs;
+using Windows.System;
 
 namespace SurfScout.Services
 {
@@ -29,7 +30,7 @@ namespace SurfScout.Services
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
 
-            var response = await client.GetAsync($"api/userconnections/pending");
+            var response = await client.GetAsync($"api/userconnections/pending?userId={UserSession.UserId}");
             
             if (!response.IsSuccessStatusCode)
             {
@@ -41,16 +42,18 @@ namespace SurfScout.Services
             }
 
             var json = await response.Content.ReadAsStringAsync();
+
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
+
             var userConnections = JsonSerializer.Deserialize<List<UserConnectionDto>>(json, options);
 
             return userConnections ?? new List<UserConnectionDto>();
         }
 
-        public static async Task<bool> SendNewRequest(string addresseeName)
+        public static async Task<bool> SendConnectionRequest(string addresseeName)
         {
             using var client = new HttpClient
             {
@@ -64,19 +67,21 @@ namespace SurfScout.Services
                 AddresseeUsername = addresseeName
             };
 
-            var json = JsonSerializer.Serialize(connectionDto);
-
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            //var json = JsonSerializer.Serialize(connectionDto);
+            //var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
 
-            var response = await client.PostAsJsonAsync($"api/userconnections/newrequest", content);
+            var response = await client.PostAsJsonAsync($"api/userconnections/newrequest", connectionDto);
 
             if (response.IsSuccessStatusCode)
                 return true;
             else if (response.StatusCode == HttpStatusCode.Conflict)
+            {
+                MessageBox.Show("Connection request already exists.");
                 return false;
+            }                
             else
             {
                 MessageBox.Show("Error while sending connection request.");
@@ -98,20 +103,16 @@ namespace SurfScout.Services
                 RequesterUsername = requesterName
             };
 
-            var json = JsonSerializer.Serialize(connectionDto);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            //var json = JsonSerializer.Serialize(connectionDto);
+            //var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
 
-            var response = await client.PostAsJsonAsync($"api/userconnections/acceptrequest", content);
+            var response = await client.PostAsJsonAsync($"api/userconnections/acceptrequest", connectionDto);
 
             if (response.IsSuccessStatusCode)
-            {
-                // Remove requester from the list
-                UserSession.DeleteRequesterFromList(requesterName);
-                return true;
-            }                
+                return true;             
 
             if (response.StatusCode == HttpStatusCode.NotFound)
                 MessageBox.Show("Connection request not found.");
@@ -135,21 +136,16 @@ namespace SurfScout.Services
                 RequesterUsername = requesterName
             };
 
-            var json = JsonSerializer.Serialize(connectionDto);
-
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            //var json = JsonSerializer.Serialize(connectionDto);
+            //var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
 
-            var response = await client.PostAsJsonAsync($"api/userconnections/rejectrequest", content);
+            var response = await client.PostAsJsonAsync($"api/userconnections/rejectrequest", connectionDto);
 
             if (response.IsSuccessStatusCode)
-            {
-                // Remove requester from the list
-                UserSession.DeleteRequesterFromList(requesterName);
                 return true;
-            }
 
             if (response.StatusCode == HttpStatusCode.NotFound)
                 MessageBox.Show("Connection request not found.");

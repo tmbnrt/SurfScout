@@ -166,13 +166,11 @@
                             <TextBlock Text="Current mode:" FontWeight="Bold"/>
                             <TextBlock x:Name="textBlockSportMode" Margin="0,5"/>
                             <ComboBox x:Name="comboSportOptions" Width="200" Margin="0,5">
-                                <ComboBoxItem Content="Windsurfing"/>
-                                <ComboBoxItem Content="Kitesurfing"/>
-                                <ComboBoxItem Content="Wingfoiling"/>
                             </ComboBox>
                             <Button x:Name="buttonSwitchSportMode" Content="Switch mode" Style="{StaticResource FormButtonStyle}" Margin="0,5"/>
-                            <TextBox x:Name="NewSportTextBox" Width="200" Margin="10,5,0,5"/>
-                            <Button x:Name="buttonAddSport" Content="Add sports mode" Style="{StaticResource FormButtonStyle}" Margin="0,5"/>
+                            <ComboBox x:Name="comboAddSportOptions" Width="200" Margin="0,5">
+                            </ComboBox>
+                            <Button x:Name="buttonAddSport" Content="Add sport" Style="{StaticResource FormButtonStyle}" Margin="0,5"/>
                         </StackPanel>
                     </Expander>
 
@@ -180,10 +178,15 @@
                     <Expander Header="🤝 Connections" Style="{StaticResource DashboardExpanderStyle}" Margin="0,10">
                         <StackPanel Margin="10">
                             <TextBlock Text="Requests:" FontWeight="Bold"/>
-                            <ListBox x:Name="FriendRequestsList" Height="100"/>
+                            <ListBox x:Name="listConnectionRequests" Height="100"/>
                             <StackPanel Orientation="Horizontal" Margin="0,5">
-                                <Button Content="Accept" Width="100" Style="{StaticResource FormButtonStyle}"/>
-                                <Button Content="Reject" Width="100" Style="{StaticResource FormButtonStyle}" Margin="10,0,0,0"/>
+                                <Button x:Name="buttonAcceptConnectionRequest" Content="Accept" Width="100" Style="{StaticResource FormButtonStyle}"/>
+                                <Button x:Name="buttonRejectConnectionRequest" Content="Reject" Width="100" Style="{StaticResource FormButtonStyle}" Margin="10,0,0,0"/>
+                            </StackPanel>
+                            <TextBlock Text="Send request to user:" FontWeight="Bold" Margin="0,10,0,0"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,5">
+                                <TextBox x:Name="textBoxTargetUsername" Width="200" Margin="0,0,10,0"/>
+                                <Button x:Name="buttonSendConnectionRequest" Content="Send Request" Width="120" Style="{StaticResource FormButtonStyle}"/>
                             </StackPanel>
                         </StackPanel>
                     </Expander>

@@ -152,5 +152,28 @@ namespace SurfScout.Services
 
             return AllUserStore.Users;
         }
+
+        public static async Task<string> SetNewSportMode(string sportMode)
+        {
+            using var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7190/")
+            };
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
+
+            var content = new StringContent($"\"{sportMode}\"", Encoding.UTF8, "application/json");
+
+            var response = await client.PutAsync($"api/users/{UserSession.UserId}/addsport", content);
+
+            if (response.IsSuccessStatusCode)
+                return sportMode;
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                //MessageBox.Show($"Failed to add sport mode: {error}");
+                return string.Empty;
+            }
+        }
     }
 }

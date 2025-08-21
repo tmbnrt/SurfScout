@@ -73,7 +73,7 @@ public partial class MainWindow : Window
 
         if (!eventHandlerIsAttached_Grid_UserLogin)
         {
-            Grid_UserLogin grid_userlogin = new Grid_UserLogin(sender, e, this);
+            Grid_Dashboard grid_userlogin = new Grid_Dashboard(sender, e, this);
             eventHandlerIsAttached_Grid_UserLogin = true;
         }
     }
