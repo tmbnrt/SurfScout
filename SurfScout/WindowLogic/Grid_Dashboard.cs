@@ -73,7 +73,7 @@ namespace SurfScout.WindowLogic
             SpotStore.ClearSpots();
             SessionStore.ClearSessions();
 
-            // If succeeded -> swap grid to *login
+            // Swap grid to *login
             win.ChangeGrid(win.Dashboard);
         }
 
@@ -109,7 +109,6 @@ namespace SurfScout.WindowLogic
                     UserSession.AddConnectionRequesters(requesters);
 
                     // Fill connection requests list box
-                    win.listConnectionRequests.Items.Clear();
                     win.listConnectionRequests.ItemsSource = UserSession.ConnectionRequesters;
 
                     // Assign sports and fill combo box with sport modes
@@ -131,8 +130,10 @@ namespace SurfScout.WindowLogic
                     return;
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                string errorMessage = $"Login failed: {ex.Message}";
+                MessageBox.Show(errorMessage, "Login Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
         }
@@ -266,6 +267,7 @@ namespace SurfScout.WindowLogic
             List<string> newSpotOptionsForUser = sportOptions
                 .Except(UserSession.Sports).ToList();
 
+            win.comboAddSportOptions.Items.Clear();
             foreach (string sport in newSpotOptionsForUser)
                 win.comboAddSportOptions.Items.Add(sport);
         }
