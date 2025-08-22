@@ -50,6 +50,10 @@
                     <TextBlock Text="Forecast Analysis" FontSize="16"/>
                 </Button>
 
+                <Button x:Name="buttonForum" Style="{StaticResource MenuButtonStyle}">
+                    <TextBlock Text="Forum" FontSize="16"/>
+                </Button>
+
                 <TextBlock Height="200"/>
 
                 <Button x:Name="buttonInfo" Content="Info" Height="40" FontSize="16" Background="WhiteSmoke" Margin="5,2"/>
@@ -445,6 +449,35 @@
         <Grid Name="ForecastAnalysis" Margin="100,0,0,0" Visibility="Collapsed" Grid.RowSpan="2">
 
         </Grid>
+
+        <!-- Sessions Planner Grid !-->
+        <Grid Name="SessionPlanner" Margin="100,0,0,0" Visibility="Collapsed" Grid.RowSpan="2">
+            <!-- TODO: Create user story :: As a [role], I want to [function], so that [benefit]. -->
+            <!--                                                                                  -->
+            <!-- This session grid contains all planned sessions at different spots -->
+            <!-- There should be a list of spots that are available in the database -->
+            <!-- A user can plan a session and can send a participation request to friends -->
+            <!-- There should be a list of planned sessions of friends where the user can participate -->
+            <!-- If a user plans a session, the program has to check for sessions that are already planned by friends: PARTICIPATE FUNCTION -->
+            <!-- Friends can accept an invitation and people can group up, so everyone knows who is going -->
+            <!-- After the session is over users can rate the session -->
+            <!-- In a common session the rating is the mean value of all ratings (but can be calculated hourly, mid-time of session) -->
+            <!-- Figure out: Dates only or DateTime? -->
+            <!-- If two groups plan a common session with a user in both groups: Merge groups but hide foreign usernames? -->
+            <!-- Figure out: Is it possible to store all windfield data for the relevant time of all users/friends/group? -->
+            <!-- Figure out: How does the structure of the database table look like? -->
+            <!-- After opening the session planner, there should be a popup for past sessions: -Participated? -Rating! -->
+            <!-- Figure out: Rating is for the mid time of the session! Is it possible to calculate and visualize an hourly rating (while showing windfield and tide)? -->
+            <!-- Users always have access to their friends' sessions: Can be advantage for emergency situations (?) -->
+            <!-- Even if a session is planned, there should be an option to cancel participation. In case no one is left: Delete planned session from database -->
+            
+        </Grid>
+
+        <!-- Forum Grid !-->
+        <Grid Name="Forum" Margin="100,0,0,0" Visibility="Collapsed" Grid.RowSpan="2">
+            <!-- This forum can be used by all registered users and is vsible to everyone !-->
+        </Grid>
+
     </Grid>
 
 </Window>

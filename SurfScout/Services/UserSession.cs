@@ -63,7 +63,7 @@ namespace SurfScout.Services
             }
         }
 
-        public static void UpdateUserConnections(string name, int id)
+        public static void AddUserConnection(string name, int id)
         {
             ConnectedUsersWithIDs.Add(name, id);
         }

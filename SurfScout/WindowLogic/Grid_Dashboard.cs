@@ -122,8 +122,11 @@ namespace SurfScout.WindowLogic
 
                     win.ChangeGrid(win.Dashboard);
 
-                    // Get User data from server
-                    await UserService.GetAllUsersAsync();
+                    GetMyConnections();
+
+                    // Get User data from server (Admin only)
+                    if (UserSession.Role == "Admin")
+                        await UserService.GetAllUsersAsync();
                 }
                 else
                 {
@@ -258,6 +261,14 @@ namespace SurfScout.WindowLogic
             }
             else
                 MessageBox.Show("Failed to add new sport mode. Please try again.");
+        }
+
+        private async void GetMyConnections()
+        {
+            var friends = await UserConnectionService.GetMyConnections();
+
+            foreach (var friend in friends)
+                UserSession.AddUserConnection(friend.Name, friend.Id);
         }
 
         private void AddOptionForNewSportMode()

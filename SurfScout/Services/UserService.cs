@@ -114,7 +114,7 @@ namespace SurfScout.Services
 
             return false;
         }
-        
+
         public static async Task<IReadOnlyList<User>> GetAllUsersAsync()
         {
             using var client = new HttpClient

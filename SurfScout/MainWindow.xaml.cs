@@ -32,10 +32,11 @@ public partial class MainWindow : Window
 {
     private List<Button> buttons;
     private List<Grid> grids;
-    public bool eventHandlerIsAttached_Grid_UserLogin = false;
+    public bool eventHandlerIsAttached_Grid_Dashboard = false;
     public bool eventHandlerIsAttached_Grid_MapViewer = false;
     public bool eventHandlerIsAttached_Grid_WindAnalytics = false;
     public bool eventHandlerIsAttached_Grid_ForecastAnalysis = false;
+    public bool eventHandlerIsAttached_Grid_Forum = false;
 
     private Grid_MapViewer? grid_mapviever;
 
@@ -54,6 +55,7 @@ public partial class MainWindow : Window
         buttonMapViewer.Click += ButtonMapViewer_Click;
         buttonWindAnalytics.Click += buttonWindAnalytics_Click;
         buttonForecastAnalysis.Click += buttonForecastAnalysis_Click;
+        buttonForum.Click += buttonForum_Click;
     }
 
     private void MenuToggleButton_Checked(object sender, RoutedEventArgs e)
@@ -71,10 +73,10 @@ public partial class MainWindow : Window
         ChangeColor(buttonDashboard);
         ChangeGrid(Dashboard);
 
-        if (!eventHandlerIsAttached_Grid_UserLogin)
+        if (!eventHandlerIsAttached_Grid_Dashboard)
         {
-            Grid_Dashboard grid_userlogin = new Grid_Dashboard(sender, e, this);
-            eventHandlerIsAttached_Grid_UserLogin = true;
+            Grid_Dashboard grid_dashboard = new Grid_Dashboard(sender, e, this);
+            eventHandlerIsAttached_Grid_Dashboard = true;
         }
     }
 
@@ -87,6 +89,18 @@ public partial class MainWindow : Window
         {
             this.grid_mapviever = new Grid_MapViewer(sender, e, this);
             eventHandlerIsAttached_Grid_MapViewer = true;
+        }
+    }
+
+    private void buttonForum_Click(object sender, RoutedEventArgs e)
+    {
+        ChangeColor(buttonForum);
+        ChangeGrid(Forum);
+
+        if (!eventHandlerIsAttached_Grid_Forum)
+        {
+            Grid_Forum grid_forum = new Grid_Forum(sender, e, this);
+            eventHandlerIsAttached_Grid_Forum = true;
         }
     }
 
@@ -127,6 +141,7 @@ public partial class MainWindow : Window
         this.grids.Add(MapViewer);
         this.grids.Add(WindAnalysis);
         this.grids.Add(ForecastAnalysis);
+        this.grids.Add(Forum);
     }
 
     private void AddButtons()
@@ -136,6 +151,7 @@ public partial class MainWindow : Window
         this.buttons.Add(buttonMapViewer);
         this.buttons.Add(buttonWindAnalytics);
         this.buttons.Add(buttonForecastAnalysis);
+        this.buttons.Add(buttonForum);
     }
 
     public void ChangeGrid(Grid act)

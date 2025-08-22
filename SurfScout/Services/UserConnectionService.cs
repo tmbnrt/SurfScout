@@ -53,6 +53,39 @@ namespace SurfScout.Services
             return userConnections ?? new List<UserConnectionDto>();
         }
 
+        public static async Task<IReadOnlyList<FriendDto>> GetMyConnections()
+        {
+            using var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7190/")
+            };
+
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
+
+            var response = await client.GetAsync($"api/userconnections/getconnections?userId={UserSession.UserId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                MessageBox.Show("Error while getting connections from server!", "Error");
+                return new List<FriendDto>();
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var friends = JsonSerializer.Deserialize<List<FriendDto>>(json, options);
+
+            if (friends != null)
+                return friends;
+
+            return new List<FriendDto>();
+        }
+
         public static async Task<bool> SendConnectionRequest(string addresseeName)
         {
             using var client = new HttpClient
