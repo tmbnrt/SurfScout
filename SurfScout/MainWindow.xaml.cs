@@ -36,6 +36,7 @@ public partial class MainWindow : Window
     public bool eventHandlerIsAttached_Grid_MapViewer = false;
     public bool eventHandlerIsAttached_Grid_WindAnalytics = false;
     public bool eventHandlerIsAttached_Grid_ForecastAnalysis = false;
+    public bool eventHandlerIsAttached_Grid_SessionPlanner = false;
     public bool eventHandlerIsAttached_Grid_Forum = false;
 
     private Grid_MapViewer? grid_mapviever;
@@ -55,7 +56,20 @@ public partial class MainWindow : Window
         buttonMapViewer.Click += ButtonMapViewer_Click;
         buttonWindAnalytics.Click += buttonWindAnalytics_Click;
         buttonForecastAnalysis.Click += buttonForecastAnalysis_Click;
-        buttonForum.Click += buttonForum_Click;
+        buttonSessionPlanner.Click += ButtonSessionPlanner_Click;
+        buttonForum.Click += buttonForum_Click;        
+    }
+
+    private void ButtonSessionPlanner_Click(object sender, RoutedEventArgs e)
+    {
+        ChangeColor(buttonSessionPlanner);
+        ChangeGrid(SessionPlanner);
+
+        if (!eventHandlerIsAttached_Grid_SessionPlanner)
+        {
+            Grid_SessionPlanner grid_sessionplanner = new Grid_SessionPlanner(sender, e, this);
+            eventHandlerIsAttached_Grid_SessionPlanner = true;
+        }
     }
 
     private void MenuToggleButton_Checked(object sender, RoutedEventArgs e)
@@ -141,6 +155,7 @@ public partial class MainWindow : Window
         this.grids.Add(MapViewer);
         this.grids.Add(WindAnalysis);
         this.grids.Add(ForecastAnalysis);
+        this.grids.Add(SessionPlanner);
         this.grids.Add(Forum);
     }
 
@@ -151,6 +166,7 @@ public partial class MainWindow : Window
         this.buttons.Add(buttonMapViewer);
         this.buttons.Add(buttonWindAnalytics);
         this.buttons.Add(buttonForecastAnalysis);
+        this.buttons.Add(buttonSessionPlanner);
         this.buttons.Add(buttonForum);
     }
 

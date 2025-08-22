@@ -50,11 +50,15 @@
                     <TextBlock Text="Forecast Analysis" FontSize="16"/>
                 </Button>
 
+                <Button x:Name="buttonSessionPlanner" Style="{StaticResource MenuButtonStyle}">
+                    <TextBlock Text="Session Planner" FontSize="16"/>
+                </Button>
+
                 <Button x:Name="buttonForum" Style="{StaticResource MenuButtonStyle}">
                     <TextBlock Text="Forum" FontSize="16"/>
                 </Button>
 
-                <TextBlock Height="200"/>
+                <TextBlock Height="100"/>
 
                 <Button x:Name="buttonInfo" Content="Info" Height="40" FontSize="16" Background="WhiteSmoke" Margin="5,2"/>
                 <Button x:Name="buttonQuit" Content="Quit" FontWeight="Bold" Height="42" FontSize="18" Background="LightGray" Margin="5,2"/>
@@ -181,6 +185,8 @@
                     <!-- Connections -->
                     <Expander Header="🤝 Connections" Style="{StaticResource DashboardExpanderStyle}" Margin="0,10">
                         <StackPanel Margin="10">
+                            <TextBlock Text="Your Connections:" FontWeight="Bold" Margin="0,0,0,5"/>
+                            <ListBox x:Name="listUserConnections" Height="100"/>
                             <TextBlock Text="Requests:" FontWeight="Bold"/>
                             <ListBox x:Name="listConnectionRequests" Height="100"/>
                             <StackPanel Orientation="Horizontal" Margin="0,5">

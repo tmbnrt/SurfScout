@@ -106,10 +106,7 @@ namespace SurfScout.WindowLogic
                     List<string> requesters = new List<string>();
                     foreach (var cr in connectionRequests)
                         requesters.Add(cr.RequesterUsername);
-                    UserSession.AddConnectionRequesters(requesters);
-
-                    // Fill connection requests list box
-                    win.listConnectionRequests.ItemsSource = UserSession.ConnectionRequesters;
+                    UserSession.AddConnectionRequesters(requesters);                    
 
                     // Assign sports and fill combo box with sport modes
                     UserSession.AddSportModes(response.User.Sports);
@@ -122,7 +119,11 @@ namespace SurfScout.WindowLogic
 
                     win.ChangeGrid(win.Dashboard);
 
-                    GetMyConnections();
+                    await GetMyConnections();
+
+                    // Fill connection list boxes
+                    win.listConnectionRequests.ItemsSource = UserSession.ConnectionRequesters;
+                    win.listUserConnections.ItemsSource = UserSession.ConnectedUsersWithIDs.Keys;
 
                     // Get User data from server (Admin only)
                     if (UserSession.Role == "Admin")
@@ -240,6 +241,7 @@ namespace SurfScout.WindowLogic
 
             // Set the selected sport mode in the user session
             UserSession.SelectedSportMode = win.comboSportOptions.Text;
+            win.textBlockSportMode.Text = UserSession.SelectedSportMode;
         }
 
         private async void ButtonAddSport_Click(object sender, RoutedEventArgs e)
@@ -263,7 +265,7 @@ namespace SurfScout.WindowLogic
                 MessageBox.Show("Failed to add new sport mode. Please try again.");
         }
 
-        private async void GetMyConnections()
+        private async Task GetMyConnections()
         {
             var friends = await UserConnectionService.GetMyConnections();
 
