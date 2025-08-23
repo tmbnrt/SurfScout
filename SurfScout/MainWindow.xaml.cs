@@ -59,12 +59,12 @@ public partial class MainWindow : Window
         AddGrids();
 
         // Button interaction
-        buttonDashboard.Click += buttonDashboard_Click;
+        buttonDashboard.Click += ButtonDashboard_Click;
         buttonMapViewer.Click += ButtonMapViewer_Click;
-        buttonWindAnalytics.Click += buttonWindAnalytics_Click;
-        buttonForecastAnalysis.Click += buttonForecastAnalysis_Click;
+        buttonWindAnalytics.Click += ButtonWindAnalytics_Click;
+        buttonForecastAnalysis.Click += ButtonForecastAnalysis_Click;
         buttonSessionPlanner.Click += ButtonSessionPlanner_Click;
-        buttonForum.Click += buttonForum_Click;        
+        buttonForum.Click += ButtonForum_Click;        
     }
 
     private void ButtonSessionPlanner_Click(object sender, RoutedEventArgs e)
@@ -89,7 +89,7 @@ public partial class MainWindow : Window
         MenuOverlay.Visibility = Visibility.Collapsed;
     }
 
-    private void buttonDashboard_Click(object sender, RoutedEventArgs e)
+    private void ButtonDashboard_Click(object sender, RoutedEventArgs e)
     {
         ChangeColor(buttonDashboard);
         ChangeGrid(Dashboard);
@@ -113,7 +113,7 @@ public partial class MainWindow : Window
         }
     }
 
-    private void buttonForum_Click(object sender, RoutedEventArgs e)
+    private void ButtonForum_Click(object sender, RoutedEventArgs e)
     {
         ChangeColor(buttonForum);
         ChangeGrid(Forum);
@@ -125,7 +125,7 @@ public partial class MainWindow : Window
         }
     }
 
-    private void buttonForecastAnalysis_Click(object sender, RoutedEventArgs e)
+    private void ButtonForecastAnalysis_Click(object sender, RoutedEventArgs e)
     {
         ChangeColor(buttonForecastAnalysis);
         ChangeGrid(ForecastAnalysis);
@@ -136,7 +136,7 @@ public partial class MainWindow : Window
         }
     }
 
-    private void buttonWindAnalytics_Click(object sender, RoutedEventArgs e)
+    private void ButtonWindAnalytics_Click(object sender, RoutedEventArgs e)
     {
         ChangeColor(buttonWindAnalytics);
         ChangeGrid(WindAnalysis);

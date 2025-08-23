@@ -10,6 +10,7 @@ namespace SurfScout.Models
 {
     public class PlannedSession
     {
+        public int Id { get; set; }
         public DateOnly Date { get; set; }
         public int SpotId { get; set; }
         public string SpotName { get; set; }
