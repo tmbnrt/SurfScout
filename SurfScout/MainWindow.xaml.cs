@@ -21,6 +21,7 @@ using System.Security.Cryptography.X509Certificates;
 using SurfScout.WindowLogic;
 using Esri.ArcGISRuntime.UI.Controls;
 using SurfScout.Services;
+using SurfScout.DataStores;
 
 
 namespace SurfScout;
@@ -40,6 +41,12 @@ public partial class MainWindow : Window
     public bool eventHandlerIsAttached_Grid_Forum = false;
 
     private Grid_MapViewer? grid_mapviever;
+    private Grid_SessionPlanner? grid_sessionplanner;
+
+    // Global instances of storage classes
+
+    PlannedSessionStore PlannedSessionStore = new PlannedSessionStore();
+
 
     public MainWindow()
     {
@@ -67,7 +74,7 @@ public partial class MainWindow : Window
 
         if (!eventHandlerIsAttached_Grid_SessionPlanner)
         {
-            Grid_SessionPlanner grid_sessionplanner = new Grid_SessionPlanner(sender, e, this);
+            this.grid_sessionplanner = new Grid_SessionPlanner(sender, e, this);
             eventHandlerIsAttached_Grid_SessionPlanner = true;
         }
     }
@@ -144,6 +151,16 @@ public partial class MainWindow : Window
     private void ButtonShowWindField_Click(object sender, RoutedEventArgs e)
     {
         grid_mapviever.ShowWindField(sender, e);
+    }
+
+    private void SessionPlannerParticipateButton_Click(object sender, RoutedEventArgs e)
+    {
+        grid_sessionplanner.ParticipateAtSession(sender, e);
+    }
+
+    private void SessionPlannerInfoButton_Click(object sender, RoutedEventArgs e)
+    {
+        grid_sessionplanner.ShowPlannedSessionInfo(sender, e);
     }
 
     private void AddGrids()

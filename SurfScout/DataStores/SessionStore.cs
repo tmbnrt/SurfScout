@@ -11,32 +11,35 @@ using SurfScout.Services;
 
 namespace SurfScout.DataStores
 {
-    public static class SessionStore
+    public class SessionStore
     {
-        private static List<Session> _sessions = new();
-        public static IReadOnlyList<Session> Sessions => _sessions;
+        private static SessionStore _instance;
+        public static SessionStore Instance => _instance ??= new SessionStore();
 
-        public static void SetSessions(IEnumerable<Session> sessions)
+        private List<Session> _sessions = new();
+        public IReadOnlyList<Session> Sessions => _sessions;
+
+        public void SetSessions(IEnumerable<Session> sessions)
         {
             _sessions = new List<Session>(sessions);
         }
 
-        public static void AddSession(Session session)
+        public void AddSession(Session session)
         {
             _sessions.Add(session);
         }
 
-        public static void RemoveSession(Session session)
+        public void RemoveSession(Session session)
         {
             _sessions.Remove(session);
         }
 
-        public static void ClearSessions()
+        public void ClearSessions()
         {
             _sessions.Clear();
         }
 
-        public static List<Session> GetSessionOfSpot(Spot spot)
+        public List<Session> GetSessionOfSpot(Spot spot)
         {
             List<Session> sessionList = new List<Session>();
 
@@ -47,7 +50,7 @@ namespace SurfScout.DataStores
             return sessionList;
         }
 
-        public static Session GetSessionById(int id)
+        public Session GetSessionById(int id)
         {
             foreach (Session session in _sessions)
                 if (session.Id == id)
@@ -56,14 +59,14 @@ namespace SurfScout.DataStores
             return null!;
         }
 
-        public static void PutWindFieldData(int id, List<WindField> windfields)
+        public void PutWindFieldData(int id, List<WindField> windfields)
         {
             foreach (Session session in _sessions)
                 if (session.Id == id)
                     session.WindFields = windfields;
         }
 
-        public static List<WindField> GetWindFieldData(int id)
+        public List<WindField> GetWindFieldData(int id)
         {
             foreach (Session session in _sessions)
                 if (session.Id == id)

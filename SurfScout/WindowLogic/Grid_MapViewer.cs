@@ -108,7 +108,7 @@ namespace SurfScout.WindowLogic
                 return;
 
             // Add polygon to spot instance
-            SpotStore.SetWindFetchField(selectedSpot.Id, polygon.polygon);
+            SpotStore.Instance.SetWindFetchField(selectedSpot.Id, polygon.polygon);
 
             // Send polygon to backend
             await SpotService.UpdateWindFetchArea(selectedSpot.Id, polygon);
@@ -267,7 +267,7 @@ namespace SurfScout.WindowLogic
                 string newSpotName = spotNameWin.SpotName;
 
                 // Check for spots with same name
-                foreach (var spot in SpotStore.Spots)
+                foreach (var spot in SpotStore.Instance.Spots)
                 {
                     if (spot.Name == newSpotName)
                     {
@@ -276,7 +276,7 @@ namespace SurfScout.WindowLogic
                     }
                 }
 
-                SpotStore.RenameSpot(spotId, newSpotName);
+                SpotStore.Instance.RenameSpot(spotId, newSpotName);
 
                 // Update spot name to server
                 bool renameSuccessful = await SpotService.UpdateSpotNameAsync(spotId, newSpotName);
@@ -317,7 +317,7 @@ namespace SurfScout.WindowLogic
                     Sport = UserSession.SelectedSportMode
                 };
 
-                SessionStore.AddSession(session);
+                SessionStore.Instance.AddSession(session);
 
                 // Spot sync with server endpoint
                 await SessionService.PostSessionAsync(session);
@@ -337,7 +337,7 @@ namespace SurfScout.WindowLogic
             await SessionService.GetSessionsAsync(selectedSpot);
 
             // Info: "selectedSpot" is the actual selected spot in the UI
-            List<Session> sessionsForSelectedSpot = SessionStore.GetSessionOfSpot(selectedSpot);
+            List<Session> sessionsForSelectedSpot = SessionStore.Instance.GetSessionOfSpot(selectedSpot);
 
             // Mapping to create star-figures
             var sessionDisplayModels = sessionsForSelectedSpot
@@ -358,7 +358,7 @@ namespace SurfScout.WindowLogic
         {
             if ((sender as Button)?.Tag is int sessionId)
             {
-                Session session = SessionStore.GetSessionById(sessionId);
+                Session session = SessionStore.Instance.GetSessionById(sessionId);
                 if (session == null)
                     return;
 
@@ -400,10 +400,10 @@ namespace SurfScout.WindowLogic
         private async Task Pull_SpotsFromServer()
         {
             var spots = await SpotService.GetSpotsAsync();
-            SpotStore.SetSpots(spots);
+            SpotStore.Instance.SetSpots(spots);
 
             // Show spots on map
-            foreach (var spot in SpotStore.Spots)
+            foreach (var spot in SpotStore.Instance.Spots)
             {
                 if (spot.Location != null)
                     SetPin(spot.Location.Y, spot.Location.X, spot.Name, spot.Id);
@@ -418,7 +418,7 @@ namespace SurfScout.WindowLogic
 
             // Check for spots nearby (search distance = 600m)
             Spot checkFound = null;
-            foreach (Spot spot in SpotStore.Spots)
+            foreach (Spot spot in SpotStore.Instance.Spots)
             {
                 if (spot.CheckWithinDistance(mapPoint4326.X, mapPoint4326.Y, 500))
                     checkFound = spot;
@@ -518,7 +518,7 @@ namespace SurfScout.WindowLogic
                 string spotName = newSpotWin.SpotName;
 
                 // Check for existing spots nearby
-                foreach (var spot in SpotStore.Spots)
+                foreach (var spot in SpotStore.Instance.Spots)
                 {
                     if (spot.CheckWithinDistance(latitude, longitude, 500) || spotName == spot.Name)
                     {
@@ -538,7 +538,7 @@ namespace SurfScout.WindowLogic
                     Location = new NetTopologySuite.Geometries.Point(longitude, latitude),
                     Sessions = new List<Session>()
                 };
-                SpotStore.AddSpot(newSpotObj);
+                SpotStore.Instance.AddSpot(newSpotObj);
 
                 // Pin new spot on map
                 SetPin(latitude, longitude, spotName);

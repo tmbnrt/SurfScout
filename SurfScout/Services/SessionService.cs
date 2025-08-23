@@ -55,7 +55,7 @@ namespace SurfScout.Services
              var sessions = JsonSerializer.Deserialize<List<Session>>(json, options);
 
              // Assign known spot instances and the session's user (owner of the session) to sessions
-             var spotLookup = SpotStore.Spots.ToDictionary(s => s.Id);
+             var spotLookup = SpotStore.Instance.Spots.ToDictionary(s => s.Id);
              var userLookup = AllUserStore.Users.ToDictionary(s => s.Id);
              foreach (var session in sessions)
              {
@@ -70,9 +70,9 @@ namespace SurfScout.Services
              }
 
             if (sessions != null)
-                 SessionStore.SetSessions(sessions);
+                 SessionStore.Instance.SetSessions(sessions);
 
-             return SessionStore.Sessions;
+             return SessionStore.Instance.Sessions;
         }
 
         // Post to server
@@ -134,7 +134,7 @@ namespace SurfScout.Services
 
             var windFields = JsonSerializer.Deserialize<List<WindField>>(json, options);
             if (windFields != null)
-                SessionStore.PutWindFieldData(session.Id, windFields);
+                SessionStore.Instance.PutWindFieldData(session.Id, windFields);
 
             return windFields;
         }

@@ -20,10 +20,9 @@ namespace SurfScout.WindowLogic
         {
             this.win = window;
 
+            // Logging
             win.LoginToggle.Click += LoginToggle_Click;
             win.RegisterToggle.Click += RegisterToggle_Click;
-
-            // Logging
             win.buttonLogin.Click += ButtonLogin_Click;
             win.buttonRegister.Click += ButtonRegister_Click;
             win.buttonLogout.Click += ButtonLogout_Click;
@@ -70,8 +69,8 @@ namespace SurfScout.WindowLogic
         {
             // Reset all user data and clear session and spot logs
             UserSession.Reset();
-            SpotStore.ClearSpots();
-            SessionStore.ClearSessions();
+            SpotStore.Instance.ClearSpots();
+            SessionStore.Instance.ClearSessions();
 
             // Swap grid to *login
             win.ChangeGrid(win.Dashboard);
@@ -242,6 +241,8 @@ namespace SurfScout.WindowLogic
             // Set the selected sport mode in the user session
             UserSession.SelectedSportMode = win.comboSportOptions.Text;
             win.textBlockSportMode.Text = UserSession.SelectedSportMode;
+
+            // Send request to backend to update planned sessions for the selected sport mode
         }
 
         private async void ButtonAddSport_Click(object sender, RoutedEventArgs e)

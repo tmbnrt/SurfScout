@@ -45,7 +45,7 @@ namespace SurfScout.WindowLogic
         {
             await SessionService.GetWindFieldDataAsync(selectedSession);
             await SpotService.GetWindFetchArea(selectedSpot.Id);
-            this.windfields = SessionStore.GetWindFieldData(selectedSession.Id);
+            this.windfields = SessionStore.Instance.GetWindFieldData(selectedSession.Id);
 
             if (windfields == null || selectedSpot.WindFetchPolygon == null)
                 return;

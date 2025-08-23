@@ -54,14 +54,14 @@ namespace SurfScout.Services
             var spots = JsonSerializer.Deserialize<List<Spot>>(json, options);
 
             if (spots != null)
-                SpotStore.SetSpots(spots);
+                SpotStore.Instance.SetSpots(spots);
 
-            return SpotStore.Spots;
+            return SpotStore.Instance.Spots;
         }
 
         public static async Task<bool> SendSpotsForSyncAsync()
         {
-            var spots = SpotStore.Spots;
+            var spots = SpotStore.Instance.Spots;
 
             var options = new JsonSerializerOptions
             {
@@ -188,7 +188,7 @@ namespace SurfScout.Services
 
             NetTopologySuite.Geometries.Polygon windfetchfield = Json_Helpers.CreatePolygonFromDto(dto);
 
-            SpotStore.SetWindFetchField(spotId, windfetchfield);
+            SpotStore.Instance.SetWindFetchField(spotId, windfetchfield);
         }
     }
 }

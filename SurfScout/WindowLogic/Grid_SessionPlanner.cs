@@ -15,7 +15,20 @@ namespace SurfScout.WindowLogic
         {
             this.win = window;
 
-            throw new NotImplementedException();
+            // Set observable collections
+            //...
+        }
+
+        public async Task ParticipateAtSession(object sender, RoutedEventArgs e)
+        {
+            // Popoup where the user can select the same session and can select a specific time
+            // ...
+        }
+
+        public async Task ShowPlannedSessionInfo(object sender, RoutedEventArgs e)
+        {
+            // Popup the list where the user can see other users planning a session at a certain time
+            // ...
         }
     }
 }

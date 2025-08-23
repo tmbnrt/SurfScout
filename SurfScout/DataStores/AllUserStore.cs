@@ -10,6 +10,9 @@ namespace SurfScout.DataStores
     // This class is the representation of all registered user
     public class AllUserStore
     {
+        private static AllUserStore _instance;
+        public static AllUserStore Instance => _instance ??= new AllUserStore();
+
         private static List<User> _users = new();
         public static IReadOnlyList<User> Users => _users;
 

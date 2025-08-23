@@ -8,27 +8,30 @@ using SurfScout.Models;
 
 namespace SurfScout.DataStores
 {
-    public static class SpotStore
+    public class SpotStore
     {
-        private static List<Spot> _spots = new();
-        public static IReadOnlyList<Spot> Spots => _spots;
+        private static SpotStore _instance;
+        public static SpotStore Instance => _instance ??= new SpotStore();
 
-        public static void SetSpots(IEnumerable<Spot> spots)
+        private List<Spot> _spots = new();
+        public IReadOnlyList<Spot> Spots => _spots;
+
+        public void SetSpots(IEnumerable<Spot> spots)
         {
             _spots = new List<Spot>(spots);
         }
 
-        public static void AddSpot(Spot spot)
+        public void AddSpot(Spot spot)
         {
             _spots.Add(spot);
         }
 
-        public static void ClearSpots()
+        public void ClearSpots()
         {
             _spots.Clear();
         }
 
-        public static int GetLatestId()
+        public int GetLatestId()
         {
             int latestId = 0;
 
@@ -39,14 +42,14 @@ namespace SurfScout.DataStores
             return latestId;
         }
 
-        public static void RenameSpot(int id, string newName)
+        public void RenameSpot(int id, string newName)
         {
             foreach (Spot spot in _spots)
                 if (spot.Id == id)
                     spot.Name = newName;
         }
 
-        public static void SetWindFetchField(int id, Polygon polygon)
+        public void SetWindFetchField(int id, Polygon polygon)
         {
             foreach (Spot spot in _spots)
                 if (spot.Id == id)
