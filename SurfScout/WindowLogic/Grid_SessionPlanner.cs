@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SurfScout.DataStores;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,9 @@ namespace SurfScout.WindowLogic
             this.win = window;
 
             // Set observable collections
-            //...
+            var plannedSessions = PlannedSessionStore.Instance.PlannedSessions
+                .Select(p => new { p.Date, p.SportMode }).ToList();
+            win.SessionListView.ItemsSource = plannedSessions;
         }
 
         public async Task ParticipateAtSession(object sender, RoutedEventArgs e)

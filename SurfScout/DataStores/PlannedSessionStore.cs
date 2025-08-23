@@ -13,14 +13,14 @@ namespace SurfScout.DataStores
         private static PlannedSessionStore _instance;
         public static PlannedSessionStore Instance => _instance ??= new PlannedSessionStore();
 
-        public static ObservableCollection<PlannedSession> PlannedSessions { get; set; }
+        public ObservableCollection<PlannedSession> PlannedSessions { get; set; } = new ObservableCollection<PlannedSession>();
 
-        public static void AddPlannedSession(PlannedSession plannedSession)
+        public void AddPlannedSession(PlannedSession plannedSession)
         {
             PlannedSessions.Add(plannedSession);
         }
 
-        public static void RemoveSession(PlannedSession plannedSession)
+        public void RemoveSession(PlannedSession plannedSession)
         {
             // Check if user is the only participant
             // ... if yes, delete session
