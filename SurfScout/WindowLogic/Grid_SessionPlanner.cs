@@ -1,5 +1,6 @@
 ﻿using SurfScout.DataStores;
 using SurfScout.Models;
+using SurfScout.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace SurfScout.WindowLogic
     class Grid_SessionPlanner
     {
         MainWindow win;
+        int plannedSessionId;
 
         public Grid_SessionPlanner(object sender, RoutedEventArgs e, MainWindow window)
         {
@@ -22,7 +24,12 @@ namespace SurfScout.WindowLogic
             SetUiInput();
 
             win.buttonAddPlannedSession.Click += ButtonAddPlannedSession_Click;
+            win.buttonConfirmParticipation.Click += ButtonConfirmParticipation_Click;
+            win.buttonConfirmNewPlannedSession.Click += ButtonConfirmNewPlannedSession_Click;
         }
+
+        // TODO: Add function to rate a past session (create popup first)
+        
 
         private void ButtonAddPlannedSession_Click(object sender, RoutedEventArgs e)
         {
@@ -36,16 +43,17 @@ namespace SurfScout.WindowLogic
             int spotId = (int)win.comboSpotSelector.SelectedValue;
             var spotName = selected.GetType().GetProperty("Name")?.GetValue(selected)?.ToString();
 
-            // Open a popup to set more details about the session (date, time, sportmode)
-            // TODO: Create popup in UI ...
-
-            // --> comboSpotSelector shows the spot name but spot id is also contained in the object
+            if (spotId != null)
+            {
+                win.AddPlannedSessionPopup.IsOpen = true;
+                win.datePickerNewPlanDate.DisplayDateStart = DateTime.Today;
+            }
         }
 
         private void SetUiInput()
         {
             // Set observable collections
-            var plannedSessions = PlannedSessionStore.Instance.PlannedSessions
+            var plannedSessions = PlannedSessionStore.Instance.PlannedSessionsForeign
                                     .Select(p => new { p.Date, p.SportMode }).ToList();
             win.SessionListView.ItemsSource = plannedSessions;
 
@@ -55,14 +63,86 @@ namespace SurfScout.WindowLogic
                                                     .ToList();
         }
 
-        public async Task ParticipateAtSession(object sender, RoutedEventArgs e)
+        public void ParticipateAtSession(object sender, RoutedEventArgs e)
         {
-            if ((sender as Button)?.Tag is int plannedSessionId)
+            if ((sender as Button)?.Tag is int idFromButton)
             {
-                var plannedSession = PlannedSessionStore.Instance.PlannedSessions.FirstOrDefault(s => s.Id == plannedSessionId);
+                this.plannedSessionId = idFromButton;
 
-                // Send put request to the server to add the user to the planned session
-                // TODO: Implement API call to add user to the session ...
+                var plannedSession = PlannedSessionStore.Instance.PlannedSessionsForeign.FirstOrDefault(s => s.Id == plannedSessionId);
+
+                // Popup time selection for participation
+                win.ParticipatePopup.IsOpen = true;
+            }
+        }
+
+        public async void ButtonConfirmNewPlannedSession_Click(object sender, RoutedEventArgs e)
+        {
+            if (win.comboNewPlanStartTime.SelectedItem == null || win.comboNewPlanEndTime.SelectedItem == null)
+            {
+                MessageBox.Show("Please select a start and end time for the session.", "Missing Time Selection", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            TimeOnly startTime = TimeOnly.Parse((win.comboNewPlanStartTime.SelectedItem as ComboBoxItem)?.Content.ToString()!);
+            TimeOnly endTime = TimeOnly.Parse((win.comboNewPlanEndTime.SelectedItem as ComboBoxItem)?.Content.ToString()!);
+            DateOnly date = DateOnly.Parse(win.datePickerNewPlanDate.SelectedDate?.ToString()!);
+
+            // TODO: Check for overlapping sessions (compare with PlannedSessionsOwn_AllSportModes)
+            // ...
+
+            // Create a new PlannedSession instance
+            var newPlannedSession = new PlannedSession
+            {
+                Date = date,
+                SpotId = (int)win.comboSpotSelector.SelectedValue,
+                SportMode = UserSession.SelectedSportMode,
+                Participants = new List<SessionParticipant>
+                { new SessionParticipant
+                    {
+                        UserId = UserSession.UserId,
+                        StartTime = startTime,
+                        EndTime = endTime}                    
+                }
+            };
+
+            // Send request to the server to create a new planned session
+            var postedSessionPlan = await SessionPlannerService.PostNewSessionPlan(newPlannedSession);
+
+            if (postedSessionPlan != null)
+            {
+                PlannedSessionStore.Instance.AddPlannedSessionOwn(postedSessionPlan);
+                PlannedSessionStore.Instance.AddPlannedSessionsOwn_AllModes(postedSessionPlan);
+                win.AddPlannedSessionPopup.IsOpen = false;
+                MessageBox.Show("New planned session created successfully!", "Session Created", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+                MessageBox.Show("Failed to create new planned session. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        public async void ButtonConfirmParticipation_Click(object sender, RoutedEventArgs e)
+        {
+            if (win.comboPlannedStartTime.SelectedItem == null || win.comboPlannedEndTime.SelectedItem == null)
+            {
+                MessageBox.Show("Please select a start and end time for the session.", "Missing Time Selection", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            TimeOnly startTime = TimeOnly.Parse((win.comboPlannedStartTime.SelectedItem as ComboBoxItem)?.Content.ToString()!);
+            TimeOnly endTime = TimeOnly.Parse((win.comboPlannedEndTime.SelectedItem as ComboBoxItem)?.Content.ToString()!);
+
+            var participatedSession = await SessionPlannerService.ParticipateAtSession(plannedSessionId, startTime, endTime);
+
+            if (participatedSession != null)
+            {
+                PlannedSessionStore.Instance.AddPlannedSessionOwn(participatedSession);
+                PlannedSessionStore.Instance.RemovePlannedForeignSession(plannedSessionId);
+                win.ParticipatePopup.IsOpen = false;
+                MessageBox.Show("Successfully participated at the session!", "Participation Confirmed", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("Failed to participate at the session. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -70,7 +150,7 @@ namespace SurfScout.WindowLogic
         {
             if ((sender as Button)?.Tag is int plannedSessionId)
             {
-                var plannedSession = PlannedSessionStore.Instance.PlannedSessions.FirstOrDefault(s => s.Id == plannedSessionId);
+                var plannedSession = PlannedSessionStore.Instance.PlannedSessionsForeign.FirstOrDefault(s => s.Id == plannedSessionId);
 
                 // Open popup
                 // TODO: Create popup window in th UI to show session details

@@ -71,6 +71,7 @@ namespace SurfScout.WindowLogic
             UserSession.Reset();
             SpotStore.Instance.ClearSpots();
             SessionStore.Instance.ClearSessions();
+            PlannedSessionStore.Instance.ResetAll();
 
             // Swap grid to *login
             win.ChangeGrid(win.Dashboard);
@@ -277,8 +278,15 @@ namespace SurfScout.WindowLogic
 
         private async Task GetPlannedSessions()
         {
+            // Call server API
+
+
             // Fill PlannedSessionStore
             // ...
+
+            // TODO: Send request to get all PAST planned sessions!
+            // ...
+            
         }
 
         private void AddOptionForNewSportMode()
