@@ -32,7 +32,7 @@ namespace SurfScout.Services
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
             
-             var response = await client.GetAsync($"api/sessions/spotsessions?spotId={spot.Id}");
+             var response = await client.GetAsync($"api/sessions/spotsessions?userId={UserSession.UserId}&spotId={spot.Id}");
 
              if (!response.IsSuccessStatusCode)
              {

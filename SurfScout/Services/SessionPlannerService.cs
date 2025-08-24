@@ -29,7 +29,7 @@ namespace SurfScout.Services
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
             
-            var response = await client.GetAsync($"api/plannedsessions/getusersessions?userId={UserSession.UserId}");
+            var response = await client.GetAsync($"api/plannedsessions/sessionsofuser?userId={UserSession.UserId}");
 
             if (!response.IsSuccessStatusCode)
             {
@@ -113,7 +113,7 @@ namespace SurfScout.Services
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
             
-            var response = await client.GetAsync($"api/plannedsessions/sessionsofuser?userId={UserSession.UserId}");
+            var response = await client.GetAsync($"api/plannedsessions/sessionsofconnections?userId={UserSession.UserId}");
 
             if (!response.IsSuccessStatusCode)
             {
@@ -138,7 +138,7 @@ namespace SurfScout.Services
 
             if (plannedSessions != null)
                 foreach (var ps in plannedSessions)
-                    if (ps.SportMode == UserSession.SelectedSportMode)
+                    //if (ps.SportMode == UserSession.SelectedSportMode)
                         PlannedSessionStore.Instance.AddPlannedSessionForeign(ps);
         }
 

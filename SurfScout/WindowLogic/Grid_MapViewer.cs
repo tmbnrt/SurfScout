@@ -56,7 +56,7 @@ namespace SurfScout.WindowLogic
             this.savedCoordinates = new List<MapPoint>();
 
             LoadMap();
-            Pull_SpotsFromServer();
+            ShowSpotsOnMap();
 
             win.buttonMapAddSpot.Click += ButtonMapAddSpot_Click;
 
@@ -339,6 +339,9 @@ namespace SurfScout.WindowLogic
             // Info: "selectedSpot" is the actual selected spot in the UI
             List<Session> sessionsForSelectedSpot = SessionStore.Instance.GetSessionOfSpot(selectedSpot);
 
+            if (sessionsForSelectedSpot.Count() < 1)
+                return;
+
             // Mapping to create star-figures
             var sessionDisplayModels = sessionsForSelectedSpot
                 .Select(s => new
@@ -397,12 +400,8 @@ namespace SurfScout.WindowLogic
             await shapeLayer.LoadAsync();
         }
 
-        private async Task Pull_SpotsFromServer()
+        private async Task ShowSpotsOnMap()
         {
-            var spots = await SpotService.GetSpotsAsync();
-            SpotStore.Instance.SetSpots(spots);
-
-            // Show spots on map
             foreach (var spot in SpotStore.Instance.Spots)
             {
                 if (spot.Location != null)

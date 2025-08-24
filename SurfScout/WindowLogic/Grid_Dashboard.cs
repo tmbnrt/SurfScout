@@ -121,11 +121,12 @@ namespace SurfScout.WindowLogic
 
                     await GetUserConnections();
 
-                    GetPlannedSessions();
+                    GetSpotsFromServer();
+                    GetPlannedSessions();                    
 
-                    // Get User data from server (Admin only)
-                    if (UserSession.Role == "Admin")
-                        await UserService.GetAllUsersAsync();
+                    //// Get User data from server (Admin only) ! Implement in Backend for security reasons!
+                    //if (UserSession.Role == "Admin")
+                    //    await UserService.GetAllUsersAsync();
                 }
                 else
                 {
@@ -208,7 +209,6 @@ namespace SurfScout.WindowLogic
             
             if (connected)
             {
-                win.listConnectionRequests.Items.Remove(selectedRequester);
                 UserSession.RemoveRequesterFromList(selectedRequester);
                 MessageBox.Show($"You are now connected with {selectedRequester}.");
             }
@@ -226,7 +226,6 @@ namespace SurfScout.WindowLogic
 
             if (rejected)
             {
-                win.listConnectionRequests.Items.Remove(selectedRequester);
                 UserSession.RemoveRequesterFromList(selectedRequester);
                 MessageBox.Show($"You have rejected the connection request from {selectedRequester}.");
             }
@@ -274,6 +273,12 @@ namespace SurfScout.WindowLogic
 
             win.listConnectionRequests.ItemsSource = UserSession.ConnectionRequesters;
             win.listUserConnections.ItemsSource = UserSession.ConnectedUsersWithIDs.Keys;
+        }
+
+        private async Task GetSpotsFromServer()
+        {
+            var spots = await SpotService.GetSpotsAsync();
+            SpotStore.Instance.SetSpots(spots);
         }
 
         private async Task GetPlannedSessions()

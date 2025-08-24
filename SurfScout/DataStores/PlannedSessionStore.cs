@@ -23,6 +23,8 @@ namespace SurfScout.DataStores
 
         public void AddPlannedSessionForeign(PlannedSession plannedSession)
         {
+            plannedSession.SpotName = SpotStore.Instance.Spots
+                .FirstOrDefault(s => s.Id == plannedSession.SpotId)?.Name ?? "Unknown";
             PlannedSessionsForeign.Add(plannedSession);
         }
 
@@ -52,7 +54,7 @@ namespace SurfScout.DataStores
 
         public void AddPlannedSessionsOwn_AllModes(PlannedSession plannedSession)
         {
-            PlannedSessionsOwn_AllSportModes.AddRange(PlannedSessionsOwn);
+            PlannedSessionsOwn_AllSportModes.Add(plannedSession);
         }
 
         public void RemovePlannedForeignSession(int sessionId)

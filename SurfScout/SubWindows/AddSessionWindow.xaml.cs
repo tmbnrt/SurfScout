@@ -69,6 +69,12 @@ namespace SurfScout.SubWindows
             }
             this.sailSize = sailSize;
 
+            if (startTime >= endTime)
+            {
+                MessageBox.Show("Start time must be before end time.", "Time Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             DialogResult = true;
 
             this.Close();

@@ -60,9 +60,7 @@ namespace SurfScout.WindowLogic
         private void SetUiInput()
         {
             // Set observable collections
-            var plannedSessions = PlannedSessionStore.Instance.PlannedSessionsForeign
-                                    .Select(p => new { p.Date, p.SportMode }).ToList();
-            win.SessionListView.ItemsSource = plannedSessions;
+            win.SessionPlannerListViewForeign.ItemsSource = PlannedSessionStore.Instance.PlannedSessionsForeign;
 
             // Fill combobox with availaple spot names
             win.comboSpotSelector.ItemsSource = SpotStore.Instance.Spots
@@ -96,7 +94,7 @@ namespace SurfScout.WindowLogic
 
             TimeOnly startTime = TimeOnly.Parse((win.comboNewPlanStartTime.SelectedItem as ComboBoxItem)?.Content.ToString()!);
             TimeOnly endTime = TimeOnly.Parse((win.comboNewPlanEndTime.SelectedItem as ComboBoxItem)?.Content.ToString()!);
-            DateOnly date = DateOnly.Parse(win.datePickerNewPlanDate.SelectedDate?.ToString()!);
+            DateOnly date = DateOnly.FromDateTime(win.datePickerNewPlanDate.SelectedDate!.Value);
 
             // TODO: Check for overlapping sessions (compare with PlannedSessionsOwn_AllSportModes)
             // ...

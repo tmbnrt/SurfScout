@@ -514,7 +514,7 @@
                 </Grid>
 
                 <!-- Session List -->
-                <ListView x:Name="SessionPlannerListView" ItemsSource="{Binding PlannedSessions}" Margin="0,0,0,20">
+                <ListView x:Name="SessionPlannerListViewForeign" Margin="0,0,0,20">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <Border BorderBrush="#DDD" BorderThickness="1" Padding="10" Margin="0,5" Background="White">
