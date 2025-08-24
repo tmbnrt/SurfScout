@@ -661,13 +661,94 @@
                     </Border>
                 </Popup>
 
-
-                <!-- Info Popup Placeholder -->
-                <Popup x:Name="SessionInfoPopup" Placement="MousePoint" IsOpen="False" StaysOpen="False">
-                    <Border Background="White" BorderBrush="Gray" BorderThickness="1" Padding="10" CornerRadius="5">
+                <!-- Past unrated sessions popup -->
+                <Popup x:Name="PastSessionsPopup" Placement="MousePoint" StaysOpen="False" IsOpen="False">
+                    <Border Background="White" BorderBrush="Gray" BorderThickness="1" Padding="10" CornerRadius="5" Width="400">
                         <StackPanel>
-                            <TextBlock Text="Session Info" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
-                            <TextBlock Text="Details will appear here..." FontStyle="Italic" Foreground="Gray"/>
+                            <!-- Close Button -->
+                            <Button x:Name="buttonPastSessionsClose"
+                                Content="❌ Close"
+                                HorizontalAlignment="Right"
+                                Width="60"
+                                Margin="0,0,0,10"
+                                Style="{StaticResource FormButtonStyle}" />
+
+                            <TextBlock Text="Past Sessions (Not Rated)"
+                                FontWeight="Bold"
+                                FontSize="16"
+                                Margin="0,0,0,10"/>
+
+                            <!-- Session List -->
+                            <ListView x:Name="PastSessionsListView"
+                                Margin="0,0,0,10"
+                                BorderThickness="0"
+                                Background="Transparent"
+                                ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="#DDD"
+                                            BorderThickness="1"
+                                            Padding="10"
+                                            Margin="0,5"
+                                            Background="White">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="120"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Date -->
+                                                <TextBlock Text="{Binding Date}"
+                                                    Grid.Column="0"
+                                                    VerticalAlignment="Center"/>
+
+                                                <!-- Spot Name -->
+                                                <TextBlock Text="{Binding SpotName}"
+                                                    Grid.Column="1"
+                                                    VerticalAlignment="Center"/>
+
+                                                <!-- Start time -->
+                                                <TextBlock Text="{Binding StartTime}"
+                                                    Grid.Column="2"
+                                                    VerticalAlignment="Center"/>
+
+                                                <!-- Start time -->
+                                                <TextBlock Text="{Binding EndTime}"
+                                                    Grid.Column="3"
+                                                    VerticalAlignment="Center"/>
+
+                                                <!-- Sport mode -->
+                                                <TextBlock Text="{Binding SportMode}"
+                                                    Grid.Column="4"
+                                                    VerticalAlignment="Center"/>
+
+                                                <!-- Rate Button -->
+                                                <Button Content="Rate"
+                                                    Grid.Column="5"
+                                                    Width="60"
+                                                    Margin="5,0,0,0"
+                                                    Style="{StaticResource FormButtonStyle}"
+                                                    Click="RatePastSession_Click"
+                                                    Tag="{Binding Id}" />
+
+                                                <!-- Delete Button -->
+                                                <Button Content="Delete"
+                                                    Grid.Column="6"
+                                                    Width="60"
+                                                    Margin="5,0,0,0"
+                                                    Style="{StaticResource FormButtonStyle}"
+                                                    Click="DeletePastSession_Click"
+                                                    Tag="{Binding Id}" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
                         </StackPanel>
                     </Border>
                 </Popup>

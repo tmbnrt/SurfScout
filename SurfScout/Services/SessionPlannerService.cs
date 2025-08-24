@@ -61,6 +61,48 @@ namespace SurfScout.Services
                 }
         }
 
+        public static async Task GetPastPlannedSessions()
+        {
+            using var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7190/")
+            };
+
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
+
+            var response = await client.GetAsync($"api/plannedsessions/pastusersessions?userId={UserSession.UserId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    PlannedSessionStore.Instance.PlannedSessionsOwn.Clear();
+                    return;
+                }
+
+                MessageBox.Show("Error while getting planned sessions from server!", "Error");
+                return;
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var pastSessions = JsonSerializer.Deserialize<List<PlannedSession>>(json, options);
+
+            if (pastSessions != null)
+                foreach (var ps in pastSessions)
+                {
+                    PlannedSessionStore.Instance.AddPlannedSessionsOwn_AllModes(ps);
+                    if (ps.SportMode == UserSession.SelectedSportMode)
+                        PlannedSessionStore.Instance.AddPlannedSessionOwn(ps);
+                }
+        }
+
         public static async Task GetForeignPlannedSessions()
         {
             using var client = new HttpClient
@@ -143,7 +185,7 @@ namespace SurfScout.Services
             return plannedSession;
         }
 
-        // Add a session plan
+        // Add a planned session
         public static async Task<PlannedSession> PostNewSessionPlan(PlannedSession newPlannedSession)
         {
             using var client = new HttpClient
@@ -179,11 +221,35 @@ namespace SurfScout.Services
             return plannedSession;
         }
 
+        // Remove user from a planned session
+        public static async Task<bool> RemoveUserFromPlannedSession(int sessionId, int userId)
+        {
+            if (sessionId <= 0 || userId <= 0)
+            {
+                MessageBox.Show("Invalid session or user ID!", "Error");
+                return false;
+            }
 
+            using var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7190/")
+            };
 
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
 
-        // TODO: Send request to API to delete user (by id) from the planned session
-        // in backend: delete session if no participants left
+            var response = await client.DeleteAsync($"api/plannedsessions/removeparticipant?sessionId={sessionId}&userId={userId}");
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                MessageBox.Show("Error while removing user from planned session!", "Error");
+                return false;
+            }
 
+            // Remove the session from the local store
+            PlannedSessionStore.Instance.RemovePlannedOwnSession(sessionId);
+
+            return true;
+        }
     }
 }

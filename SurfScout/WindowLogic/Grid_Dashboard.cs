@@ -279,14 +279,13 @@ namespace SurfScout.WindowLogic
         private async Task GetPlannedSessions()
         {
             // Call server API
+            SessionPlannerService.GetForeignPlannedSessions();
 
+            // Call user's planned sessions
+            SessionPlannerService.GetOwnPlannedSessions();
 
-            // Fill PlannedSessionStore
-            // ...
-
-            // TODO: Send request to get all PAST planned sessions!
-            // ...
-            
+            // Call past planned sessions
+            SessionPlannerService.GetPastPlannedSessions();
         }
 
         private void AddOptionForNewSportMode()

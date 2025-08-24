@@ -163,6 +163,22 @@ public partial class MainWindow : Window
         grid_sessionplanner.ShowPlannedSessionInfo(sender, e);
     }
 
+    private void RatePastSession_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.Tag is int sessionId)
+        {
+            grid_sessionplanner.RatePastSession(sender, e, sessionId);
+        }
+    }
+
+    private void DeletePastSession_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.Tag is int sessionId)
+        {
+            grid_sessionplanner.DeletePastSession(sender, e, sessionId);
+        }
+    }
+
     private void AddGrids()
     {
         this.grids = new List<Grid>();

@@ -1,6 +1,7 @@
 ﻿using SurfScout.DataStores;
 using SurfScout.Models;
 using SurfScout.Services;
+using SurfScout.SubWindows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,13 +24,14 @@ namespace SurfScout.WindowLogic
 
             SetUiInput();
 
+            // Show popup for past unrated sessions
+            win.PastSessionsPopup.IsOpen = true;
+            win.buttonPastSessionsClose.Click += ButtonPastSessionsClose_Click;
+
             win.buttonAddPlannedSession.Click += ButtonAddPlannedSession_Click;
             win.buttonConfirmParticipation.Click += ButtonConfirmParticipation_Click;
             win.buttonConfirmNewPlannedSession.Click += ButtonConfirmNewPlannedSession_Click;
         }
-
-        // TODO: Add function to rate a past session (create popup first)
-        
 
         private void ButtonAddPlannedSession_Click(object sender, RoutedEventArgs e)
         {
@@ -50,6 +52,11 @@ namespace SurfScout.WindowLogic
             }
         }
 
+        private void ButtonPastSessionsClose_Click(object sender, RoutedEventArgs e)
+        {
+            win.PastSessionsPopup.IsOpen = false;
+        }
+
         private void SetUiInput()
         {
             // Set observable collections
@@ -61,6 +68,9 @@ namespace SurfScout.WindowLogic
             win.comboSpotSelector.ItemsSource = SpotStore.Instance.Spots
                                                     .Select(s => new { s.Id, s.Name })
                                                     .ToList();
+
+            // Fill popup list of unrated sessions
+            win.PastSessionsListView.ItemsSource = PlannedSessionStore.Instance.unratedSessionsViewModels;
         }
 
         public void ParticipateAtSession(object sender, RoutedEventArgs e)
@@ -146,6 +156,81 @@ namespace SurfScout.WindowLogic
             }
         }
 
+        public async Task RatePastSession(object sender, RoutedEventArgs e, int sessionId)
+        {
+            // Check if the sessionId is valid
+            if (sessionId <= 0)
+            {
+                MessageBox.Show("Invalid session ID.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            PlannedSession sessionToRate = PlannedSessionStore.Instance.PastSessions_NotRated
+                .FirstOrDefault(ps => ps.Id == sessionId)!;
+
+            if (sessionToRate == null)
+                return;
+
+            // Open the same popup as in the map viewer grid for creating a new session
+            AddSessionWindow addSessionWindow = new AddSessionWindow();
+
+            addSessionWindow.datePicker.SelectedDate = sessionToRate.Date.ToDateTime(TimeOnly.MinValue);
+            addSessionWindow.datePicker.IsEnabled = false;
+
+            addSessionWindow.comboStartTime.SelectedItem = sessionToRate.Participants
+                .FirstOrDefault(p => p.Id == UserSession.UserId)?.StartTime.ToString("HH:mm");
+
+            addSessionWindow.comboEndTime.SelectedItem = sessionToRate.Participants
+                .FirstOrDefault(p => p.Id == UserSession.UserId)?.EndTime.ToString("HH:mm");
+
+            bool? result = addSessionWindow.ShowDialog();
+
+            if (addSessionWindow.ShowDialog() != true)
+                return;
+
+            // Get the values from the popup
+            DateOnly date = addSessionWindow.date;
+            TimeOnly startTime = addSessionWindow.startTime;
+            TimeOnly endTime = addSessionWindow.endTime;
+            string waveHeight = addSessionWindow.waveHeight;
+            int rating = addSessionWindow.rating;
+            double sailSize = addSessionWindow.sailSize;
+
+            // Send request to server to store the session
+            if (result.HasValue)
+            {
+                Session session = new Session
+                {
+                    Date = date,
+                    Spot = SpotStore.Instance.Spots.FirstOrDefault(s => s.Id == sessionToRate.SpotId)!,
+                    StartTime = startTime,
+                    EndTime = endTime,
+                    Wave_height = addSessionWindow.waveHeight,
+                    Sail_size = addSessionWindow.sailSize,
+                    Rating = addSessionWindow.rating,
+                    UserId = UserSession.UserId,
+                    Sport = sessionToRate.SportMode
+                };
+
+                SessionStore.Instance.AddSession(session);
+
+                // Spot sync with server endpoint
+                bool rated = await SessionService.PostSessionAsync(session);
+
+                if (rated)
+                    PlannedSessionStore.Instance.RemoveRatedOrDeletedSession(sessionId);
+            }
+        }
+
+        public async Task DeletePastSession(object sender, RoutedEventArgs e, int sessionId)
+        {
+            // Send request to the server to remove the user from the planned session
+            bool removed = await SessionPlannerService.RemoveUserFromPlannedSession(sessionId, UserSession.UserId);
+
+            if (removed)
+                PlannedSessionStore.Instance.RemoveRatedOrDeletedSession(sessionId);
+        }
+
         public async Task ShowPlannedSessionInfo(object sender, RoutedEventArgs e)
         {
             if ((sender as Button)?.Tag is int plannedSessionId)
@@ -154,6 +239,7 @@ namespace SurfScout.WindowLogic
 
                 // Open popup
                 // TODO: Create popup window in th UI to show session details
+                // ...
             }            
         }
     }

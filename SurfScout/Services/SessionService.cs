@@ -76,7 +76,7 @@ namespace SurfScout.Services
         }
 
         // Post to server
-        public static async Task PostSessionAsync(Session session)
+        public static async Task<bool> PostSessionAsync(Session session)
         {
             var dto = new SessionDto
             {
@@ -103,7 +103,10 @@ namespace SurfScout.Services
             if (!response.IsSuccessStatusCode)
             {
                 MessageBox.Show("Error while storing session on server!", "API-Error");
+                return false;
             }
+
+            return true;
         }
 
         // Request wind field data for a session
