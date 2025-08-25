@@ -476,7 +476,7 @@
             <!-- Users always have access to their friends' sessions: Can be advantage for emergency situations (?) -->
             <!-- Even if a session is planned, there should be an option to cancel participation. In case no one is left: Delete planned session from database -->
 
-            <StackPanel Margin="40" Background="#F8F8F8" Width="600">
+            <StackPanel Margin="40" Background="#F8F8F8" Width="1000">
 
                 <!-- Header: Add Session -->
                 <Grid Margin="0,0,0,20">
@@ -503,8 +503,10 @@
                 <!-- Session List Column Headers -->
                 <Grid Margin="0,0,0,10">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120"/>
                         <ColumnDefinition Width="150"/>
-                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="120"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
@@ -513,17 +515,17 @@
                     <TextBlock Text="Spot" Grid.Column="1" FontWeight="SemiBold" Foreground="Gray" />
                 </Grid>
 
-                <!-- Session List -->
+                <!-- Foreign Session List -->
                 <ListView x:Name="SessionPlannerListViewForeign" Margin="0,0,0,20">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <Border BorderBrush="#DDD" BorderThickness="1" Padding="10" Margin="0,5" Background="White">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="250"/>
-                                        <ColumnDefinition Width="250"/>
-                                        <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
 
                                     <!-- Date -->
@@ -537,8 +539,46 @@
                                         Style="{StaticResource FormButtonStyle}"
                                         Command="{Binding ParticipateCommand}"
                                         CommandParameter="{Binding Id}"
+                                        Tag="{Binding Id}"
                                         Click="SessionPlannerParticipateButton_Click" />
 
+                                    <!-- Info Button -->
+                                    <Button Content="Info" Grid.Column="3" Width="80" Margin="10,0,0,0"
+                                        Style="{StaticResource FormButtonStyle}"
+                                        CommandParameter="{Binding Id}"
+                                        Tag="{Binding Id}"
+                                        Click="SessionPlannerInfoButton_Click" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <!-- Own planned session -->
+                <ListView x:Name="SessionPlannerListViewOwn" Margin="0,0,0,20">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="#DDD" BorderThickness="1" Padding="10" Margin="0,5" Background="White">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Date -->
+                                    <TextBlock Text="{Binding Date}" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    <!-- Spot Name -->
+                                    <TextBlock Text="{Binding SpotName}" Grid.Column="1" VerticalAlignment="Center"/>
+                                    
+                                    <!-- Skip Button -->
+                                    <Button Content="Skip" Grid.Column="2" Width="100"
+                                        Style="{StaticResource FormButtonStyle}"
+                                        Command="{Binding SkipCommand}"
+                                        CommandParameter="{Binding Id}"
+                                        Tag="{Binding Id}"
+                                        Click="SessionPlannerSkipButton_Click" />
                                     <!-- Info Button -->
                                     <Button Content="Info" Grid.Column="3" Width="80" Margin="10,0,0,0"
                                         Style="{StaticResource FormButtonStyle}"
@@ -549,6 +589,7 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
+
 
                 <!-- Add Planned Session Popup -->
                 <Popup x:Name="AddPlannedSessionPopup" Placement="MousePoint" StaysOpen="False" IsOpen="False">
@@ -663,7 +704,7 @@
 
                 <!-- Past unrated sessions popup -->
                 <Popup x:Name="PastSessionsPopup" Placement="MousePoint" StaysOpen="False" IsOpen="False">
-                    <Border Background="White" BorderBrush="Gray" BorderThickness="1" Padding="10" CornerRadius="5" Width="400">
+                    <Border Background="White" BorderBrush="Gray" BorderThickness="1" Padding="10" CornerRadius="5" Width="600">
                         <StackPanel>
                             <!-- Close Button -->
                             <Button x:Name="buttonPastSessionsClose"

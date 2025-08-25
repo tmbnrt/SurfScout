@@ -97,9 +97,8 @@ namespace SurfScout.Services
             if (pastSessions != null)
                 foreach (var ps in pastSessions)
                 {
-                    PlannedSessionStore.Instance.AddPlannedSessionsOwn_AllModes(ps);
-                    if (ps.SportMode == UserSession.SelectedSportMode)
-                        PlannedSessionStore.Instance.AddPlannedSessionOwn(ps);
+                    if (UserSession.Sports.Contains(ps.SportMode))
+                        PlannedSessionStore.Instance.AddPastSession(ps);
                 }
         }
 

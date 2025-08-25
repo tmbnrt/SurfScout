@@ -5,6 +5,7 @@ using SurfScout.SubWindows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -61,6 +62,7 @@ namespace SurfScout.WindowLogic
         {
             // Set observable collections
             win.SessionPlannerListViewForeign.ItemsSource = PlannedSessionStore.Instance.PlannedSessionsForeign;
+            win.SessionPlannerListViewOwn.ItemsSource = PlannedSessionStore.Instance.PlannedSessionsOwn;
 
             // Fill combobox with availaple spot names
             win.comboSpotSelector.ItemsSource = SpotStore.Instance.Spots
@@ -81,6 +83,25 @@ namespace SurfScout.WindowLogic
 
                 // Popup time selection for participation
                 win.ParticipatePopup.IsOpen = true;
+            }
+        }
+
+        public async void SkipSession(object sender, RoutedEventArgs e)
+        {
+            if ((sender as Button)?.Tag is int idFromButton)
+            {
+                int skipSessionId = idFromButton;
+
+                // Delete the user from the session
+                bool removed = await SessionPlannerService.RemoveUserFromPlannedSession(skipSessionId, UserSession.UserId);
+
+                if (removed)
+                {
+                    PlannedSessionStore.Instance.RemovePlannedOwnSession(skipSessionId);
+
+                    // Update foreign sessions list
+                    SessionPlannerService.GetForeignPlannedSessions();
+                }                    
             }
         }
 

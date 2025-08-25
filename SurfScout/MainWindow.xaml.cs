@@ -158,8 +158,14 @@ public partial class MainWindow : Window
         grid_sessionplanner.ParticipateAtSession(sender, e);
     }
 
+    private void SessionPlannerSkipButton_Click(object sender, RoutedEventArgs e)
+    {
+        grid_sessionplanner.SkipSession(sender, e);
+    }
+
     private void SessionPlannerInfoButton_Click(object sender, RoutedEventArgs e)
     {
+        // For both own and foreign sessions!
         grid_sessionplanner.ShowPlannedSessionInfo(sender, e);
     }
 

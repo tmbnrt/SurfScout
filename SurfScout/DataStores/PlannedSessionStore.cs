@@ -23,6 +23,9 @@ namespace SurfScout.DataStores
 
         public void AddPlannedSessionForeign(PlannedSession plannedSession)
         {
+            if (PlannedSessionsForeign.Any(s => s.Id == plannedSession.Id))
+                return;
+
             plannedSession.SpotName = SpotStore.Instance.Spots
                 .FirstOrDefault(s => s.Id == plannedSession.SpotId)?.Name ?? "Unknown";
             PlannedSessionsForeign.Add(plannedSession);
@@ -30,6 +33,9 @@ namespace SurfScout.DataStores
 
         public void AddPlannedSessionOwn(PlannedSession plannedSession)
         {
+            if (PlannedSessionsOwn.Any(s => s.Id == plannedSession.Id))
+                return;
+
             PlannedSessionsOwn.Add(plannedSession);
         }
 
