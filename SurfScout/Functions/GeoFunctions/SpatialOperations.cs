@@ -158,7 +158,16 @@ namespace SurfScout.Functions.GeoFunctions
             {
                 double interpolatedWindspeed = InterpolateIDW(point, windPoints, windspeedValues);
                 var windspeedColor = GetColorForWindspeed(interpolatedWindspeed);
-                var cell = CreateCellPolygon(point, 1000);
+
+
+                //var cell = CreateCellPolygon(point, 1000);
+                //var cell = GeometryEngine.Buffer(point, 0.01);
+                var envelope = new Envelope(
+                    point.X - 0.005, point.Y - 0.005,
+                    point.X + 0.005, point.Y + 0.005,
+                    SpatialReferences.Wgs84);
+                var cell = envelope;
+
                 SimpleFillSymbol symbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, windspeedColor, null);
                 var cellGraphic = new Graphic(cell, symbol);
                 graphicsOverlay.Graphics.Add(cellGraphic);
@@ -192,9 +201,9 @@ namespace SurfScout.Functions.GeoFunctions
                 return Color.LightBlue;
             else if (windSpeed < 20)
                 return Color.Cyan;
-            else if (windSpeed < 25)
+            else if (windSpeed < 23)
                 return Color.Green;
-            else if (windSpeed < 28)
+            else if (windSpeed < 26)
                 return Color.Yellow;
             else if (windSpeed < 32)
                 return Color.Orange;

@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using SurfScout.Functions.UserDataFunction;
 using SurfScout.Models.DTOs;
-using Windows.System;
 
 namespace SurfScout.Services
 {
@@ -53,7 +52,7 @@ namespace SurfScout.Services
             return userConnections ?? new List<UserConnectionDto>();
         }
 
-        public static async Task<IReadOnlyList<FriendDto>> GetMyConnections()
+        public static async Task<IReadOnlyList<User>> GetMyConnections()
         {
             using var client = new HttpClient
             {
@@ -68,7 +67,7 @@ namespace SurfScout.Services
             if (!response.IsSuccessStatusCode)
             {
                 MessageBox.Show("Error while getting connections from server!", "Error");
-                return new List<FriendDto>();
+                return new List<User>();
             }
 
             var json = await response.Content.ReadAsStringAsync();
@@ -78,12 +77,12 @@ namespace SurfScout.Services
                 PropertyNameCaseInsensitive = true
             };
 
-            var friends = JsonSerializer.Deserialize<List<FriendDto>>(json, options);
+            var friends = JsonSerializer.Deserialize<List<User>>(json, options);
 
             if (friends != null)
                 return friends;
 
-            return new List<FriendDto>();
+            return new List<User>();
         }
 
         public static async Task<bool> SendConnectionRequest(string addresseeName)

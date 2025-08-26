@@ -311,7 +311,7 @@
                    AllowsTransparency="True"
                    IsOpen="False">
                 <Border Background="White" CornerRadius="5" BorderBrush="Gray" BorderThickness="1">
-                    <Grid Width="320" Height="240" Margin="5">
+                    <Grid Width="450" Height="300" Margin="5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <!-- Title -->
@@ -326,16 +326,16 @@
                         <!-- Header line -->
                         <Grid Grid.Row="1" Margin="10,0,10,5">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="80"/>
-                                <ColumnDefinition Width="80"/>
-                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Text="Date" FontWeight="SemiBold" Grid.Column="0"/>
                             <TextBlock Text="Surfer" FontWeight="SemiBold" Grid.Column="1"/>
                             <TextBlock Text="Rating" FontWeight="SemiBold" Grid.Column="2"/>
-                            <TextBlock Text="Action" FontWeight="SemiBold" Grid.Column="3"/>
+                            <TextBlock Text="" FontWeight="SemiBold" Grid.Column="3"/>
                         </Grid>
 
                         <!-- Session list -->
@@ -345,9 +345,9 @@
                                     <DataTemplate>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="120"/>
-                                                <ColumnDefinition Width="120"/>
-                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="100"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
 
@@ -503,16 +503,18 @@
                 <!-- Session List Column Headers -->
                 <Grid Margin="0,0,0,10">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="120"/>
-                        <ColumnDefinition Width="150"/>
-                        <ColumnDefinition Width="120"/>
-                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="350"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Text="Date" Grid.Column="0" FontWeight="SemiBold" Foreground="Gray" />
                     <TextBlock Text="Spot" Grid.Column="1" FontWeight="SemiBold" Foreground="Gray" />
+                    <TextBlock Text="Start Time" Grid.Column="2" FontWeight="SemiBold" Foreground="Gray" />
+                    <TextBlock Text="End Time" Grid.Column="3" FontWeight="SemiBold" Foreground="Gray" />
                 </Grid>
 
                 <!-- Foreign Session List -->
@@ -523,7 +525,9 @@
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="200"/>
-                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="350"/>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="100"/>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
@@ -535,7 +539,7 @@
                                     <TextBlock Text="{Binding SpotName}" Grid.Column="1" VerticalAlignment="Center"/>
 
                                     <!-- Participate Button -->
-                                    <Button Content="Participate" Grid.Column="2" Width="100"
+                                    <Button Content="Participate" Grid.Column="4" Width="100"
                                         Style="{StaticResource FormButtonStyle}"
                                         Command="{Binding ParticipateCommand}"
                                         CommandParameter="{Binding Id}"
@@ -543,7 +547,7 @@
                                         Click="SessionPlannerParticipateButton_Click" />
 
                                     <!-- Info Button -->
-                                    <Button Content="Info" Grid.Column="3" Width="80" Margin="10,0,0,0"
+                                    <Button Content="Info" Grid.Column="5" Width="80" Margin="10,0,0,0"
                                         Style="{StaticResource FormButtonStyle}"
                                         CommandParameter="{Binding Id}"
                                         Tag="{Binding Id}"
@@ -562,7 +566,9 @@
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="200"/>
-                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="350"/>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="100"/>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
@@ -571,16 +577,20 @@
                                     <TextBlock Text="{Binding Date}" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center"/>
                                     <!-- Spot Name -->
                                     <TextBlock Text="{Binding SpotName}" Grid.Column="1" VerticalAlignment="Center"/>
-                                    
+                                    <!-- StartTime -->
+                                    <TextBlock Text="{Binding StartTime}" Grid.Column="2" VerticalAlignment="Center"/>
+                                    <!-- End Time -->
+                                    <TextBlock Text="{Binding EndTime}" Grid.Column="3" VerticalAlignment="Center"/>
+
                                     <!-- Skip Button -->
-                                    <Button Content="Skip" Grid.Column="2" Width="100"
+                                    <Button Content="Skip" Grid.Column="4" Width="100"
                                         Style="{StaticResource FormButtonStyle}"
                                         Command="{Binding SkipCommand}"
                                         CommandParameter="{Binding Id}"
                                         Tag="{Binding Id}"
                                         Click="SessionPlannerSkipButton_Click" />
                                     <!-- Info Button -->
-                                    <Button Content="Info" Grid.Column="3" Width="80" Margin="10,0,0,0"
+                                    <Button Content="Info" Grid.Column="5" Width="80" Margin="10,0,0,0"
                                         Style="{StaticResource FormButtonStyle}"
                                         CommandParameter="{Binding Id}"
                                         Click="SessionPlannerInfoButton_Click" />

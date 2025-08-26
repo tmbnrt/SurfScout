@@ -62,7 +62,7 @@ namespace SurfScout.WindowLogic
         {
             // Set observable collections
             win.SessionPlannerListViewForeign.ItemsSource = PlannedSessionStore.Instance.PlannedSessionsForeign;
-            win.SessionPlannerListViewOwn.ItemsSource = PlannedSessionStore.Instance.PlannedSessionsOwn;
+            win.SessionPlannerListViewOwn.ItemsSource = PlannedSessionStore.Instance.PlannedSessionsViewOwn;
 
             // Fill combobox with availaple spot names
             win.comboSpotSelector.ItemsSource = SpotStore.Instance.Spots

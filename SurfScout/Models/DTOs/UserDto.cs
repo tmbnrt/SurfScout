@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace SurfScout.Models.DTOs
 {
-    class FriendDto
+    class UserDto
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string Username { get; set; }
     }
 }

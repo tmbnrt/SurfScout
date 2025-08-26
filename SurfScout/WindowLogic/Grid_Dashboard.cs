@@ -269,7 +269,10 @@ namespace SurfScout.WindowLogic
             var friends = await UserConnectionService.GetMyConnections();
 
             foreach (var friend in friends)
-                UserSession.AddUserConnection(friend.Name, friend.Id);
+            {
+                UserSession.AddUserConnection(friend.Username, friend.Id);
+                ConnectedUsersStore.Instance.AddUserConnection(friend);
+            }                
 
             win.listConnectionRequests.ItemsSource = UserSession.ConnectionRequesters;
             win.listUserConnections.ItemsSource = UserSession.ConnectedUsersWithIDs.Keys;

@@ -115,7 +115,7 @@ namespace SurfScout.WindowLogic
             this.mapView.GraphicsOverlays.Add(overlay_arrows);
 
             // Add interpolated overlay for the current hour
-            if (this.mapView.GraphicsOverlays.Contains(overlays_interpolated_by_hours[hour]))
+            if (mapView.GraphicsOverlays.Contains(overlays_interpolated_by_hours[hour]))
                 this.mapView.GraphicsOverlays.Remove(overlays_interpolated_by_hours[hour]);
             if (overlays_interpolated_by_hours.ContainsKey(hour))
                 this.mapView.GraphicsOverlays.Add(overlays_interpolated_by_hours[hour]);

@@ -348,7 +348,7 @@ namespace SurfScout.WindowLogic
                 {
                     SessionId = s.Id,
                     Date = s.Date.ToString("yyyy-MM-dd"),
-                    Username = s.User.Username ?? "–",
+                    Username = ConnectedUsersStore.Instance.GetUsernameById(s.UserId) ?? UserSession.Username,
                     RatingStars = UI_Helpers.GenerateStars(s.Rating)
                 })
                 .ToList();

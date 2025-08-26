@@ -16,7 +16,8 @@ namespace SurfScout.DataStores
         public static PlannedSessionStore Instance => _instance ??= new PlannedSessionStore();
 
         public ObservableCollection<PlannedSession> PlannedSessionsForeign { get; set; } = new ObservableCollection<PlannedSession>();
-        public ObservableCollection<PlannedSession> PlannedSessionsOwn { get; set; } = new ObservableCollection<PlannedSession>();
+        public List<PlannedSession> PlannedSessionsOwn { get; set; } = new List<PlannedSession>();
+        public ObservableCollection<PlannedSessionView> PlannedSessionsViewOwn { get; set; } = new ObservableCollection<PlannedSessionView>();
         public List<PlannedSession> PlannedSessionsOwn_AllSportModes { get; set; } = new List<PlannedSession>();
         public List<PlannedSession> PastSessions_NotRated { get; set; } = new List<PlannedSession>();
         public ObservableCollection<UnratedSessionsViewModel> unratedSessionsViewModels { get; set; } = new ObservableCollection<UnratedSessionsViewModel>();
@@ -37,6 +38,24 @@ namespace SurfScout.DataStores
                 return;
 
             PlannedSessionsOwn.Add(plannedSession);
+
+            // add session with id from the view model as well
+            PlannedSessionsViewOwn.Add(new PlannedSessionView
+            {
+                Id = plannedSession.Id,
+                Date = plannedSession.Date,
+                SpotName = SpotStore.Instance.Spots
+                    .FirstOrDefault(s => s.Id == plannedSession.SpotId)?.Name ?? "Unknown",
+                StartTime = plannedSession.Participants
+                    .FirstOrDefault(p => p.Id == UserSession.UserId)!.StartTime,
+                EndTime = plannedSession.Participants
+                    .FirstOrDefault(p => p.Id == UserSession.UserId)!.EndTime,
+                SportMode = plannedSession.SportMode
+            });
+            PlannedSessionsViewOwn.Last().Participants = plannedSession.Participants
+                .Where(p => p.Id != UserSession.UserId)
+                .Select(p => p.Name)
+                .ToList();
         }
 
         public void AddPastSession(PlannedSession plannedSession)
@@ -51,9 +70,9 @@ namespace SurfScout.DataStores
                 SpotName = SpotStore.Instance.Spots
                     .FirstOrDefault(s => s.Id == plannedSession.SpotId)?.Name ?? "Unknown",
                 StartTime = plannedSession.Participants
-                    .FirstOrDefault(p => p.Id == UserSession.UserId)!.StartTime,
+                    .FirstOrDefault(p => p.UserId == UserSession.UserId)!.StartTime,
                 EndTime = plannedSession.Participants
-                    .FirstOrDefault(p => p.Id == UserSession.UserId)!.EndTime,
+                    .FirstOrDefault(p => p.UserId == UserSession.UserId)!.EndTime,
                 SportMode = plannedSession.SportMode
             });
         }
@@ -75,6 +94,11 @@ namespace SurfScout.DataStores
             var sessionToRemove = PlannedSessionsOwn.FirstOrDefault(s => s.Id == sessionId);
             if (sessionToRemove != null)
                 PlannedSessionsOwn.Remove(sessionToRemove);
+
+            // Remove session with id from the view model as well
+            var sessionViewToRemove = PlannedSessionsViewOwn.FirstOrDefault(s => s.Id == sessionId);
+            if (sessionViewToRemove != null)
+                PlannedSessionsViewOwn.Remove(sessionViewToRemove);
         }
 
         // Function to check for past planned session in the own collection. If in the past, delete it and add to PastSessions_NotRated
@@ -85,6 +109,12 @@ namespace SurfScout.DataStores
             foreach (var session in pastSessions)
             {
                 PlannedSessionsOwn.Remove(session);
+
+                // Remove session with id from the view model as well
+                var sessionViewToRemove = PlannedSessionsViewOwn.FirstOrDefault(s => s.Id == session.Id);
+                if (sessionViewToRemove != null)
+                    PlannedSessionsViewOwn.Remove(sessionViewToRemove);
+
                 PastSessions_NotRated.Add(session);
             }
         }
@@ -106,8 +136,9 @@ namespace SurfScout.DataStores
         {
             PlannedSessionsForeign.Clear();
             PlannedSessionsOwn.Clear();
+            PlannedSessionsViewOwn.Clear();
             PlannedSessionsOwn_AllSportModes.Clear();
             PastSessions_NotRated.Clear();
-        }
+        }        
     }
 }
