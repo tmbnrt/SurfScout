@@ -20,6 +20,7 @@ namespace SurfScout.DataStores
         public ObservableCollection<PlannedSessionView> PlannedSessionsViewOwn { get; set; } = new ObservableCollection<PlannedSessionView>();
         public List<PlannedSession> PlannedSessionsOwn_AllSportModes { get; set; } = new List<PlannedSession>();
         public List<PlannedSession> PastSessions_NotRated { get; set; } = new List<PlannedSession>();
+        public ObservableCollection<SessionParticipantsInfoView> ParticipantsInfoViews { get; set; } = new ObservableCollection<SessionParticipantsInfoView>();
         public ObservableCollection<UnratedSessionsViewModel> unratedSessionsViewModels { get; set; } = new ObservableCollection<UnratedSessionsViewModel>();
 
         public void AddPlannedSessionForeign(PlannedSession plannedSession)
@@ -47,15 +48,44 @@ namespace SurfScout.DataStores
                 SpotName = SpotStore.Instance.Spots
                     .FirstOrDefault(s => s.Id == plannedSession.SpotId)?.Name ?? "Unknown",
                 StartTime = plannedSession.Participants
-                    .FirstOrDefault(p => p.Id == UserSession.UserId)!.StartTime,
+                    .FirstOrDefault(p => p.UserId == UserSession.UserId)!.StartTime,
                 EndTime = plannedSession.Participants
-                    .FirstOrDefault(p => p.Id == UserSession.UserId)!.EndTime,
+                    .FirstOrDefault(p => p.UserId == UserSession.UserId)!.EndTime,
                 SportMode = plannedSession.SportMode
             });
             PlannedSessionsViewOwn.Last().Participants = plannedSession.Participants
-                .Where(p => p.Id != UserSession.UserId)
+                .Where(p => p.UserId != UserSession.UserId)
                 .Select(p => p.Name)
                 .ToList();
+        }
+
+        public void UpdateParticipantCollection(int sessionId)
+        {
+            // Check if session is in own or foreign planned sessions
+            var session = PlannedSessionsForeign.FirstOrDefault(s => s.Id == sessionId);
+            if (session == null)
+                session = PlannedSessionsOwn.FirstOrDefault(s => s.Id == sessionId);
+
+            if (session != null)
+            {
+                ParticipantsInfoViews.Clear();
+                foreach (var participant in session.Participants)
+                {
+                    string participantName = "Unknown";
+                    if (participant.UserId == UserSession.UserId)
+                        participantName = UserSession.Username;
+                    else
+                        participantName = ConnectedUsersStore.Instance.UserConnections
+                            .FirstOrDefault(u => u.Id == participant.UserId)?.Username ?? "Unknown";
+
+                    ParticipantsInfoViews.Add(new SessionParticipantsInfoView
+                        {
+                            Name = participantName,
+                            StartTime = participant.StartTime,
+                            EndTime = participant.EndTime
+                        });
+                }
+            }
         }
 
         public void AddPastSession(PlannedSession plannedSession)

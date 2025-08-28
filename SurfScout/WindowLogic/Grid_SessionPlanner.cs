@@ -197,10 +197,10 @@ namespace SurfScout.WindowLogic
             addSessionWindow.datePicker.IsEnabled = false;
 
             addSessionWindow.comboStartTime.SelectedItem = sessionToRate.Participants
-                .FirstOrDefault(p => p.Id == UserSession.UserId)?.StartTime.ToString("HH:mm");
+                .FirstOrDefault(p => p.UserId == UserSession.UserId)?.StartTime.ToString("HH:mm");
 
             addSessionWindow.comboEndTime.SelectedItem = sessionToRate.Participants
-                .FirstOrDefault(p => p.Id == UserSession.UserId)?.EndTime.ToString("HH:mm");
+                .FirstOrDefault(p => p.UserId == UserSession.UserId)?.EndTime.ToString("HH:mm");
 
             bool? result = addSessionWindow.ShowDialog();
 
@@ -256,10 +256,12 @@ namespace SurfScout.WindowLogic
             {
                 var plannedSession = PlannedSessionStore.Instance.PlannedSessionsForeign.FirstOrDefault(s => s.Id == plannedSessionId);
 
-                // Open popup
-                // TODO: Create popup window in th UI to show session details
-                // ...
-            }            
+                PlannedSessionStore.Instance.UpdateParticipantCollection(plannedSessionId);
+
+                win.PlannedSessionParticipantsView.ItemsSource = PlannedSessionStore.Instance.ParticipantsInfoViews;
+
+                win.PlannedSessionInfoPopup.IsOpen = true;
+            }
         }
     }
 }

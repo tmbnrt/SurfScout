@@ -13,7 +13,7 @@ namespace SurfScout.DataStores
         private static ConnectedUsersStore _instance;
         public static ConnectedUsersStore Instance => _instance ??= new ConnectedUsersStore();
 
-        List<User> UserConnections { get; set; } = new List<User>();
+        public List<User> UserConnections { get; set; } = new List<User>();
 
         public void AddUserConnection(User user)
         {

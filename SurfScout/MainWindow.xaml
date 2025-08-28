@@ -593,6 +593,7 @@
                                     <Button Content="Info" Grid.Column="5" Width="80" Margin="10,0,0,0"
                                         Style="{StaticResource FormButtonStyle}"
                                         CommandParameter="{Binding Id}"
+                                        Tag="{Binding Id}"
                                         Click="SessionPlannerInfoButton_Click" />
                                 </Grid>
                             </Border>
@@ -797,6 +798,47 @@
                                                     Tag="{Binding Id}" />
                                             </Grid>
                                         </Border>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </Border>
+                </Popup>
+
+                <Popup x:Name="PlannedSessionInfoPopup"
+                       Placement="MousePoint"
+                       StaysOpen="False"
+                       IsOpen="False">
+                    <Border Background="White"
+                            BorderBrush="Gray"
+                            BorderThickness="1"
+                            Padding="10"
+                            CornerRadius="5"
+                            Width="400">
+                        <StackPanel>
+                            <!-- Title -->
+                            <TextBlock Text="Session Participants"
+                                       FontWeight="Bold"
+                                       FontSize="16"
+                                       Margin="0,0,0,10"/>
+
+                            <!-- Participants -->
+                            <ListView x:Name="PlannedSessionParticipantsView"
+                                      BorderThickness="0"
+                                      Background="Transparent"
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Name}" Grid.Column="0" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding StartTime}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding EndTime}" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                             </ListView>
