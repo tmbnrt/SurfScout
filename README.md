@@ -31,10 +31,10 @@
 | ArcGIS Runtime SDK        | Mapping, geometry capture, and symbol rendering            |
 | NetTopologySuite          | Spatial processing (union, intersection)                   |
 | System.Drawing / WPF      | UI rendering, color processing                             |
-| Newtonsoft.Json (optional)| JSON parsing for API interactions                          |
+| Newtonsoft.Json           | JSON parsing for API interactions                          |
 | ASP.NET Core Web API      | Backend communication interface                            |
 | PostgreSQL + PostGIS      | Persistent storage and geospatial querying of sessions     |
-| Stormglass.io             | Marine weather forecasts and wind data                     |
+| Stormglass.io             | Marine tidal forecasts and wind data                       |
 | Open-meteo.com            | Historic wind data                                         |
 
 ## ✨ Key Features and Outlook
