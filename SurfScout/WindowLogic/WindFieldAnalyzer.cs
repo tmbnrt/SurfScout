@@ -93,7 +93,7 @@ namespace SurfScout.WindowLogic
 
                 var arrowSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbolStyle.Triangle, System.Drawing.Color.Blue, wfp.WindSpeedKnots);
                 double size = Math.Clamp(wfp.WindSpeedKnots, 5, 50);
-                arrowSymbol.Size = size;
+                arrowSymbol.Size = size / 2;
 
                 // Add 180 degree to the angle but result is in range 0-360
                 double angle = wfp.WindDirectionDegree + 180;
@@ -103,6 +103,7 @@ namespace SurfScout.WindowLogic
                 arrowSymbol.Angle = angle;
 
                 var graphic = new Graphic(location, arrowSymbol);
+
                 overlay_arrows.Graphics.Add(graphic);
             }
 
