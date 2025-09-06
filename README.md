@@ -31,30 +31,27 @@
 | ArcGIS Runtime SDK        | Mapping, geometry capture, and symbol rendering            |
 | NetTopologySuite          | Spatial processing (union, intersection)                   |
 | System.Drawing / WPF      | UI rendering, color processing                             |
-| Newtonsoft.Json (optional)| JSON parsing for API interactions                          |
+| Newtonsoft.Json           | JSON parsing for API interactions                          |
 | ASP.NET Core Web API      | Backend communication interface                            |
 | PostgreSQL + PostGIS      | Persistent storage and geospatial querying of sessions     |
-| Stormglass.io             | Marine weather forecasts and wind data                     |
+| Stormglass.io             | Marine tidal forecasts and wind data                       |
 | Open-meteo.com            | Historic wind data                                         |
 
 ## ✨ Key Features and Outlook
 
 - Map visualization of wind raster points with dynamic styling
-- Polygon overlays showing windsurfing sessions by location
+- Polygon overlays showing windsurfing sessions by location including historical wind field data
 - Selective removal or fit of wind fetch areas (illustrated by polygons)
 - Comparison between forecast and real-world conditions
 - Tide-aware recommendations for surf spots
 - Spot-specific forecast model evaluation
 - Backend persistence and spatial analysis of session history
+- Users to have access to connected users' (friends) surf sessions and analyses
 
 ## 🧪 Tests & CI
 
 SurfScout uses **GitHub Actions** as its CI pipeline to automatically build and run tests on every push.  
 Unit tests are located in the `SurfScout.Tests` project under `/SurfScout.Tests/`.
-
-## 📍 To Do
-
-- Enable users to have access to connected users' (friends) surf sessions
 
 ## 🖼️ Architecture Overview
 
