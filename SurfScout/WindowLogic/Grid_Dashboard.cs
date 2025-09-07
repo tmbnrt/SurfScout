@@ -26,6 +26,7 @@ namespace SurfScout.WindowLogic
             win.buttonLogin.Click += ButtonLogin_Click;
             win.buttonRegister.Click += ButtonRegister_Click;
             win.buttonLogout.Click += ButtonLogout_Click;
+            win.buttonChangePassword.Click += ButtonChangePassword_Click;
 
             // Sport modes
             win.buttonSwitchSportMode.Click += ButtonSwitchSportMode_Click;
@@ -138,6 +139,29 @@ namespace SurfScout.WindowLogic
                 string errorMessage = $"Login failed: {ex.Message}";
                 MessageBox.Show(errorMessage, "Login Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
+            }
+        }
+
+        private void ButtonChangePassword_Click(object sender, RoutedEventArgs e)
+        {
+            // Open interface popup
+            win.ChangePasswordPopup.IsOpen = true;
+        }
+
+        private async void ButtonConfirmPasswordChange_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(win.OldPasswordBox.Password))
+                MessageBox.Show("Please enter your current password.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            else if (win.NewPasswordBox.Password != win.RepeatNewPasswordBox.Password)
+                MessageBox.Show("The new passwords are not the same.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            else
+            {
+                // Run service to change password
+                bool passwordChanged = await UserService
+                    .ChangePassword(win.OldPasswordBox.Password, win.NewPasswordBox.Password);
+
+                if (passwordChanged)
+                    win.ChangePasswordPopup.IsOpen = false;
             }
         }
 

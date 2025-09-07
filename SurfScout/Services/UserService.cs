@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using SurfScout.Functions.UserDataFunction;
 using SurfScout.Models.DTOs;
+using RTools_NTS.Util;
 
 namespace SurfScout.Services
 {
@@ -151,6 +152,40 @@ namespace SurfScout.Services
                 AllUserStore.SetAllUsers(users);
 
             return AllUserStore.Users;
+        }
+
+        public static async Task<bool> ChangePassword(string oldPassword, string newPassword)
+        {
+            using var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7190/")
+            };
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
+
+            // Create password Dto
+            var dto = new ChangePasswordDto
+            {
+                CurrentPassword = oldPassword,
+                NewPassword = newPassword
+            };
+
+            var json = JsonSerializer.Serialize(dto);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PutAsync($"api/users/changepassword", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                MessageBox.Show("Password changed successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                return true;
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                MessageBox.Show($"Error: {error}", "Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
         }
 
         public static async Task<string> SetNewSportMode(string sportMode)
