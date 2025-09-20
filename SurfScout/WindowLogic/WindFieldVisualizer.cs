@@ -46,6 +46,7 @@ namespace SurfScout.WindowLogic
         public async Task RequestWindDataForSession()
         {
             await WindFieldService.GetWindFieldMeasureDataAsync(selectedSession);
+            await WindFieldService.GetInterpolatedWindFieldDataAsync(selectedSession);
             await SpotService.GetWindFetchArea(selectedSpot.Id);
             this.windfieldmeasures = SessionStore.Instance.GetWindFieldData(selectedSession.Id);
 
@@ -56,7 +57,7 @@ namespace SurfScout.WindowLogic
             //CreateInterpolatedWindspeedOverlays();
 
             // TODO: Create overlays from interpolated API data (geojson/gzip)
-            //CreateWindfieldOverlays();
+            //CreateWindFieldOverlays();
 
             ShowTimeSlider();
         }
