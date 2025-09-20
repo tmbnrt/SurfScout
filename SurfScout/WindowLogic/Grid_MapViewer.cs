@@ -42,7 +42,7 @@ namespace SurfScout.WindowLogic
 
         private string mouseClick;
 
-        private WindFieldAnalyzer windAnalyzer;
+        private WindFieldVisualizer windAnalyzer;
 
         // Current UI selections
         public Spot selectedSpot;
@@ -368,7 +368,7 @@ namespace SurfScout.WindowLogic
                 this.selectedSession = session!;
 
                 // Create wind analysis instance
-                this.windAnalyzer = new WindFieldAnalyzer(win, selectedSession, selectedSpot);
+                this.windAnalyzer = new WindFieldVisualizer(win, selectedSession, selectedSpot);
                 await windAnalyzer.RequestWindDataForSession();
             }
         }

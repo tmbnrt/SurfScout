@@ -128,7 +128,7 @@ namespace SurfScout.Functions.GeoFunctions
             }
 
             return pointsInsidePolygon;
-        }
+        }        
 
         public static GraphicsOverlay CreateGraphicsOverlayInterpolationIDW(WindField windfield,
                                                                             NTS.Polygon ntsPolygon,

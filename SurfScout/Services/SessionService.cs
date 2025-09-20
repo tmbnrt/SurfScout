@@ -109,37 +109,6 @@ namespace SurfScout.Services
             return true;
         }
 
-        // Request wind field data for a session
-        public static async Task<IReadOnlyList<WindField>> GetWindFieldDataAsync(Session session)
-        {
-            using var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7190/")
-            };
-
-            client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", UserSession.JwtToken);
-
-            var response = await client.GetAsync($"api/sessions/windfields?sessionId={session.Id}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                MessageBox.Show("Error while getting wind field data from server!", "API-Error");
-                return null!;
-            }
-
-            var json = await response.Content.ReadAsStringAsync();
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-            options.Converters.Add(new GeoJsonConverterFactory());
-
-            var windFields = JsonSerializer.Deserialize<List<WindField>>(json, options);
-            if (windFields != null)
-                SessionStore.Instance.PutWindFieldData(session.Id, windFields);
-
-            return windFields;
-        }
+        
     }
 }
