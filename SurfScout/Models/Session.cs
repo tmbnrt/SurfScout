@@ -26,6 +26,7 @@ namespace SurfScout.Models
         public double? WindSpeedKnots { get; set; }
         public double? WindDirectionDegree { get; set; }
         public List<WindField>? WindFields { get; set; }    // Historic wind fetch data for this session
+        public List<WindFieldInterpolated>? WindFieldsInterpolated { get; set; }
 
         public int UserId { get; set; }                     // External key
         public User User { get; set; } = null!;             // Navigation property

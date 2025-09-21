@@ -18,8 +18,10 @@ using NetTopologySuite.IO.Converters;
 using System.Net.Http.Json;
 using System.Net;
 using System.IO;
+using System.Globalization;
 using System.Drawing;
 using Esri.ArcGISRuntime.Geometry;
+using System.Globalization;
 
 namespace SurfScout.Services
 {
@@ -125,7 +127,8 @@ namespace SurfScout.Services
                             polygonPoints.Add(new MapPoint(lon, lat, SpatialReferences.Wgs84));
                         }
 
-                        var windSpeed = Convert.ToDouble(feature.Properties["windSpeedKnots"]);
+                        var windValue = (JsonElement)feature.Properties["windSpeedKnots"];
+                        double windSpeed = double.Parse(windValue.GetRawText(), CultureInfo.InvariantCulture);
 
                         var cell = new WindFieldCellInterpolated
                         {
@@ -144,6 +147,9 @@ namespace SurfScout.Services
                     MessageBox.Show($"Error while parsing GeoJSON: {ex.Message}", "Parsing Error");
                 }
             }
+
+            if (windFields != null)
+                SessionStore.Instance.PutWindFieldData(session.Id, windFields);
 
             return windFields;
         }

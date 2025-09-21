@@ -30,6 +30,7 @@ namespace SurfScout.WindowLogic
         private Dictionary<int, GraphicsOverlay> overlays_interpolated_by_hours;
         private readonly MainWindow win;
         private List<WindField> windfieldmeasures;
+        private List<WindFieldInterpolated> windfieldinterpolated;
         private Session selectedSession;
         private Spot selectedSpot;
 
@@ -48,16 +49,16 @@ namespace SurfScout.WindowLogic
             await WindFieldService.GetWindFieldMeasureDataAsync(selectedSession);
             await WindFieldService.GetInterpolatedWindFieldDataAsync(selectedSession);
             await SpotService.GetWindFetchArea(selectedSpot.Id);
-            this.windfieldmeasures = SessionStore.Instance.GetWindFieldData(selectedSession.Id);
 
-            if (windfieldmeasures == null || selectedSpot.WindFetchPolygon == null)
+            this.windfieldmeasures = SessionStore.Instance.GetWindFieldData(selectedSession.Id);
+            this.windfieldinterpolated = SessionStore.Instance.GetWindFieldInterpolated(selectedSession.Id);
+
+            if (windfieldmeasures == null || windfieldinterpolated == null || selectedSpot.WindFetchPolygon == null)
                 return;
 
-            // OLD: Fill List of graphics overlay (local frontend interpolation)
-            //CreateInterpolatedWindspeedOverlays();
-
-            // TODO: Create overlays from interpolated API data (geojson/gzip)
-            //CreateWindFieldOverlays();
+            // Create overlays from interpolated API data (geojson/gzip)
+            this.overlays_interpolated_by_hours = OverlayFunctions
+                                                    .CreateInterpolatedWindFieldOverlays(windfieldinterpolated);
 
             ShowTimeSlider();
         }
@@ -70,7 +71,7 @@ namespace SurfScout.WindowLogic
             foreach (WindField wfm in windfieldmeasures)
             {
                 GraphicsOverlay overlay = OverlayFunctions
-                                            .CreateGraphicsOverlayWindmarkersXX(wfm, selectedSpot.WindFetchPolygon!);
+                                            .CreateGraphicsOverlayWindmarkers_Old(wfm, selectedSpot.WindFetchPolygon!);
                 if (overlay != null)
                     this.overlays_windmarkers_by_hours.Add(wfm.Timestamp.Hour, overlay);
             }
@@ -128,7 +129,7 @@ namespace SurfScout.WindowLogic
         {
             int hour = (int)e.NewValue;
 
-            // TODO: Update the wind field graphics based on the selected hour (INTERPOLATION FIRST)
+            // Update the wind field graphics based on the selected hour
             ShowWindField(hour);
         }
 

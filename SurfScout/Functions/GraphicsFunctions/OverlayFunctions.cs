@@ -10,6 +10,8 @@ using Esri.ArcGISRuntime.UI;
 using NetTopologySuite;
 using NTS = NetTopologySuite.Geometries;
 using SurfScout.Models.WindModel;
+using SurfScout.Functions.GeoFunctions;
+using SurfScout.DataStores;
 
 namespace SurfScout.Functions.GraphicsFunctions
 {
@@ -48,7 +50,39 @@ namespace SurfScout.Functions.GraphicsFunctions
             return overlay_markers;
         }
 
-        public static GraphicsOverlay CreateGraphicsOverlayWindmarkersXX(WindField windfield, NTS.Polygon ntsPolygon)
+        public static Dictionary<int, GraphicsOverlay> CreateInterpolatedWindFieldOverlays(List<WindFieldInterpolated> windfieldinterpolated)
+        {
+            Dictionary<int, GraphicsOverlay> overlays_interpolated_by_hours = new Dictionary<int, GraphicsOverlay>();
+
+            foreach (WindFieldInterpolated wfi in windfieldinterpolated)
+            {
+                GraphicsOverlay graphicsOverlay = new GraphicsOverlay();
+
+                foreach (var cell in wfi.Cells)
+                {
+                    // Create ArcGIS polygon based on MapPoint list
+                    var pointCollection = new PointCollection(SpatialReferences.Wgs84);
+                    foreach (var pt in cell.PolygonPoints)
+                        pointCollection.Add(pt);
+
+                    var arcgisPolygon = new Polygon(pointCollection);
+
+                    var windspeedColor = cell.IntensityColor ?? ColorDefinition.GetColorForWindspeed(cell.SpeedKnots);
+
+                    var fillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, windspeedColor, null);
+                    var cellGraphic = new Graphic(arcgisPolygon, fillSymbol);
+
+                    graphicsOverlay.Graphics.Add(cellGraphic);
+                }
+
+                if (graphicsOverlay != null)
+                    overlays_interpolated_by_hours.Add(wfi.Timestamp.Hour, graphicsOverlay);
+            }
+
+            return overlays_interpolated_by_hours;
+        }
+
+        public static GraphicsOverlay CreateGraphicsOverlayWindmarkers_Old(WindField windfield, NTS.Polygon ntsPolygon)
         {
             GraphicsOverlay graphicsOverlay = new GraphicsOverlay();
 

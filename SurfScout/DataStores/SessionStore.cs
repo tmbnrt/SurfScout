@@ -66,6 +66,13 @@ namespace SurfScout.DataStores
                     session.WindFields = windfields;
         }
 
+        public void PutWindFieldData(int id, List<WindFieldInterpolated> windfields)
+        {
+            foreach (Session session in _sessions)
+                if (session.Id == id)
+                    session.WindFieldsInterpolated = windfields;
+        }
+
         public List<WindField> GetWindFieldData(int id)
         {
             foreach (Session session in _sessions)
@@ -75,6 +82,20 @@ namespace SurfScout.DataStores
                         return session.WindFields;
                     else
                         return new List<WindField>();
+                }
+
+            return null!;
+        }
+
+        public List<WindFieldInterpolated> GetWindFieldInterpolated(int id)
+        {
+            foreach (Session session in _sessions)
+                if (session.Id == id)
+                {
+                    if (session.WindFields != null)
+                        return session.WindFieldsInterpolated;
+                    else
+                        return new List<WindFieldInterpolated>();
                 }
 
             return null!;
