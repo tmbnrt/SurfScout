@@ -100,6 +100,10 @@ namespace SurfScout.WindowLogic
             //win.SpotPopup.IsOpen = false;
             win.SpotSidebar.Visibility = Visibility.Collapsed;
             win.MapToolbar.Visibility = Visibility.Visible;
+
+            // Clear the wind field overlay
+            if (windAnalyzer != null)
+                windAnalyzer.ClearWindField();
         }
 
         private async void ButtonSavePolygon_Click(object sender, RoutedEventArgs e)

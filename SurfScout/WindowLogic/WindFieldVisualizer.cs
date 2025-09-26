@@ -28,6 +28,7 @@ namespace SurfScout.WindowLogic
         private GraphicsOverlay overlay_interpolated;
         private Dictionary<int, GraphicsOverlay> overlays_windmarkers_by_hours;
         private Dictionary<int, GraphicsOverlay> overlays_interpolated_by_hours;
+        private GraphicsOverlay actual_interpolated_overlay;
         private readonly MainWindow win;
         private List<WindField> windfieldmeasures;
         private List<WindFieldInterpolated> windfieldinterpolated;
@@ -111,7 +112,11 @@ namespace SurfScout.WindowLogic
             if (mapView.GraphicsOverlays.Contains(overlays_interpolated_by_hours[hour]))
                 this.mapView.GraphicsOverlays.Remove(overlays_interpolated_by_hours[hour]);
             if (overlays_interpolated_by_hours.ContainsKey(hour))
-                this.mapView.GraphicsOverlays.Add(overlays_interpolated_by_hours[hour]);
+            {
+                this.actual_interpolated_overlay = overlays_interpolated_by_hours[hour];
+                this.mapView.GraphicsOverlays.Add(actual_interpolated_overlay);
+            }
+                
         }
         
         private void ShowTimeSlider()
@@ -137,7 +142,25 @@ namespace SurfScout.WindowLogic
         {
             win.TimeSlider.Visibility = Visibility.Collapsed;
             this.overlay_windDirectionMarkers.Graphics.Clear();
-            this.overlay_interpolated.Graphics.Clear();
+
+            foreach (var overlay in overlays_interpolated_by_hours.Values)
+                if (mapView.GraphicsOverlays.Contains(overlay))
+                    this.mapView.GraphicsOverlays.Remove(overlay);
+
+            this.overlays_interpolated_by_hours.Clear();
+            //if (mapView.GraphicsOverlays != null && actual_interpolated_overlay != null)
+            //    this.mapView.GraphicsOverlays.Remove(actual_interpolated_overlay);
+            //
+            //foreach (var overlay in mapView.GraphicsOverlays)
+            //{
+            //    if (overlay.Id == actual_interpolated_overlay.Id)
+            //    {
+            //        mapView.GraphicsOverlays.Remove(overlay);
+            //        break;
+            //    }
+            //}
+
+            //this.overlay_interpolated.Graphics.Clear();       // overlay_interpolated only used for local interpolation.
         }
     }
 }
