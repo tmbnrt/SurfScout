@@ -105,8 +105,6 @@ namespace SurfScout.WindowLogic
             this.overlay_windDirectionMarkers = OverlayFunctions.CreateWindDirectionMarkers(windfieldmeasures, hour);
             if (overlay_windDirectionMarkers == null)
                 return;
-                        
-            this.mapView.GraphicsOverlays.Add(overlay_windDirectionMarkers);
 
             // Add interpolated overlay for the current hour
             if (mapView.GraphicsOverlays.Contains(overlays_interpolated_by_hours[hour]))
@@ -116,7 +114,8 @@ namespace SurfScout.WindowLogic
                 this.actual_interpolated_overlay = overlays_interpolated_by_hours[hour];
                 this.mapView.GraphicsOverlays.Add(actual_interpolated_overlay);
             }
-                
+
+            this.mapView.GraphicsOverlays.Add(overlay_windDirectionMarkers);
         }
         
         private void ShowTimeSlider()
@@ -143,23 +142,12 @@ namespace SurfScout.WindowLogic
             win.TimeSlider.Visibility = Visibility.Collapsed;
             this.overlay_windDirectionMarkers.Graphics.Clear();
 
+            // Clear all interpolated overlays
             foreach (var overlay in overlays_interpolated_by_hours.Values)
                 if (mapView.GraphicsOverlays.Contains(overlay))
                     this.mapView.GraphicsOverlays.Remove(overlay);
 
             this.overlays_interpolated_by_hours.Clear();
-            //if (mapView.GraphicsOverlays != null && actual_interpolated_overlay != null)
-            //    this.mapView.GraphicsOverlays.Remove(actual_interpolated_overlay);
-            //
-            //foreach (var overlay in mapView.GraphicsOverlays)
-            //{
-            //    if (overlay.Id == actual_interpolated_overlay.Id)
-            //    {
-            //        mapView.GraphicsOverlays.Remove(overlay);
-            //        break;
-            //    }
-            //}
-
             //this.overlay_interpolated.Graphics.Clear();       // overlay_interpolated only used for local interpolation.
         }
     }
