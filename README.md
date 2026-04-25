@@ -1,23 +1,19 @@
 # SurfScout 🌬️🏄‍♂️
 
-**SurfScout** is a work-in-progress analytics tool designed to evaluate windsurfing sessions by visualizing wind fields based on forecast data from weather APIs. The goal is to compare predicted conditions with actual weather observations and derive meaningful insights about session quality — helping users make smarter decisions about future surf spots based on tides and forecast reliability.
+This project was the prototype and MVP designed to evaluate windfield data.
 
 ## 🔍 Project Goals
 
-- Collect and visualize wind data (raster points) around surf spots
-- Store windsurfing sessions enriched with real-time weather data
+- Collect and visualize wind data (raster points) around surf spots and validate the stored data
 - Compare weather forecasts with actual conditions and assess accuracy
-- Recommend optimal surf locations for future sessions
-- Factor **tide levels** into surf spot selection logic
+- Evaluate tide levels
 - Determine the **most accurate wind model** for each individual surf spot
-- Communicate with a dedicated **SurfScoutBackend**, which manages persistent session data in a **PostgreSQL/PostGIS** geospatial database
+- Communicate with the **SurfScoutBackend** that is now used for production deployment
 
-> ⚠️ _This project is actively under development. Features, architecture, and visuals are subject to refinement._
+> ⚠️ _This project was a MVP to validate the meteorological data from external APIs._
 
 ## 🛠️ Architecture Overview
 
-- **Frontend/UI**: Built with WPF (Windows Presentation Foundation)
-- **Wind Data Visualization**: Uses `GraphicsOverlay` to render raster points on the map
 - **GIS Capabilities**: Powered by ArcGIS Runtime SDK for interactive mapping and geometry handling
 - **Geometry Operations**: Leverages NetTopologySuite for spatial tasks (e.g. union, intersection)
 - **Backend Communication**: Exchanges data via HTTP with the ASP.NET Core–based `SurfScoutBackend`
@@ -37,21 +33,9 @@
 | Stormglass.io             | Marine tidal forecasts and wind data                       |
 | Open-meteo.com            | Historic wind data                                         |
 
-## ✨ Key Features and Outlook
-
-- Map visualization of wind raster points with dynamic styling
-- Polygon overlays showing windsurfing sessions by location including historical wind field data
-- Selective removal or fit of wind fetch areas (illustrated by polygons)
-- Comparison between forecast and real-world conditions
-- Tide-aware recommendations for surf spots
-- Spot-specific forecast model evaluation
-- Backend persistence and spatial analysis of session history
-- Users to have access to connected users' (friends) surf sessions and analyses
-
 ## 🧪 Tests & CI
 
 SurfScout uses **GitHub Actions** as its CI pipeline to automatically build and run tests on every push.  
-Unit tests are located in the `SurfScout.Tests` project under `/SurfScout.Tests/`.
 
 ## 🖼️ Architecture Overview
 
